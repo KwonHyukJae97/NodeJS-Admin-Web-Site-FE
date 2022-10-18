@@ -5,7 +5,7 @@ import { useState, ReactNode, MouseEvent } from 'react'
 import Link from 'next/link'
 
 // ** MUI Components
-import Alert from '@mui/material/Alert'
+// import Alert from '@mui/material/Alert'
 import MuiLink from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
@@ -38,7 +38,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import useBgColor from 'src/@core/hooks/useBgColor'
+
+// import useBgColor from 'src/@core/hooks/useBgColor'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Configs
@@ -100,28 +101,33 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   }
 }))
 
+// 로그인 입력값에 대한 유효성 체크
 const schema = yup.object().shape({
-  email: yup.string().email().required(),
-  password: yup.string().min(4).required()
+  id: yup.string().required('아이디를 입력해주세요.'),
+  password: yup.string().required('비밀번호를 입력해주세요.')
 })
 
+// 로그인 입력 고정값 정의
 const defaultValues = {
-  password: '1234',
-  email: 'tech01@doubledlab.co.kr'
+  id: 'super',
+  password: 'admin0000'
 }
 
+// 로그인 입력값 타입 정의
 interface FormData {
-  email: string
+  id: string
   password: string
 }
 
+// 로그인 화면 실행
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
   // ** Hooks
   const auth = useAuth()
   const theme = useTheme()
-  const bgClasses = useBgColor()
+
+  //const bgClasses = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -132,19 +138,20 @@ const LoginPage = () => {
     control,
     setError,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
     defaultValues,
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = (data: FormData) => {
-    const { email, password } = data
-    auth.login({ email, password }, () => {
-      setError('email', {
+  // 로그인 버튼 클릭 시, 로그인 요청
+  const onSubmit = async (data: FormData) => {
+    const { id, password } = data
+    auth.login({ id, password }, () => {
+      setError('id', {
         type: 'manual',
-        message: 'Email or Password is invalid'
+        message: '아이디와 비밀번호를 확인해주세요.'
       })
     })
   }
@@ -264,33 +271,35 @@ const LoginPage = () => {
               <TypographyStyled variant='h5'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</TypographyStyled>
               <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
             </Box>
-            <Alert icon={false} sx={{ py: 3, mb: 6, ...bgClasses.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
-              <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>
-                Admin: <strong>admin@materialize.com</strong> / Pass: <strong>admin</strong>
-              </Typography>
-              <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
-                Client: <strong>client@materialize.com</strong> / Pass: <strong>client</strong>
-              </Typography>
-            </Alert>
+            {/*<Alert icon={false} sx={{ py: 3, mb: 6, ...bgClasses.primaryLight, '& .MuiAlert-message': { p: 0 } }}>*/}
+            {/*  <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>*/}
+            {/*    Admin: <strong>admin@materialize.com</strong> / Pass: <strong>admin</strong>*/}
+            {/*  </Typography>*/}
+            {/*  <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>*/}
+            {/*    Client: <strong>client@materialize.com</strong> / Pass: <strong>client</strong>*/}
+            {/*  </Typography>*/}
+            {/*</Alert>*/}
+
+            {/* onSubmit에 handleSubmit() 함수 등록 */}
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name='email'
+                  name='id'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       autoFocus
-                      label='Email'
+                      label='Id'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
-                      error={Boolean(errors.email)}
-                      placeholder='admin@materialize.com'
+                      error={Boolean(errors.id)}
+                      placeholder='admin'
                     />
                   )}
                 />
-                {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+                {errors.id && <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>}
               </FormControl>
               <FormControl fullWidth>
                 <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
