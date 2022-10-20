@@ -1,39 +1,46 @@
 // ** Redux Imports
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // ** Axios Imports
-import axios from 'axios'
+import axios from 'axios';
 
+// 통신 성공 시 가져오게 될 데이터 타입
 interface DataParams {
-  q: string
+  q: string;
 }
 
-// ** Fetch Invoices
-export const fetchData = createAsyncThunk('appPermissions/fetchData', async (params: DataParams) => {
-  const response = await axios.get('/apps/permissions/data', {
-    params
-  })
+export let data: [];
 
-  return response.data
-})
+// 비동기 통신 구현
+export const fetchData = createAsyncThunk(
+  'appPermissions/fetchData',
+  async (params: DataParams) => {
+    await axios
+      .get('http://localhost:3000/permission', {
+        params,
+      })
+      .then((res) => {
+        data = res.data;
+      })
+      .catch((Error) => {
+        console.log('Error', Error);
+      });
+
+    return data;
+  },
+);
 
 export const appPermissionsSlice = createSlice({
   name: 'appPermissions',
   initialState: {
     data: [],
-    total: 1,
-    params: {},
-    allData: []
   },
   reducers: {},
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder.addCase(fetchData.fulfilled, (state, action) => {
-      state.data = action.payload.permissions
-      state.params = action.payload.params
-      state.allData = action.payload.allData
-      state.total = action.payload.total
-    })
-  }
-})
+      state.data = action.payload;
+    });
+  },
+});
 
-export default appPermissionsSlice.reducer
+export default appPermissionsSlice.reducer;
