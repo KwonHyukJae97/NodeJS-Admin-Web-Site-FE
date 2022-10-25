@@ -26,7 +26,13 @@ const FooterContent = () => {
         {`© ${new Date().getFullYear()}, Made with2 `}
         <Box component='span' sx={{ color: 'error.main' }}>
           ❤️
-          <img onClick={() => loginWithKakao()} alt={'kakao-login'} style={{ borderRadius: '4px' }}></img>
+          {/* <img onClick={() => loginWithKakao()} alt={'kakao-login'} style={{ borderRadius: '4px' }}></img> */}
+          <img
+            onClick={() => loginWithKakao()}
+            alt={'kakao-login'}
+            src='//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg'
+            width='180'
+          />
         </Box>
         {` by `}
         <Link target='_blank' href='https://pixinvent.com/'>

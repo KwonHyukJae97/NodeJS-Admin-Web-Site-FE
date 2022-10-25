@@ -30,6 +30,9 @@ export type KakaoUserDataType = {
   accountId: number
   snsId: string
   name: string
+  email: string
+  birth: string
+  gender: string
   // email: string
   //몇개 더 추가
 }

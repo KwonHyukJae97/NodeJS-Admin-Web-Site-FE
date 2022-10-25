@@ -106,8 +106,10 @@ const schema = yup.object().shape({
 })
 
 const defaultValues = {
-  password: '1234',
-  email: 'tech01@doubledlab.co.kr'
+  // password: '1234',
+  // email: 'tech01@doubledlab.co.kr'
+  password: 'admin',
+  email: 'admin@materialize.com'
 }
 
 interface FormData {
@@ -162,7 +164,8 @@ const LoginPage = () => {
     // const REDIRECT_URI = `${process.env.REACT_APP_REDIRECT_URI}`
     // const CLIENT_ID = `${process.env.REACT_APP_KAKAO_KEY}`
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`
-    const test = window.location.replace(KAKAO_AUTH_URL)
+    // const test = window.location.replace(KAKAO_AUTH_URL)
+    window.location.href = KAKAO_AUTH_URL
   }
 
   return (
@@ -394,10 +397,12 @@ const LoginPage = () => {
                     <Google sx={{ color: '#db4437' }} />
                   </IconButton>
                 </Link>
-                {/* <Button href={KAKAO_AUTH_URL} fullWidth size='large' variant='contained' type='submit'>
-                  카카오 로그인
-                </Button> */}
-                <img onClick={() => loginWithKakao()} alt={'kakao-login'} style={{ borderRadius: '4px' }}></img>
+                <img
+                  onClick={() => loginWithKakao()}
+                  alt={'kakao-login'}
+                  src='//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg'
+                  width='180'
+                />
               </Box>
             </form>
           </BoxWrapper>

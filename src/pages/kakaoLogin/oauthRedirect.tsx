@@ -113,17 +113,18 @@ const OauthRedirect = () => {
         name: responseUserInfo.data.kakao_account.profile.nickname,
         birth: responseUserInfo.data.kakao_account.birthday,
         gender: responseUserInfo.data.kakao_account.gender,
-        kakaoAccessToken: kakaoAccessToken,
+        kakaoAccessToken2: kakaoAccessToken,
         kakaoAccount: responseUserInfo.data.kakao_account
         // snsId: responseUserInfo.data.kako_account.email
         // snsType: '01'
       }
-      const { name, birth, gender, snsId } = kakaoUserInfo
+      const { name, birth, gender, snsId, kakaoAccessToken2 } = kakaoUserInfo
 
-      console.log('카카오 유저 정보입니다1.', name)
-      console.log('카카오 유저 정보입니다2.', snsId)
-      console.log('카카오 유저 정보입니다3.', birth)
-      console.log('카카오 유저 정보입니다4.', gender)
+      console.log('카카오 이름.', name)
+      console.log('카카오 snsID.', snsId)
+      console.log('카카오 생일.', birth)
+      console.log('카카오 성별.', gender)
+      console.log('카카오 토큰.', kakaoAccessToken2)
 
       // return kakaoUserInfo
       auth.kakaoLogin(kakaoUserInfo)

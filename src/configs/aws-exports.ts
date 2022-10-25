@@ -10,8 +10,8 @@ const awsmobile = {
   oauth: {
     domain: '',
     scope: ['phone', 'email', 'openid', 'profile', 'aws.cognito.signin.user.admin'],
-    redirectSignIn: 'http://localhost:3001/',
-    redirectSignOut: 'http://localhost:3001/login/',
+    redirectSignIn: 'http://localhost:3002/',
+    redirectSignOut: 'http://localhost:3002/login/',
     responseType: 'code'
   },
   federationTarget: 'COGNITO_USER_POOLS',

@@ -20,6 +20,7 @@ import {
   KakaoLoginParams,
   KakaoUserDataType
 } from './types'
+import auth from 'src/configs/auth'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -113,14 +114,15 @@ const AuthProvider = ({ children }: Props) => {
       })
   }
 
-  const handleKakaoLogin = async (params: any, errorCallback?: ErrCallbackType) => {
+  //키키어 로그인 요청 시 실행
+  const handleKakaoLogin = (params: any, errorCallback?: ErrCallbackType) => {
     console.log('params!!', params)
     axios
       .post(authConfig.loginEndPoint2, params, { withCredentials: true })
       .then(async res => {
         console.log('로그인 성공 시 응답', res.data)
       })
-      .then(() => {
+      .then(async () => {
         axios
           .get(authConfig.kakaoLoginEndPoint, {
             withCredentials: true
@@ -134,9 +136,12 @@ const AuthProvider = ({ children }: Props) => {
             const kakaoUser: KakaoUserDataType = {
               accountId: res.data.accountId,
               snsId: res.data.email,
-              name: res.data.name
+              name: res.data.name,
+              email: res.data.email,
+              birth: res.data.birth,
+              gender: res.data.gender
             }
-            console.log('로그인 테스트1', kakaoUser)
+            console.log('로그인 테스트', kakaoUser)
 
             setKakaoUser(kakaoUser)
             await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(kakaoUser))
