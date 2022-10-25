@@ -175,7 +175,7 @@ const UserViewLeft = ({ data }: Props) => {
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Username:
                   </Typography>
-                  <Typography variant='body2'>@{data.name}</Typography>
+                  <Typography variant='body2'>@{data.username}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
@@ -258,7 +258,7 @@ const UserViewLeft = ({ data }: Props) => {
                       <TextField
                         fullWidth
                         label='Username'
-                        defaultValue={data.name}
+                        defaultValue={data.username}
                         InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
                       />
                     </Grid>

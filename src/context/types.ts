@@ -5,9 +5,14 @@ export type LoginParams = {
   password: string
 }
 
+export type KakaoLoginParams = {
+  email: string
+  // password: string
+}
+
 export type RegisterParams = {
   email: string
-  name: string
+  username: string
   password: string
 }
 
@@ -21,6 +26,14 @@ export type UserDataType = {
   avatar?: string | null
 }
 
+export type KakaoUserDataType = {
+  accountId: number
+  snsId: string
+  name: string
+  // email: string
+  //몇개 더 추가
+}
+
 export type AuthValuesType = {
   loading: boolean
   setLoading: (value: boolean) => void
@@ -28,7 +41,10 @@ export type AuthValuesType = {
   isInitialized: boolean
   user: UserDataType | null
   setUser: (value: UserDataType | null) => void
+  kakaoUser: KakaoUserDataType | null
+  setKakaoUser: (value: KakaoUserDataType | null) => void
   setIsInitialized: (value: boolean) => void
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void
+  kakaoLogin: (params: any) => void
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void
 }

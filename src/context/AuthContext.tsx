@@ -11,16 +11,27 @@ import axios from 'axios'
 import authConfig from 'src/configs/auth'
 
 // ** Types
-import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
+import {
+  AuthValuesType,
+  RegisterParams,
+  LoginParams,
+  ErrCallbackType,
+  UserDataType,
+  KakaoLoginParams,
+  KakaoUserDataType
+} from './types'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
   user: null,
+  kakaoUser: null,
+  setKakaoUser: () => null,
   loading: true,
   setUser: () => null,
   setLoading: () => Boolean,
   isInitialized: false,
   login: () => Promise.resolve(),
+  kakaoLogin: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   setIsInitialized: () => Boolean,
   register: () => Promise.resolve()
@@ -35,6 +46,7 @@ type Props = {
 const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
+  const [kakaoUser, setKakaoUser] = useState<KakaoUserDataType | null>(defaultProvider.kakaoUser)
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
   const [isInitialized, setIsInitialized] = useState<boolean>(defaultProvider.isInitialized)
 
@@ -73,7 +85,7 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     axios
-      .post(authConfig.loginEndpoint, params, {withCredentials: true})
+      .post(authConfig.loginEndpoint, params, { withCredentials: true })
       .then(async res => {
         window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
       })
@@ -94,6 +106,44 @@ const AuthProvider = ({ children }: Props) => {
             const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
             router.replace(redirectURL as string)
+          })
+      })
+      .catch(err => {
+        if (errorCallback) errorCallback(err)
+      })
+  }
+
+  const handleKakaoLogin = async (params: any, errorCallback?: ErrCallbackType) => {
+    console.log('params!!', params)
+    axios
+      .post(authConfig.loginEndPoint2, params, { withCredentials: true })
+      .then(async res => {
+        console.log('로그인 성공 시 응답', res.data)
+      })
+      .then(() => {
+        axios
+          .get(authConfig.kakaoLoginEndPoint, {
+            withCredentials: true
+          })
+          .then(async res => {
+            const returnUrl = router.query.returnUrl
+            console.log('returnUrl', returnUrl)
+
+            console.log('사용자 정보 조회 성공 시 응답', res)
+
+            const kakaoUser: KakaoUserDataType = {
+              accountId: res.data.accountId,
+              snsId: res.data.email,
+              name: res.data.name
+            }
+            console.log('로그인 테스트1', kakaoUser)
+
+            setKakaoUser(kakaoUser)
+            await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(kakaoUser))
+
+            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+
+            await router.replace(redirectURL as string)
           })
       })
       .catch(err => {
@@ -124,12 +174,15 @@ const AuthProvider = ({ children }: Props) => {
 
   const values = {
     user,
+    kakaoUser,
+    setKakaoUser,
     loading,
     setUser,
     setLoading,
     isInitialized,
     setIsInitialized,
     login: handleLogin,
+    kakaoLogin: handleKakaoLogin,
     logout: handleLogout,
     register: handleRegister
   }

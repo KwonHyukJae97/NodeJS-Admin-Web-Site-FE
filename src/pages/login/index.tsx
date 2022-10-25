@@ -3,9 +3,10 @@ import { useState, ReactNode, MouseEvent } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
+import KakaoLogin from 'react-kakao-login'
 
 // ** MUI Components
-import Alert from '@mui/material/Alert'
+// import Alert from '@mui/material/Alert'
 import MuiLink from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
@@ -30,7 +31,6 @@ import Twitter from 'mdi-material-ui/Twitter'
 import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-
 // ** Third Party Imports
 import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
@@ -151,6 +151,20 @@ const LoginPage = () => {
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
+  // const CLIENT_ID = '214f882001474304a397de3fa79c9de0'
+  // const REDIRECT_URI = 'http://localhost:3000/auth/kakao'
+
+  // const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`
+
+  function loginWithKakao() {
+    const CLIENT_ID = '214f882001474304a397de3fa79c9de0'
+    const REDIRECT_URI = 'http://localhost:3002/kakaoLogin/oauthRedirect'
+    // const REDIRECT_URI = `${process.env.REACT_APP_REDIRECT_URI}`
+    // const CLIENT_ID = `${process.env.REACT_APP_KAKAO_KEY}`
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`
+    const test = window.location.replace(KAKAO_AUTH_URL)
+  }
+
   return (
     <Box className='content-right'>
       {!hidden ? (
@@ -264,14 +278,14 @@ const LoginPage = () => {
               <TypographyStyled variant='h5'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</TypographyStyled>
               <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
             </Box>
-            <Alert icon={false} sx={{ py: 3, mb: 6, ...bgClasses.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
+            {/* <Alert icon={false} sx={{ py: 3, mb: 6, ...bgClasses.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
               <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>
                 Admin: <strong>admin@materialize.com</strong> / Pass: <strong>admin</strong>
               </Typography>
               <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
                 Client: <strong>client@materialize.com</strong> / Pass: <strong>client</strong>
               </Typography>
-            </Alert>
+            </Alert> */}
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
@@ -380,6 +394,10 @@ const LoginPage = () => {
                     <Google sx={{ color: '#db4437' }} />
                   </IconButton>
                 </Link>
+                {/* <Button href={KAKAO_AUTH_URL} fullWidth size='large' variant='contained' type='submit'>
+                  카카오 로그인
+                </Button> */}
+                <img onClick={() => loginWithKakao()} alt={'kakao-login'} style={{ borderRadius: '4px' }}></img>
               </Box>
             </form>
           </BoxWrapper>
