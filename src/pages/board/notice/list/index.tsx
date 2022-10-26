@@ -52,6 +52,7 @@ import {boardData, boardDate, BoardType, UsersType} from 'src/types/apps/userTyp
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import TableStickyHeader from "../../../../views/table/mui/TableStickyHeader";
+import PaginationSimple from "../../../../views/components/pagination/PaginationSimple";
 
 interface UserRoleType {
   [key: string]: ReactElement
@@ -204,7 +205,7 @@ const columns = [
               size='small'
               label='중요'
               color='primary'
-              sx={{textTransform: 'capitalize', '& .MuiChip-label': {lineHeight: '18px'}}}
+              sx={{textTransform: 'capitalize', '& .MuiChip-label': {lineHeight: '18px'}, fontWeight: 600}}
             /> :
             <Typography noWrap variant='body2'>
               {row.id}
@@ -352,23 +353,26 @@ const UserList = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={<Typography variant='h4'>본사용 공지사항</Typography>}
+          <CardHeader title={<Typography variant='h4'>회원사용 공지사항</Typography>}
                       sx={{pb: 4, '& .MuiCardHeader-title': {letterSpacing: '.15px'}}}
-                      style={{textAlign: "center", paddingTop: '68px', paddingBottom: '10px', backgroundColor: 'red'}}/>
+                      style={{textAlign: "center", paddingTop: '82px', paddingBottom: '10px'}}/>
           <hr style={{width: '30px', color: 'lightgrey'}}/>
           <CardHeader title={<Typography variant='subtitle1'>TenPick의 이벤트 및 업데이트 정보 등 다양한 소식을 알려드립니다.</Typography>}
                       sx={{pb: 4, '& .MuiCardHeader-title': {letterSpacing: '.15px'}}}
-                      style={{textAlign: "center", padding: '8px 0 8px 0', backgroundColor: 'red'}}/>
+                      style={{textAlign: "center", padding: '8px 0'}}/>
 
+          {/* Tables 컴포넌트 사용 */}
           {/*<TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />*/}
           {/*<TableStickyHeader />*/}
 
+          {/* DataGrid 컴포넌트 사용 */}
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer}/>
           <DataGrid
             autoHeight
             pagination
             rows={boardData}
             columns={columns}
+
             // checkboxSelection
             disableSelectionOnClick
             pageSize={Number(pageSize)}
@@ -377,6 +381,7 @@ const UserList = () => {
             onSelectionModelChange={rows => setSelectedRows(rows)}
             onPageSizeChange={newPageSize => setPageSize(newPageSize)}
           />
+          {/*<PaginationSimple />*/}
         </Card>
       </Grid>
     </Grid>

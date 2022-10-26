@@ -6,10 +6,10 @@ const DataGrid = (theme: Theme) => {
     MuiDataGrid: {
       styleOverrides: {
         root: {
-          width: '93%',
+          width: '92%',
           margin: 'auto',
           border: 0,
-          color: theme.palette.text.primary,
+          // color: theme.palette.text.primary,
           '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within': {
             outline: 'none'
           }
@@ -22,19 +22,23 @@ const DataGrid = (theme: Theme) => {
           maxHeight: '54px !important',
           minHeight: '54px !important',
           lineHeight: '24px !important',
-          backgroundColor: theme.palette.customColors.tableHeaderBg
+          borderTop: `2px solid ${theme.palette.divider}`,
+          // backgroundColor: theme.palette.customColors.tableHeaderBg
         },
         columnHeader: {
-          backgroundColor: 'blue',
+          // backgroundColor: 'orange',
           height: '54px',
           '&:not(.MuiDataGrid-columnHeaderCheckbox)': {
-            padding: theme.spacing(4),
+            // padding: theme.spacing(4)
+            padding: theme.spacing(3),
             '&:first-of-type': {
-              paddingLeft: theme.spacing(5)
+              // paddingLeft: theme.spacing(5)
+              paddingLeft: theme.spacing(2),
             }
           },
           '&:last-of-type': {
-            paddingRight: theme.spacing(5)
+            // paddingRight: theme.spacing(5)
+            paddingRight: theme.spacing(8)
           }
         },
         columnHeaderCheckbox: {
@@ -44,7 +48,7 @@ const DataGrid = (theme: Theme) => {
         columnHeaderTitleContainer: {
           padding: 0,
           justifyContent: 'center',
-          backgroundColor: 'purple'
+          // backgroundColor: 'yellow'
 
         },
         columnHeaderTitle: {
@@ -52,9 +56,10 @@ const DataGrid = (theme: Theme) => {
           letterSpacing: '0.17px',
           textTransform: 'uppercase'
         },
-        // columnSeparator: {
-        //   // color: theme.palette.divider
-        // },
+        columnSeparator: {
+          color: theme.palette.divider
+          // color: 'white'
+        },
         virtualScroller: {
           marginTop: '54px !important'
         },
@@ -80,7 +85,7 @@ const DataGrid = (theme: Theme) => {
           borderColor: theme.palette.divider,
           '&:not(.MuiDataGrid-cellCheckbox)': {
             padding: theme.spacing(4),
-            backgroundColor: 'blue',
+            // backgroundColor: 'blue',
             '&:first-of-type': {
               paddingLeft: theme.spacing(5),
               justifyContent: 'center',
@@ -89,7 +94,7 @@ const DataGrid = (theme: Theme) => {
           },
           '&:last-of-type': {
             paddingRight: theme.spacing(5),
-            backgroundColor: 'red'
+            // backgroundColor: 'red'
           },
           '&:focus, &:focus-within': {
             outline: 'none'
@@ -108,12 +113,14 @@ const DataGrid = (theme: Theme) => {
         },
         footerContainer: {
           minHeight: '50px !important',
-          borderTop: `1px solid ${theme.palette.divider}`,
+          // backgroundColor: 'yellow',
+          borderTop: `2px solid ${theme.palette.divider}`,
+          padding: '4px 0 24px 0',
           '& .MuiTablePagination-toolbar': {
-            minHeight: '50px !important'
+            // minHeight: '50px !important'
           },
           '& .MuiTablePagination-select': {
-            color: theme.palette.text.primary
+            // color: theme.palette.text.primary
           }
         }
       },

@@ -21,13 +21,13 @@ const TableHeader = (props: TableHeaderProps) => {
   const { handleFilter, toggle, value } = props
 
   return (
-    <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', marginTop: '24px', backgroundColor: 'green'}}>
+    <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', marginTop: '32px'}}>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', width:'80%', backgroundColor: 'orange'}} >
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', width:'80%'}} >
         <TextField
           size='small'
           value={value}
-          sx={{ mr: 3, mb: 2, ml: 4, width: '40%'}}
+          sx={{ mr: 3, mb: 2, ml: 10, width: '40%'}}
           placeholder='검색어를 입력해주세요.'
           onChange={e => handleFilter(e.target.value)}
           InputProps={{
@@ -39,14 +39,14 @@ const TableHeader = (props: TableHeaderProps) => {
           }}
         />
         <Button sx={{ mb: 2 }} color='secondary' variant='outlined' >
-          <Typography variant='subtitle2'>
+          <Typography variant='subtitle2' style={{ fontWeight: 700 }}>
           검색
           </Typography>
         </Button>
       </Box>
 
-      <Button sx={{ mr: 4, mb: 2, backgroundColor: 'orange', paddingRight: '16px', paddingLeft: '16px' }} onClick={toggle} variant='contained' startIcon={<Plus />}>
-        <Typography variant='body2'style={{ color: "white" }}>
+      <Button sx={{ mr: 10, mb: 2, paddingRight: '16px', paddingLeft: '16px' }} onClick={toggle} variant='contained' startIcon={<Plus />}>
+        <Typography variant='body2'style={{ color: "white" , fontWeight: 700}}>
           등록
         </Typography>
       </Button>
