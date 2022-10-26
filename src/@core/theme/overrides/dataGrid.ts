@@ -6,6 +6,8 @@ const DataGrid = (theme: Theme) => {
     MuiDataGrid: {
       styleOverrides: {
         root: {
+          width: '93%',
+          margin: 'auto',
           border: 0,
           color: theme.palette.text.primary,
           '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within': {
@@ -23,6 +25,7 @@ const DataGrid = (theme: Theme) => {
           backgroundColor: theme.palette.customColors.tableHeaderBg
         },
         columnHeader: {
+          backgroundColor: 'blue',
           height: '54px',
           '&:not(.MuiDataGrid-columnHeaderCheckbox)': {
             padding: theme.spacing(4),
@@ -39,16 +42,19 @@ const DataGrid = (theme: Theme) => {
           minWidth: '58px !important'
         },
         columnHeaderTitleContainer: {
-          padding: 0
+          padding: 0,
+          justifyContent: 'center',
+          backgroundColor: 'purple'
+
         },
         columnHeaderTitle: {
-          fontSize: '0.75rem',
+          fontSize: '0.95rem',
           letterSpacing: '0.17px',
           textTransform: 'uppercase'
         },
-        columnSeparator: {
-          color: theme.palette.divider
-        },
+        // columnSeparator: {
+        //   // color: theme.palette.divider
+        // },
         virtualScroller: {
           marginTop: '54px !important'
         },
@@ -59,6 +65,7 @@ const DataGrid = (theme: Theme) => {
           }
         },
         row: {
+          // backgroundColor: 'red',
           '&:last-child': {
             '& .MuiDataGrid-cell': {
               borderBottom: 0
@@ -66,18 +73,23 @@ const DataGrid = (theme: Theme) => {
           }
         },
         cell: {
+          // backgroundColor: 'red',
           maxHeight: '50px !important',
           minHeight: '50px !important',
           lineHeight: '20px !important',
           borderColor: theme.palette.divider,
           '&:not(.MuiDataGrid-cellCheckbox)': {
             padding: theme.spacing(4),
+            backgroundColor: 'blue',
             '&:first-of-type': {
-              paddingLeft: theme.spacing(5)
+              paddingLeft: theme.spacing(5),
+              justifyContent: 'center',
+              // backgroundColor: 'red'
             }
           },
           '&:last-of-type': {
-            paddingRight: theme.spacing(5)
+            paddingRight: theme.spacing(5),
+            backgroundColor: 'red'
           },
           '&:focus, &:focus-within': {
             outline: 'none'

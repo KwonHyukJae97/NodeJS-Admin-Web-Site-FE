@@ -9,7 +9,7 @@ const PageHeader = (props: PageHeaderProps) => {
   const { title, subtitle } = props
 
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} style={{backgroundColor: 'red'}}>
       {title}
       {subtitle || null}
     </Grid>

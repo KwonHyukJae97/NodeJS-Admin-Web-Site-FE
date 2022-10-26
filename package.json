@@ -76,6 +76,7 @@
     "yup": "0.32.9"
   },
   "devDependencies": {
+    "@mdi/js": "^7.0.96",
     "@types/cleave.js": "1.4.6",
     "@types/draft-js": "0.11.8",
     "@types/jsonwebtoken": "8.5.8",

@@ -29,6 +29,8 @@ const Home = () => {
     // 사용자 정보가 있을 경우, 페이지 이동 처리
     if (auth.user) {
       router.replace('/dashboards/crm')
+    } else {
+      router.replace('/login')
     }
   }, [])
 

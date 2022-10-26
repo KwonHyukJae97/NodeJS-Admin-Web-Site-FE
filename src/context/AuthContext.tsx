@@ -78,6 +78,8 @@ const AuthProvider = ({children}: Props) => {
       } else {
         setLoading(false)
         console.log('사용자 정보 없음')
+
+        // router.push('login')
       }
     }
     initAuth()
@@ -91,7 +93,7 @@ const AuthProvider = ({children}: Props) => {
       .then(async response => {
         console.log('로그인 성공 시 응답', response)
       })
-      .then( () => {
+      .then(() => {
         axios
           .get(authConfig.meEndpoint, {
             withCredentials: true

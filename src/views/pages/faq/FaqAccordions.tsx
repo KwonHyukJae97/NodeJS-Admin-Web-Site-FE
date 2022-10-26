@@ -32,12 +32,14 @@ const icons = {
   CurrencyUsd
 }
 
+// FAQ 게시글 컴포넌트
 const FaqAccordions = ({ data }: Props) => {
   // ** States
   const [expandedCommon, setExpandedCommon] = useState<string | false>(false)
   const [expandedPayment, setExpandedPayment] = useState<string | false>(false)
   const [expandedProduct, setExpandedProduct] = useState<string | false>(false)
 
+  // 아코디언 UI 기능
   const expanded = (section: string, panel: string) => {
     if (section === 'common') {
       return expandedCommon === panel
@@ -48,6 +50,7 @@ const FaqAccordions = ({ data }: Props) => {
     }
   }
 
+  // 해당
   const handleChange = (section: string, panel: string) => (event: SyntheticEvent, isExpanded: boolean) => {
     if (section === 'common') {
       setExpandedCommon(isExpanded ? panel : false)
@@ -58,6 +61,7 @@ const FaqAccordions = ({ data }: Props) => {
     }
   }
 
+  // 아코디언 UI 컴포넌트
   const renderAccordions = (item: FaqType) => {
     return item.qAndA.map((obj: FaqQAndAType) => {
       return (
@@ -77,10 +81,12 @@ const FaqAccordions = ({ data }: Props) => {
     })
   }
 
+  // 카테고리별 맵핑
   const renderData = () => {
     if (data) {
       return (
         <>
+          {/* 카테고리별 게시글 리스트 뿌려주기 */}
           {data.map((item: FaqType) => {
             if (item) {
               const IconTag = icons[item.icon as keyof typeof icons]
@@ -94,11 +100,12 @@ const FaqAccordions = ({ data }: Props) => {
                     >
                       <IconTag sx={{ fontSize: '1.375rem' }} />
                     </Avatar>
+
                     <Box sx={{ ml: 4 }}>
                       <Typography variant='h6' sx={{ lineHeight: '2rem' }}>
                         {item.title}
                       </Typography>
-                      <Typography variant='body2'>{item.subtitle}</Typography>
+                      {/*<Typography variant='body2'>{item.subtitle}</Typography>*/}
                     </Box>
                   </Box>
                   <Box sx={{ mt: 5 }}>{renderAccordions(item)}</Box>
