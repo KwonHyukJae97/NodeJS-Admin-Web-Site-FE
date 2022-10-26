@@ -42,24 +42,25 @@ import themeConfig from 'src/configs/themeConfig'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Hooks
-import { useAuth } from 'src/hooks/useAuth'
+// import { useAuth } from 'src/hooks/useAuth'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 
 const defaultValues = {
-  email: '',
+  id: '',
   username: '',
   password: '',
   terms: false
 }
-interface FormData {
-  email: string
-  terms: boolean
-  username: string
-  password: string
-}
+
+// interface FormData {
+//   id: string
+//   terms: boolean
+//   username: string
+//   password: string
+// }
 
 // ** Styled Components
 const RegisterIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -117,7 +118,8 @@ const Register = () => {
 
   // ** Hooks
   const theme = useTheme()
-  const { register } = useAuth()
+
+  // const { register } = useAuth()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -126,14 +128,14 @@ const Register = () => {
   const schema = yup.object().shape({
     password: yup.string().min(5).required(),
     username: yup.string().min(3).required(),
-    email: yup.string().email().required(),
+    id: yup.string().email().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms')
   })
 
   const {
     control,
-    setError,
-    handleSubmit,
+    //setError,
+    //handleSubmit,
     formState: { errors }
   } = useForm({
     defaultValues,
@@ -141,23 +143,23 @@ const Register = () => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = (data: FormData) => {
-    const { email, username, password } = data
-    register({ email, username, password }, err => {
-      if (err.email) {
-        setError('email', {
-          type: 'manual',
-          message: err.email
-        })
-      }
-      if (err.username) {
-        setError('username', {
-          type: 'manual',
-          message: err.username
-        })
-      }
-    })
-  }
+  // const onSubmit = (data: FormData) => {
+  //   const { id, username, password } = data
+  //   register({ id, username, password }, err => {
+  //     if (err.id) {
+  //       setError('id', {
+  //         type: 'manual',
+  //         message: err.id
+  //       })
+  //     }
+  //     if (err.username) {
+  //       setError('username', {
+  //         type: 'manual',
+  //         message: err.username
+  //       })
+  //     }
+  //   })
+  // }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
 
@@ -274,7 +276,7 @@ const Register = () => {
               <TypographyStyled variant='h5'>Adventure starts here 🚀</TypographyStyled>
               <Typography variant='body2'>Make your app management easy and fun!</Typography>
             </Box>
-            <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+            <form noValidate autoComplete='off'>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name='username'
@@ -298,21 +300,21 @@ const Register = () => {
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name='email'
+                  name='id'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       value={value}
-                      label='Email'
+                      label='Id'
                       onBlur={onBlur}
                       onChange={onChange}
-                      error={Boolean(errors.email)}
-                      placeholder='user@email.com'
+                      error={Boolean(errors.id)}
+                      placeholder='user'
                     />
                   )}
                 />
-                {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+                {errors.id && <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>}
               </FormControl>
               <FormControl fullWidth>
                 <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>

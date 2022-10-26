@@ -1,9 +1,11 @@
 export default {
-  meEndpoint: 'http://localhost:3000/auth/me',
-  loginEndpoint: 'http://localhost:3000/auth/login/admin',
+  meEndpoint: 'http://localhost:3001/auth/me',
+  loginEndpoint: 'http://localhost:3001/auth/login/admin',
+  storageUserDataKeyName: 'userData',
   registerEndpoint: '/jwt/register',
   storageTokenKeyName: 'authorization'
 }
+
 // export default {
 //   meEndpoint: '/auth/me',
 //   loginEndpoint: '/jwt/login',

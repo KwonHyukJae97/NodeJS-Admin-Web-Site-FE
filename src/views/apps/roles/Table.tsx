@@ -107,7 +107,7 @@ const columns = [
     field: 'nickname',
     headerName: 'User',
     renderCell: ({ row }: CellType) => {
-      const { id, nickname, name } = row
+      const { id, nickname, username } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -125,7 +125,7 @@ const columns = [
             </Link>
             <Link href={`/apps/user/view/${id}`} passHref>
               <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
-                @{name}
+                @{username}
               </Typography>
             </Link>
           </Box>
