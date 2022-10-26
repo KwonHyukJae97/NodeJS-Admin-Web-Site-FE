@@ -24,7 +24,6 @@ const Home = () => {
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
-  console.log('home test')
 
   useEffect(() => {
     // 사용자 정보가 있을 경우, 페이지 이동 처리

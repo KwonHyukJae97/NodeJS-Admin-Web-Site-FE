@@ -123,8 +123,8 @@ const App = (props: ExtendedAppProps) => {
             name='description'
             content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
           />
-          <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
-          <meta name='viewport' content='initial-scale=1, width=device-width' />
+          <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template'/>
+          <meta name='viewport' content='initial-scale=1, width=device-width'/>
         </Head>
 
         <AuthProvider>
@@ -135,10 +135,9 @@ const App = (props: ExtendedAppProps) => {
                   <ThemeComponent settings={settings}>
                     <WindowWrapper>
                       <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                        {/* 여기주석 */}
-                        {/* <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}> */}
+                        {/*<AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>*/}
                         {getLayout(<Component {...pageProps} />)}
-                        {/* </AclGuard> */}
+                        {/*</AclGuard>*/}
                       </Guard>
                     </WindowWrapper>
                     <ReactHotToast>
