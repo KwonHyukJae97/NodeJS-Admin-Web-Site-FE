@@ -42,6 +42,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/roles/TableHeader'
+import TableStickyHeader from "../../table/mui/TableStickyHeader";
 
 interface UserRoleType {
   [key: string]: ReactElement
@@ -242,17 +243,19 @@ const UserList = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader plan={plan} value={value} handleFilter={handleFilter} handlePlanChange={handlePlanChange} />
-          <DataGrid
-            autoHeight
-            rows={store.data}
-            columns={columns}
-            checkboxSelection
-            pageSize={pageSize}
-            disableSelectionOnClick
-            rowsPerPageOptions={[10, 25, 50]}
-            onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-            sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-          />
+          <TableStickyHeader />
+
+          {/*<DataGrid*/}
+          {/*  autoHeight*/}
+          {/*  rows={store.data}*/}
+          {/*  columns={columns}*/}
+          {/*  checkboxSelection*/}
+          {/*  pageSize={pageSize}*/}
+          {/*  disableSelectionOnClick*/}
+          {/*  rowsPerPageOptions={[10, 25, 50]}*/}
+          {/*  onPageSizeChange={newPageSize => setPageSize(newPageSize)}*/}
+          {/*  sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}*/}
+          {/*/>*/}
         </Card>
       </Grid>
     </Grid>

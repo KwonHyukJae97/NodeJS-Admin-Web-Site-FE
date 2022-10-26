@@ -16,7 +16,7 @@ const RolesComponent = () => {
         title={<Typography variant='h4'>본사용 공지사항</Typography>}
         subtitle={
           <Typography variant='subtitle1'>
-            공지사항 > 본사용
+            공지사항 {'>'} 본사용
           </Typography>
         }
       />

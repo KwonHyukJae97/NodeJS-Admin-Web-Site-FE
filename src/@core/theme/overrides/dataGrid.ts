@@ -57,8 +57,8 @@ const DataGrid = (theme: Theme) => {
           textTransform: 'uppercase'
         },
         columnSeparator: {
-          color: theme.palette.divider
-          // color: 'white'
+          // color: theme.palette.divider
+          color: 'white'
         },
         virtualScroller: {
           marginTop: '54px !important'

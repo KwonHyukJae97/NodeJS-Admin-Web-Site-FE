@@ -45,7 +45,7 @@ const TableHeader = (props: TableHeaderProps) => {
         </Button>
       </Box>
 
-      <Button sx={{ mr: 10, mb: 2, paddingRight: '16px', paddingLeft: '16px' }} onClick={toggle} variant='contained' startIcon={<Plus />}>
+      <Button sx={{ mr: 10, mb: 2, padding: '10px 18px' }} onClick={toggle} variant='contained' startIcon={<Plus />}>
         <Typography variant='body2'style={{ color: "white" , fontWeight: 700}}>
           등록
         </Typography>

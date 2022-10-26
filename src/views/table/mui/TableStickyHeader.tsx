@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow'
 import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
+import {AlarmLight} from "mdi-material-ui";
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import PaginationSimple from "../../components/pagination/PaginationSimple";
@@ -81,7 +82,7 @@ import CustomChip from "../../../@core/components/mui/chip";
 
 
 interface Column {
-  id: 'id' | 'title' | 'viewCnt' | 'regDate'
+  id: 'id' | 'isTop' | 'title' | 'viewCnt' | 'regDate'
   label: string
   minWidth?: number
   align?: 'center'
@@ -89,10 +90,11 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: 'id', label: '번호', minWidth: 40, align: 'center' },
-  { id: 'title', label: '제목', minWidth: 300 },
-  { id: 'viewCnt', label: '조회수', minWidth: 40, align: 'center' },
-  { id: 'regDate', label: '제목', minWidth: 80, align: 'center' }
+  { id: 'id', label: '번호', align: 'center' },
+  { id: 'isTop', label: '', align: 'center' },
+  { id: 'title', label: '제목' },
+  { id: 'viewCnt', label: '조회수', align: 'center' },
+  { id: 'regDate', label: '등록일', align: 'center' }
 ]
 
 interface Data {
@@ -135,8 +137,8 @@ const TableStickyHeader = () => {
   }
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' , backgroundColor: 'yellow'}}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <Paper sx={{ width: '100%', marginTop:'10px'}}>
+      <TableContainer>
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
             <TableRow>
@@ -159,7 +161,7 @@ const TableStickyHeader = () => {
                       <TableCell key={column.id} align={column.align}>
                         {}
                         {column.format && typeof value === 'number' ? column.format(value) : value}
-                        {/*<CustomChip label='중요' skin='light' color='primary' />*/}
+                        {column.id === 'isTop' && value === true ? <AlarmLight color='primary' style={{ paddingTop: '2px'}}>value</AlarmLight> : null}
                       </TableCell>
                     )
                   })}
