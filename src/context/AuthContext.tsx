@@ -114,42 +114,46 @@ const AuthProvider = ({ children }: Props) => {
       })
   }
 
-  //키키어 로그인 요청 시 실행
+  //카카오 로그인 요청 시 실행
   const handleKakaoLogin = (params: any, errorCallback?: ErrCallbackType) => {
     console.log('params!!', params)
     axios
       .post(authConfig.loginEndPoint2, params, { withCredentials: true })
-      .then(async res => {
+      .then(res => {
         console.log('로그인 성공 시 응답', res.data)
-      })
-      .then(async () => {
-        axios
-          .get(authConfig.kakaoLoginEndPoint, {
-            withCredentials: true
-          })
-          .then(async res => {
-            const returnUrl = router.query.returnUrl
-            console.log('returnUrl', returnUrl)
+        if (res.data.loginSuccess == true) {
+          axios
+            .get(authConfig.kakaoLoginEndPoint, {
+              withCredentials: true
+            })
+            .then(async res => {
+              const returnUrl = router.query.returnUrl
+              console.log('returnUrl', returnUrl)
 
-            console.log('사용자 정보 조회 성공 시 응답', res)
+              console.log('사용자 정보 조회 성공 시 응답', res)
 
-            const kakaoUser: KakaoUserDataType = {
-              accountId: res.data.accountId,
-              snsId: res.data.email,
-              name: res.data.name,
-              email: res.data.email,
-              birth: res.data.birth,
-              gender: res.data.gender
-            }
-            console.log('로그인 테스트', kakaoUser)
+              const kakaoUser: KakaoUserDataType = {
+                accountId: res.data.accountId,
+                snsId: res.data.email,
+                name: res.data.name,
+                email: res.data.email,
+                birth: res.data.birth,
+                gender: res.data.gender
+              }
+              console.log('로그인 테스트', kakaoUser)
 
-            setKakaoUser(kakaoUser)
-            await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(kakaoUser))
+              setKakaoUser(kakaoUser)
+              await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(kakaoUser))
 
-            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+              const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
-            await router.replace(redirectURL as string)
-          })
+              await router.replace(redirectURL as string)
+            })
+        } else {
+          console.log('loginSuccess 값 false일경우')
+          // router.replace('/login')
+          // window.location.href = '/register')
+        }
       })
       .catch(err => {
         if (errorCallback) errorCallback(err)

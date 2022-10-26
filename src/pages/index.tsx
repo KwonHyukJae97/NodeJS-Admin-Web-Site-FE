@@ -28,10 +28,9 @@ const Home = () => {
 
   useEffect(() => {
     // 사용자 정보가 있을 경우, 페이지 이동 처리
-    if (auth.user || auth.kakaoUser) {
+    if (auth.user) {
       router.replace('/dashboards/crm')
       console.log('auth.user 정보', auth.user)
-      console.log('auth.kakaoUser 정보', auth.kakaoUser)
     }
   }, [])
 

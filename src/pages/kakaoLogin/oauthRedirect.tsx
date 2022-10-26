@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import axios from 'axios'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
@@ -8,6 +8,7 @@ import { useCookies } from 'react-cookie'
 import { useAuth } from 'src/hooks/useAuth'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // 리다이렉트 될 화면 (인가코드 받음) / 로그인 처리 진행시 보여질 화면
 const OauthRedirect = () => {
@@ -34,6 +35,7 @@ const OauthRedirect = () => {
   //   })
 
   useEffect(() => {
+    console.log('redirect test')
     const code = new URL(window.location.href).searchParams.get('code')
     console.log('카카오 인가코드입니다', code)
 
@@ -217,7 +219,9 @@ const OauthRedirect = () => {
   //       })
   //   }
   // }
-  return <h4>로그인 중2입니다.</h4>
+  return <h4>로그인 중입니다. 잠시만 기다려주세요.</h4>
 }
+// OauthRedirect.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+OauthRedirect.guestGuard = true
 
 export default OauthRedirect
