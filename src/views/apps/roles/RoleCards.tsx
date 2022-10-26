@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 // ** React Imports
 import { MouseEvent, useEffect, useState } from 'react';
 
@@ -34,6 +35,8 @@ import { Controller, useForm } from 'react-hook-form';
 // ** axios Imports
 import axios from 'axios';
 
+import moment from 'moment';
+
 // 역할 리스트 타입 정의
 interface CardDataType {
   roleId: number;
@@ -51,12 +54,14 @@ interface permissionType {
 const RolesCards = () => {
   // ** States
   const [open, setOpen] = useState<boolean>(false),
-    [dialogTitle, setDialogTitle] = useState<'Add' | 'Edit'>('Add'),
+    [dialogTitle, setDialogTitle] = useState<'Add' | 'Edit' | 'View'>('Add'),
     [cardData, setCardData] = useState<any[]>([]),
+    [viewData, setViewData] = useState<any>({}),
     [permissionData, setPermissionData] = useState<any[]>([]),
     [grantType, setGrantType] = useState<any[]>([]),
     [permissionId, setPermissionId] = useState(0),
     [roleId, setRoleId] = useState(0),
+    [title, setTitle] = useState(''),
     [checkedItem, setCheckedItem] = useState(new Set());
 
   // 권한 데이터 정의
@@ -76,9 +81,14 @@ const RolesCards = () => {
   } = useForm();
 
   // 버튼 열기
-  const handleClickOpen = () => {
+  const handleClickOpen = (action: string, roleId: number) => {
     setOpen(true);
-    getPermissionData();
+    if (action === 'Edit') {
+      getPermissionData();
+    }
+    if (action === 'View') {
+      getRoleView(roleId);
+    }
   };
 
   // 버튼 닫기
@@ -163,6 +173,18 @@ const RolesCards = () => {
       });
   };
 
+  // 권한 상세 정보 불러오기
+  const getRoleView = (roleId: number) => {
+    axios
+      .get(`http://localhost:3000/role/${roleId}`)
+      .then((res) => {
+        setViewData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const renderCards = () =>
     cardData.map((item, index: number) => (
       <Grid item xs={12} sm={6} lg={4} key={index}>
@@ -185,7 +207,16 @@ const RolesCards = () => {
               </AvatarGroup>
             </Box>
             <Box>
-              <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+              <Typography
+                variant="h6"
+                sx={{ color: 'text.secondary', cursor: 'pointer' }}
+                onClick={() => {
+                  setRoleId(item.roleId);
+                  setTitle(item.title);
+                  handleClickOpen('View', item.roleId);
+                  setDialogTitle('View');
+                }}
+              >
                 {item.title}
               </Typography>
             </Box>
@@ -195,7 +226,8 @@ const RolesCards = () => {
                 sx={{ color: 'primary.main', cursor: 'pointer' }}
                 onClick={() => {
                   setRoleId(item.roleId);
-                  handleClickOpen();
+                  setTitle(item.title);
+                  handleClickOpen('Edit', item.roleId);
                   setDialogTitle('Edit');
                 }}
               >
@@ -242,9 +274,9 @@ const RolesCards = () => {
     setGrantType(Array.from(checkedItem));
   };
 
-  // useState(grantType) 비동기 문제를 위한 useEffect 사용
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  // useState 비동기 문제 해결을 위한 useEffect 사용
   useEffect(() => {}, [grantType]);
+  useEffect(() => {}, [roleId]);
 
   const onSubmit = (data: any) => {
     setValue('roleName', data.roleName);
@@ -288,6 +320,7 @@ const RolesCards = () => {
 
   // 역할 수정
   const updateRole = (data: { roleName: any }, roleId: number) => {
+    console.log('roleName', title);
     console.log('updateRole', grantType.join(','));
     if (confirm('등록 하시겠습니까?')) {
       axios
@@ -314,7 +347,7 @@ const RolesCards = () => {
         <Card
           sx={{ cursor: 'pointer' }}
           onClick={() => {
-            handleClickOpen();
+            handleClickOpen('Add', 0);
             setDialogTitle('Add');
           }}
         >
@@ -338,7 +371,7 @@ const RolesCards = () => {
                     variant="contained"
                     sx={{ mb: 2.5, whiteSpace: 'nowrap' }}
                     onClick={() => {
-                      handleClickOpen();
+                      handleClickOpen('Add', 0);
                       setDialogTitle('Add');
                     }}
                   >
@@ -357,26 +390,27 @@ const RolesCards = () => {
             <Typography variant="h4" component="span">
               {`${dialogTitle} Role`}
             </Typography>
-            <Typography variant="body2">Set Role Permissions</Typography>
           </DialogTitle>
           <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
             <Box sx={{ my: 4 }}>
               <FormControl fullWidth>
-                <Controller
-                  name="roleName"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value}
-                      label="Role Name"
-                      onChange={onChange}
-                      error={Boolean(errors.roleName)}
-                      defaultValue=""
-                      placeholder="Enter Role Name"
-                    />
-                  )}
-                />
+                {dialogTitle != 'View' ? (
+                  <Controller
+                    name="roleName"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value}
+                        label="Role Name"
+                        onChange={onChange}
+                        error={Boolean(errors.roleName)}
+                        defaultValue={title}
+                        placeholder="Enter Role Name"
+                      />
+                    )}
+                  />
+                ) : null}
                 {errors.roleName && (
                   <FormHelperText sx={{ color: 'error.main' }}>
                     Please enter a valid role name
@@ -384,83 +418,119 @@ const RolesCards = () => {
                 )}
               </FormControl>
             </Box>
-            <Typography variant="h6">Role Permissions</Typography>
+            {dialogTitle != 'View' ? (
+              <Typography variant="h6">Role Permissions</Typography>
+            ) : (
+              <Typography variant="h6">{title}</Typography>
+            )}
             <TableContainer>
               <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    {/* <TableCell sx={{ pl: '0 !important' }}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          fontSize: '0.875rem',
-                          alignItems: 'center',
-                          textTransform: 'capitalize'
-                        }}
-                      >
-                        Administrator Access
-                        <Tooltip placement='top' title='Allows a full access to the system'>
-                          <InformationOutline sx={{ ml: 1, fontSize: '1rem' }} />
-                        </Tooltip>
-                      </Box>
-                    </TableCell> 
-                    <TableCell colSpan={3}>
-                      <FormControlLabel
-                        label="Select All"
-                        control={<Checkbox size="small" />}
-                        sx={{ '& .MuiTypography-root': { textTransform: 'capitalize' } }}
-                      />
-                    </TableCell>*/}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {permissionData.map((i, index: number) => {
-                    return (
-                      <TableRow
-                        onClick={(event) => handleClick(event, i.permissionId)}
-                        key={index}
-                        sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
-                      >
-                        <TableCell
+                {dialogTitle === 'View' ? (
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ pl: '0 !important' }}>
+                        <Box
                           sx={{
-                            fontWeight: 600,
-                            color: (theme) => `${theme.palette.text.primary} !important`,
+                            display: 'flex',
+                            fontSize: '0.875rem',
+                            alignItems: 'center',
+                            textTransform: 'capitalize',
                           }}
                         >
-                          {i.displayName}
-                        </TableCell>
-                        <TableCell>
-                          {dataList.map((list) => (
-                            <FormControlLabel
-                              name="grantType"
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  onChange={(e) => onCheckedType(e.target.checked, e.target.value)}
-                                />
-                              }
-                              key={list.value}
-                              label={list.type}
-                              value={list.value}
-                            />
-                          ))}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
+                          Permission Name
+                        </Box>
+                      </TableCell>
+                      <TableCell>Grant Type</TableCell>
+                      <TableCell>Register Date</TableCell>
+                      <TableCell>Update Date</TableCell>
+                    </TableRow>
+                  </TableHead>
+                ) : null}
+                {dialogTitle === 'View' ? (
+                  <TableBody>
+                    <TableRow sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
+                      <TableCell>{viewData.P_display_name}</TableCell>
+                      <TableCell>
+                        {`${viewData.RP_grant_type}` === '0'
+                          ? 'Write'
+                          : `${viewData.RP_grant_type}` === '1'
+                          ? 'Read'
+                          : `${viewData.RP_grant_type}` === '2'
+                          ? 'Update'
+                          : `${viewData.RP_grant_type}` === '3'
+                          ? 'Delete'
+                          : null}
+                      </TableCell>
+                      <TableCell>
+                        {moment(`${viewData.RP_reg_date}`).format('YYYY-MM-DD HH:mm')}
+                      </TableCell>
+                      <TableCell>
+                        {moment(`${viewData.RP_update_date}`).format('YYYY-MM-DD HH:mm')}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : null}
+                {dialogTitle != 'View' ? (
+                  <TableBody>
+                    {permissionData.map((i, index: number) => {
+                      return (
+                        <TableRow
+                          onClick={(event) => handleClick(event, i.permissionId)}
+                          key={index}
+                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                        >
+                          <TableCell
+                            sx={{
+                              fontWeight: 600,
+                              color: (theme) => `${theme.palette.text.primary} !important`,
+                            }}
+                          >
+                            {i.displayName}
+                          </TableCell>
+
+                          <TableCell>
+                            {dataList.map((list) => (
+                              <FormControlLabel
+                                name="grantType"
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    onChange={(e) =>
+                                      onCheckedType(e.target.checked, e.target.value)
+                                    }
+                                  />
+                                }
+                                key={list.value}
+                                label={list.type}
+                                value={list.value}
+                              />
+                            ))}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                ) : null}
               </Table>
             </TableContainer>
           </DialogContent>
           <DialogActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
-            <Box className="demo-space-x">
-              <Button size="large" type="submit" variant="contained">
-                Submit
-              </Button>
-              <Button size="large" color="secondary" variant="outlined" onClick={handleClose}>
-                Discard
-              </Button>
-            </Box>
+            {dialogTitle != 'View' ? (
+              <Box className="demo-space-x">
+                <Button size="large" type="submit" variant="contained">
+                  Submit
+                </Button>
+                <Button size="large" color="secondary" variant="outlined" onClick={handleClose}>
+                  Discard
+                </Button>
+              </Box>
+            ) : (
+              <Box className="demo-space-x">
+                <Button size="large" variant="outlined" onClick={handleClose}>
+                  Discard
+                </Button>
+              </Box>
+            )}
           </DialogActions>
         </form>
       </Dialog>
