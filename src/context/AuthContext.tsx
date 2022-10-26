@@ -70,6 +70,8 @@ const AuthProvider = ({children}: Props) => {
             setUser(user)
           })
           .catch(() => {
+            // 토큰 만료 시, 로그인 페이지로 이동 / 로컬스토리지에 저장되어있는 userData 삭제
+            router.push('login')
             localStorage.removeItem(authConfig.storageUserDataKeyName)
             setUser(null)
             setLoading(false)
