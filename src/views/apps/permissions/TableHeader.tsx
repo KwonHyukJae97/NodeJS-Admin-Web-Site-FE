@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
@@ -53,12 +53,17 @@ const TableHeader = (props: TableHeaderProps) => {
   // 버튼 토글 메소드
   const handleDialogToggle = () => {
     setOpen(!open);
+    setCheckedList([]);
   };
 
   // 권한 입력 배열 처리 메소드
   const onCheckedElement = (checked, list) => {
     if (checked) {
+      console.log('checked?', checked, list);
+
       setCheckedList([...checkedList, list]);
+
+      console.log('checkedList:', checkedList);
     } else if (!checked) {
       setCheckedList(checkedList.filter((el) => el !== list));
     }
@@ -81,6 +86,9 @@ const TableHeader = (props: TableHeaderProps) => {
         .catch((err) => {
           console.log(err.response.data);
         });
+    } else {
+      alert('cancled');
+      setCheckedList([]);
     }
   };
 

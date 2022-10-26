@@ -1,5 +1,5 @@
 // ** React Imports
-import { SetStateAction, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 
 // ** MUI Imports
 import Avatar from '@mui/material/Avatar';
@@ -25,6 +25,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { DeleteOutline } from 'mdi-material-ui';
+import { IconButton } from '@mui/material';
 
 // ** Third Party Imports
 import { Controller, useForm } from 'react-hook-form';
@@ -32,6 +34,7 @@ import { Controller, useForm } from 'react-hook-form';
 // ** axios Imports
 import axios from 'axios';
 
+// 역할 리스트 타입 정의
 interface CardDataType {
   roleId: number;
   title: string;
@@ -39,19 +42,29 @@ interface CardDataType {
   totalUsers: number;
 }
 
+// 권한 타입 정의
+interface permissionType {
+  permissionId: number;
+  displayName: string;
+}
+
 const RolesCards = () => {
   // ** States
-  const [open, setOpen] = useState<boolean>(false);
-  const [dialogTitle, setDialogTitle] = useState<'Add' | 'Edit'>('Add');
-  const [cardData, setCardData] = useState<any[]>([]);
-  const [grantType, setGrantType] = useState('');
+  const [open, setOpen] = useState<boolean>(false),
+    [dialogTitle, setDialogTitle] = useState<'Add' | 'Edit'>('Add'),
+    [cardData, setCardData] = useState<any[]>([]),
+    [permissionData, setPermissionData] = useState<any[]>([]),
+    [grantType, setGrantType] = useState<any[]>([]),
+    [permissionId, setPermissionId] = useState(0),
+    [roleId, setRoleId] = useState(0),
+    [checkedItem, setCheckedItem] = useState(new Set());
 
   // 권한 데이터 정의
   const dataList = [
-    { id: 0, data: 'Write' },
-    { id: 1, data: 'Read' },
-    { id: 2, data: 'Update' },
-    { id: 3, data: 'Delete' },
+    { value: '0', type: 'Write' },
+    { value: '1', type: 'Read' },
+    { value: '2', type: 'Update' },
+    { value: '3', type: 'Delete' },
   ];
 
   // ** Hooks
@@ -62,12 +75,33 @@ const RolesCards = () => {
     formState: { errors },
   } = useForm();
 
-  const handleClickOpen = () => setOpen(true);
+  // 버튼 열기
+  const handleClickOpen = () => {
+    setOpen(true);
+    getPermissionData();
+  };
 
+  // 버튼 닫기
   const handleClose = () => {
     setOpen(false);
     setValue('roleName', '');
-    setValue('grantType', '');
+    checkedItem.clear();
+  };
+
+  // 삭제 처리
+  // To Do : 추후 권한 처리 적용 후 삭제 권한자만 보일 수 있도록 수정해야함
+  const handleDeleteClick = (roleId: number) => {
+    if (confirm('삭제 하시겠습니까?')) {
+      axios
+        .delete(`http://localhost:3000/role/${roleId}`)
+        .then(() => {
+          alert('삭제가 완료 되었습니다.');
+          location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   //role 데이터 불러오기
@@ -103,18 +137,31 @@ const RolesCards = () => {
       });
   }, []);
 
-  // 화면(권한)이름 정의
-  const rolesArr = [
-    'User Management',
-    'Content Management',
-    'Disputes Management',
-    'Database Management',
-    'Financial Management',
-    'Reporting',
-    'API Control',
-    'Repository Management',
-    'Payroll',
-  ];
+  // 화면 이름(권한) 데이터 불러오기
+  const getPermissionData = () => {
+    axios
+      .get('http://localhost:3000/permission')
+      .then((res) => {
+        const permissionMap = new Map<number, permissionType>();
+        res.data.forEach((permission: { displayName: string; permissionId: number }) => {
+          if (!permissionMap.has(permission.permissionId)) {
+            const permissionData: permissionType = {
+              permissionId: permission.permissionId,
+              displayName: permission.displayName,
+            };
+            permissionMap.set(permission.permissionId, permissionData);
+          }
+        });
+        const permissionDataList: permissionType[] = [];
+        permissionMap.forEach((value) => {
+          permissionDataList.push(value);
+        });
+        setPermissionData(permissionDataList);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const renderCards = () =>
     cardData.map((item, index: number) => (
@@ -147,56 +194,117 @@ const RolesCards = () => {
                 variant="body2"
                 sx={{ color: 'primary.main', cursor: 'pointer' }}
                 onClick={() => {
+                  setRoleId(item.roleId);
                   handleClickOpen();
                   setDialogTitle('Edit');
                 }}
               >
                 Edit Role
               </Typography>
-              {/* <IconButton size="small">
-                <ContentCopy />
-              </IconButton> */}
+              <IconButton
+                size="small"
+                onClick={() => {
+                  handleDeleteClick(item.roleId);
+                }}
+              >
+                <DeleteOutline />
+              </IconButton>
             </Box>
           </CardContent>
         </Card>
       </Grid>
     ));
 
+  // permissionId 처리
+  const handleClick = (
+    event: MouseEvent<HTMLTableRowElement, globalThis.MouseEvent>,
+    id: number,
+  ) => {
+    if (event) {
+      setPermissionId(id);
+    }
+  };
+
   // 권한 타입 checkBox 처리
-  const onCheckedType = (value: SetStateAction<string>) => {
-    console.log('checked value:', value);
-    setGrantType(value);
+  const onCheckedType = (isChecked: boolean, value: string) => {
+    // 체크박스에 체크 되었을 때 값 저장
+    if (isChecked) {
+      checkedItem.add(value);
+      setCheckedItem(checkedItem);
+
+      // 체크 안됨&체크박스 두번 누를 경우 중복데이터 삭제 후 값 저장
+    } else if (!isChecked && checkedItem.has(value)) {
+      checkedItem.delete(value);
+      setCheckedItem(checkedItem);
+    }
+
+    // Set을 Array타입으로 변환
+    setGrantType(Array.from(checkedItem));
   };
 
   // useState(grantType) 비동기 문제를 위한 useEffect 사용
-  useEffect(() => {
-    console.log('grantType?', grantType);
-  }, [grantType]);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  useEffect(() => {}, [grantType]);
 
-  // 역할 등록
   const onSubmit = (data: any) => {
-    setValue('grantType', grantType);
     setValue('roleName', data.roleName);
 
+    if (grantType.length > 1) {
+      grantType.forEach((value) => {
+        const setType = value;
+        console.log('splitValue', setType);
+      });
+    }
+    if (dialogTitle == 'Add') {
+      registerRole(data);
+    } else if (dialogTitle == 'Edit') {
+      updateRole(data, roleId);
+    }
+    handleClose();
+  };
+
+  // 역할 등록
+  const registerRole = (data: { roleName: any }) => {
     if (confirm('등록 하시겠습니까?')) {
       axios
         .post('http://localhost:3000/role', {
           roleName: data.roleName,
           grantType: grantType,
+          permissionId: permissionId,
 
           // TO DO : companyId 필터링적용 후 수정 필요
           companyId: 3,
-          permissionId: 8,
         })
         .then((res) => {
           console.log(res.data);
           alert('등록이 완료 되었습니다.');
+          location.reload();
         })
         .catch((err) => {
           console.log(err.response.data);
         });
     }
-    handleClose();
+  };
+
+  // 역할 수정
+  const updateRole = (data: { roleName: any }, roleId: number) => {
+    console.log('updateRole', grantType.join(','));
+    if (confirm('등록 하시겠습니까?')) {
+      axios
+        .patch(`http://localhost:3000/role/${roleId}`, {
+          roleName: data.roleName,
+          grantType: grantType.join(','),
+          permissionId: permissionId,
+        })
+        .then((res) => {
+          console.log(res.data);
+          alert('수정이 완료 되었습니다.');
+          location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (
@@ -252,31 +360,30 @@ const RolesCards = () => {
             <Typography variant="body2">Set Role Permissions</Typography>
           </DialogTitle>
           <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
-            {`${dialogTitle}` === 'Add' ? (
-              <Box sx={{ my: 4 }}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="roleName"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label="Role Name"
-                        onChange={onChange}
-                        error={Boolean(errors.name)}
-                        placeholder="Enter Role Name"
-                      />
-                    )}
-                  />
-                  {errors.name && (
-                    <FormHelperText sx={{ color: 'error.main' }}>
-                      Please enter a valid role name
-                    </FormHelperText>
+            <Box sx={{ my: 4 }}>
+              <FormControl fullWidth>
+                <Controller
+                  name="roleName"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      value={value}
+                      label="Role Name"
+                      onChange={onChange}
+                      error={Boolean(errors.roleName)}
+                      defaultValue=""
+                      placeholder="Enter Role Name"
+                    />
                   )}
-                </FormControl>
-              </Box>
-            ) : null}
+                />
+                {errors.roleName && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    Please enter a valid role name
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Box>
             <Typography variant="h6">Role Permissions</Typography>
             <TableContainer>
               <Table size="small">
@@ -307,9 +414,10 @@ const RolesCards = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rolesArr.map((i, index: number) => {
+                  {permissionData.map((i, index: number) => {
                     return (
                       <TableRow
+                        onClick={(event) => handleClick(event, i.permissionId)}
                         key={index}
                         sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
                       >
@@ -319,7 +427,7 @@ const RolesCards = () => {
                             color: (theme) => `${theme.palette.text.primary} !important`,
                           }}
                         >
-                          {i}
+                          {i.displayName}
                         </TableCell>
                         <TableCell>
                           {dataList.map((list) => (
@@ -328,12 +436,12 @@ const RolesCards = () => {
                               control={
                                 <Checkbox
                                   size="small"
-                                  onChange={(e) => onCheckedType(e.target.value)}
+                                  onChange={(e) => onCheckedType(e.target.checked, e.target.value)}
                                 />
                               }
-                              key={list.id}
-                              label={list.data}
-                              value={list.id}
+                              key={list.value}
+                              label={list.type}
+                              value={list.value}
                             />
                           ))}
                         </TableCell>
