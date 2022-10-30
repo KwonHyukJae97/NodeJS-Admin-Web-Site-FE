@@ -6,10 +6,26 @@ export type LoginParams = {
   password: string;
 };
 
+// export type RegisterParams = {
+//   id: string;
+//   username: string;
+//   password: string;
+// };
+
+// 회원가입 데이터 정의
 export type RegisterParams = {
   id: string;
-  username: string;
   password: string;
+  name: string;
+  email: string;
+  phone: string;
+  nickname: string;
+  birth: string;
+  gender: string;
+  companyId: number;
+  roleId: number;
+  isSuper: boolean;
+  division: boolean;
 };
 
 export type KakaoRegisterParams = {

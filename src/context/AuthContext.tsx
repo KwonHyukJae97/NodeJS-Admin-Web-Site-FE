@@ -200,6 +200,7 @@ const AuthProvider = ({ children }: Props) => {
     router.push('/login');
   };
 
+  // 회원가입 요청 시 실행
   const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
     axios
       .post(authConfig.registerEndpoint, params)

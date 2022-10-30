@@ -47,11 +47,30 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
+import { registerLocale } from 'react-datepicker';
+import auth from 'src/configs/auth';
+import { useAuth } from 'src/hooks/useAuth';
+
+// const defaultValues = {
+//   id: '',
+//   username: '',
+//   password: '',
+//   terms: false,
+// };
 
 const defaultValues = {
   id: '',
-  username: '',
   password: '',
+  name: '',
+  email: '',
+  phone: '',
+  nickname: '',
+  birth: '',
+  gender: '',
+  companyId: '',
+  roleId: '',
+  isSuper: '',
+  division: '',
   terms: false,
 };
 
@@ -112,12 +131,30 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
     color: theme.palette.text.secondary,
   },
 }));
+
+interface FormData {
+  id: string;
+  password: string;
+  name: string;
+  email: string;
+  phone: string;
+  nickname: string;
+  birth: string;
+  gender: string;
+  companyId: number;
+  roleId: number;
+  isSuper: boolean;
+  division: boolean;
+}
+
 const Register = () => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   // ** Hooks
   const theme = useTheme();
+
+  const auth = useAuth();
 
   // const { register } = useAuth()
   const { settings } = useSettings();
@@ -126,16 +163,25 @@ const Register = () => {
   // ** Vars
   const { skin } = settings;
   const schema = yup.object().shape({
-    password: yup.string().min(5).required(),
-    username: yup.string().min(3).required(),
-    id: yup.string().email().required(),
+    id: yup.string().min(8).required(),
+    password: yup.string().min(8).required(),
+    name: yup.string().min(3).required(),
+    email: yup.string().email().required(),
+    phone: yup.string().min(11).required(),
+    nickname: yup.string().min(3).required(),
+    birth: yup.string().min(3).required(),
+    gender: yup.string().required(),
+    companyId: yup.string().required(),
+    roleId: yup.string().required(),
+    isSuper: yup.string().required(),
+    division: yup.string().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
   const {
     control,
     //setError,
-    //handleSubmit,
+    handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues,
@@ -160,6 +206,37 @@ const Register = () => {
   //     }
   //   })
   // }
+
+  const onSubmit = (data: FormData) => {
+    const {
+      id,
+      password,
+      name,
+      email,
+      phone,
+      nickname,
+      birth,
+      gender,
+      companyId,
+      roleId,
+      isSuper,
+      division,
+    } = data;
+    auth.register({
+      id,
+      password,
+      name,
+      email,
+      phone,
+      nickname,
+      birth,
+      gender,
+      companyId,
+      roleId,
+      isSuper,
+      division,
+    });
+  };
 
   const imageSource =
     skin === 'bordered'
@@ -302,30 +379,7 @@ const Register = () => {
               <TypographyStyled variant="h5">Adventure starts here 🚀</TypographyStyled>
               <Typography variant="body2">Make your app management easy and fun!</Typography>
             </Box>
-            <form noValidate autoComplete="off">
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="username"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      autoFocus
-                      value={value}
-                      onBlur={onBlur}
-                      label="Username"
-                      onChange={onChange}
-                      placeholder="johndoe"
-                      error={Boolean(errors.username)}
-                    />
-                  )}
-                />
-                {errors.username && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.username.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
+            <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="id"
@@ -338,7 +392,7 @@ const Register = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.id)}
-                      placeholder="user"
+                      placeholder="tenpick123"
                     />
                   )}
                 />
@@ -346,7 +400,7 @@ const Register = () => {
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>
                 )}
               </FormControl>
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <InputLabel htmlFor="auth-login-v2-password" error={Boolean(errors.password)}>
                   Password
                 </InputLabel>
@@ -380,6 +434,244 @@ const Register = () => {
                 {errors.password && (
                   <FormHelperText sx={{ color: 'error.main' }}>
                     {errors.password.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="name"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="name"
+                      onChange={onChange}
+                      placeholder="johndoe"
+                      error={Boolean(errors.name)}
+                    />
+                  )}
+                />
+                {errors.name && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.name.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="email"
+                      onChange={onChange}
+                      placeholder="johndoe"
+                      error={Boolean(errors.email)}
+                    />
+                  )}
+                />
+                {errors.email && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.email.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="phone"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="phone"
+                      onChange={onChange}
+                      placeholder="01011112222"
+                      error={Boolean(errors.phone)}
+                    />
+                  )}
+                />
+                {errors.phone && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.phone.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="nickname"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="nickname"
+                      onChange={onChange}
+                      placeholder="johndoe123"
+                      error={Boolean(errors.nickname)}
+                    />
+                  )}
+                />
+                {errors.nickname && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.nickname.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="birth"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="birth"
+                      onChange={onChange}
+                      placeholder="ex) 971113"
+                      error={Boolean(errors.birth)}
+                    />
+                  )}
+                />
+                {errors.birth && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.birth.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="gender"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="gender"
+                      onChange={onChange}
+                      placeholder="ex) male"
+                      error={Boolean(errors.gender)}
+                    />
+                  )}
+                />
+                {errors.gender && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.gender.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="companyId"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="companyId"
+                      onChange={onChange}
+                      placeholder="companyId"
+                      error={Boolean(errors.companyId)}
+                    />
+                  )}
+                />
+                {errors.companyId && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.companyId.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="roleId"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="roleId"
+                      onChange={onChange}
+                      placeholder="roleId"
+                      error={Boolean(errors.roleId)}
+                    />
+                  )}
+                />
+                {errors.roleId && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.roleId.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="isSuper"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="isSuper"
+                      onChange={onChange}
+                      placeholder="isSuper"
+                      error={Boolean(errors.name)}
+                    />
+                  )}
+                />
+                {errors.isSuper && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.isSuper.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="division"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="division"
+                      onChange={onChange}
+                      placeholder="division"
+                      error={Boolean(errors.division)}
+                    />
+                  )}
+                />
+                {errors.division && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.division.message}
                   </FormHelperText>
                 )}
               </FormControl>
