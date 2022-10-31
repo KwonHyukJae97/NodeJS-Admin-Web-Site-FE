@@ -50,6 +50,7 @@ import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import { registerLocale } from 'react-datepicker';
 import auth from 'src/configs/auth';
 import { useAuth } from 'src/hooks/useAuth';
+import { number } from 'yup/lib/locale';
 
 // const defaultValues = {
 //   id: '',
@@ -57,22 +58,6 @@ import { useAuth } from 'src/hooks/useAuth';
 //   password: '',
 //   terms: false,
 // };
-
-const defaultValues = {
-  id: '',
-  password: '',
-  name: '',
-  email: '',
-  phone: '',
-  nickname: '',
-  birth: '',
-  gender: '',
-  companyId: '',
-  roleId: '',
-  isSuper: '',
-  division: '',
-  terms: false,
-};
 
 // interface FormData {
 //   id: string
@@ -132,6 +117,20 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   },
 }));
 
+const defaultValues = {
+  id: '',
+  password: '',
+  name: '',
+  email: '',
+  phone: '',
+  nickname: '',
+  birth: '',
+  gender: '',
+  companyName: '',
+  companyCode: null,
+  terms: false,
+};
+
 interface FormData {
   id: string;
   password: string;
@@ -141,10 +140,8 @@ interface FormData {
   nickname: string;
   birth: string;
   gender: string;
-  companyId: number;
-  roleId: number;
-  isSuper: boolean;
-  division: boolean;
+  companyName: string;
+  companyCode: number;
 }
 
 const Register = () => {
@@ -171,16 +168,16 @@ const Register = () => {
     nickname: yup.string().min(3).required(),
     birth: yup.string().min(3).required(),
     gender: yup.string().required(),
-    companyId: yup.string().required(),
-    roleId: yup.string().required(),
-    isSuper: yup.string().required(),
-    division: yup.string().required(),
+    companyName: yup.string().required(),
+    companyCode: yup.number().required(),
+    // roleId: yup.string().required(),
+    // isSuper: yup.string().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
   const {
     control,
-    //setError,
+    setError,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -208,34 +205,40 @@ const Register = () => {
   // }
 
   const onSubmit = (data: FormData) => {
-    const {
-      id,
-      password,
-      name,
-      email,
-      phone,
-      nickname,
-      birth,
-      gender,
-      companyId,
-      roleId,
-      isSuper,
-      division,
-    } = data;
-    auth.register({
-      id,
-      password,
-      name,
-      email,
-      phone,
-      nickname,
-      birth,
-      gender,
-      companyId,
-      roleId,
-      isSuper,
-      division,
-    });
+    const { id, password, name, email, phone, nickname, birth, gender, companyName, companyCode } =
+      data;
+    auth.register(
+      {
+        id,
+        password,
+        name,
+        email,
+        phone,
+        nickname,
+        birth,
+        gender,
+        companyName,
+        companyCode,
+      },
+      () => {
+        setError('id', {
+          type: 'manual',
+          message: '중복된 아이디 입니다.',
+        }),
+          setError('email', {
+            type: 'manual',
+            message: '중복된 이메일 입니다.',
+          });
+        setError('phone', {
+          type: 'manual',
+          message: '중복된 전화번호 입니다.',
+        }),
+          setError('nickname', {
+            type: 'manual',
+            message: '중복된 닉네임 입니다.',
+          });
+      },
+    );
   };
 
   const imageSource =
@@ -376,8 +379,10 @@ const Register = () => {
               </Typography>
             </Box>
             <Box sx={{ mb: 6 }}>
-              <TypographyStyled variant="h5">Adventure starts here 🚀</TypographyStyled>
-              <Typography variant="body2">Make your app management easy and fun!</Typography>
+              <TypographyStyled variant="h5">
+                열Pick 로그인을 위한 필수 정보를 입력해주세요!
+              </TypographyStyled>
+              <Typography variant="body2">아래 내용을 입력해주세요!</Typography>
             </Box>
             <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
@@ -388,7 +393,7 @@ const Register = () => {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       value={value}
-                      label="Id"
+                      label="아이디"
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.id)}
@@ -402,7 +407,7 @@ const Register = () => {
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <InputLabel htmlFor="auth-login-v2-password" error={Boolean(errors.password)}>
-                  Password
+                  비밀번호
                 </InputLabel>
                 <Controller
                   name="password"
@@ -411,7 +416,7 @@ const Register = () => {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <OutlinedInput
                       value={value}
-                      label="Password"
+                      label="비밀번호"
                       onBlur={onBlur}
                       onChange={onChange}
                       id="auth-login-v2-password"
@@ -447,7 +452,7 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="name"
+                      label="이름"
                       onChange={onChange}
                       placeholder="johndoe"
                       error={Boolean(errors.name)}
@@ -470,7 +475,7 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="email"
+                      label="이메일"
                       onChange={onChange}
                       placeholder="johndoe"
                       error={Boolean(errors.email)}
@@ -494,7 +499,7 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="phone"
+                      label="전화번호"
                       onChange={onChange}
                       placeholder="01011112222"
                       error={Boolean(errors.phone)}
@@ -518,7 +523,7 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="nickname"
+                      label="닉네임"
                       onChange={onChange}
                       placeholder="johndoe123"
                       error={Boolean(errors.nickname)}
@@ -542,7 +547,7 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="birth"
+                      label="생년월일"
                       onChange={onChange}
                       placeholder="ex) 971113"
                       error={Boolean(errors.birth)}
@@ -566,7 +571,7 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="gender"
+                      label="성별"
                       onChange={onChange}
                       placeholder="ex) male"
                       error={Boolean(errors.gender)}
@@ -582,7 +587,7 @@ const Register = () => {
 
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name="companyId"
+                  name="companyName"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
@@ -590,23 +595,22 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="companyId"
+                      label="회원사명"
                       onChange={onChange}
-                      placeholder="companyId"
-                      error={Boolean(errors.companyId)}
+                      placeholder="companyName"
+                      error={Boolean(errors.companyName)}
                     />
                   )}
                 />
-                {errors.companyId && (
+                {errors.companyName && (
                   <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.companyId.message}
+                    {errors.companyName.message}
                   </FormHelperText>
                 )}
               </FormControl>
-
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name="roleId"
+                  name="companyCode"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
@@ -614,64 +618,16 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="roleId"
+                      label="회원사코드"
                       onChange={onChange}
-                      placeholder="roleId"
-                      error={Boolean(errors.roleId)}
+                      placeholder="ex) 기업일 경우 1, 기관일 경우 2"
+                      error={Boolean(errors.companyCode)}
                     />
                   )}
                 />
-                {errors.roleId && (
+                {errors.companyCode && (
                   <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.roleId.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
-
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="isSuper"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      autoFocus
-                      value={value}
-                      onBlur={onBlur}
-                      label="isSuper"
-                      onChange={onChange}
-                      placeholder="isSuper"
-                      error={Boolean(errors.name)}
-                    />
-                  )}
-                />
-                {errors.isSuper && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.isSuper.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
-
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="division"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      autoFocus
-                      value={value}
-                      onBlur={onBlur}
-                      label="division"
-                      onChange={onChange}
-                      placeholder="division"
-                      error={Boolean(errors.division)}
-                    />
-                  )}
-                />
-                {errors.division && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.division.message}
+                    {errors.companyCode.message}
                   </FormHelperText>
                 )}
               </FormControl>
