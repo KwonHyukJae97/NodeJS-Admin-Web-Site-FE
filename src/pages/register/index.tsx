@@ -134,8 +134,6 @@ const Register = () => {
 
   const {
     control,
-    //setError,
-    //handleSubmit,
     formState: { errors }
   } = useForm({
     defaultValues,
