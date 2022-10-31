@@ -7,7 +7,6 @@ import PageHeader from 'src/@core/components/page-header'
 
 // ** Demo Components Imports
 import Table from 'src/views/apps/roles/Table'
-import RoleCards from 'src/views/apps/roles/RoleCards'
 
 const RolesComponent = () => {
   return (
@@ -20,17 +19,6 @@ const RolesComponent = () => {
           </Typography>
         }
       />
-      {/*<Grid item xs={12} sx={{ mb: 5 }}>*/}
-      {/*  <RoleCards />*/}
-      {/*</Grid>*/}
-      {/*<PageHeader*/}
-      {/*  title={<Typography variant='h5'>Total users with their roles</Typography>}*/}
-      {/*  subtitle={*/}
-      {/*    <Typography variant='body2'>*/}
-      {/*      Find all of your company’s administrator accounts and their associate roles.*/}
-      {/*    </Typography>*/}
-      {/*  }*/}
-      {/*/>*/}
       <Grid item xs={12}>
         <Table />
       </Grid>

@@ -8,7 +8,6 @@ import Link from 'next/link'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import { DataGrid } from '@mui/x-data-grid'
 import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
@@ -244,18 +243,6 @@ const UserList = () => {
         <Card>
           <TableHeader plan={plan} value={value} handleFilter={handleFilter} handlePlanChange={handlePlanChange} />
           <TableStickyHeader />
-
-          {/*<DataGrid*/}
-          {/*  autoHeight*/}
-          {/*  rows={store.data}*/}
-          {/*  columns={columns}*/}
-          {/*  checkboxSelection*/}
-          {/*  pageSize={pageSize}*/}
-          {/*  disableSelectionOnClick*/}
-          {/*  rowsPerPageOptions={[10, 25, 50]}*/}
-          {/*  onPageSizeChange={newPageSize => setPageSize(newPageSize)}*/}
-          {/*  sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}*/}
-          {/*/>*/}
         </Card>
       </Grid>
     </Grid>

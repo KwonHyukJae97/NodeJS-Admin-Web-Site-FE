@@ -4,7 +4,6 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 
 // ** Icons Imports
-import ExportVariant from 'mdi-material-ui/ExportVariant'
 import Magnify from "mdi-material-ui/Magnify";
 import {Plus} from "mdi-material-ui";
 import Typography from "@mui/material/Typography";
@@ -53,27 +52,6 @@ const TableHeader = (props: TableHeaderProps) => {
 
     </Box>
   )
-
-  // return (
-  //   <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-  //     <Button sx={{ mr: 4, mb: 2 }} color='secondary' variant='outlined' startIcon={<ExportVariant fontSize='small' />}>
-  //       Export
-  //     </Button>
-  //     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-  //       <TextField
-  //         size='small'
-  //         value={value}
-  //         sx={{ mr: 6, mb: 2 }}
-  //         placeholder='Search User'
-  //         onChange={e => handleFilter(e.target.value)}
-  //       />
-  //
-  //       <Button sx={{ mb: 2 }} onClick={toggle} variant='contained'>
-  //         Add User
-  //       </Button>
-  //     </Box>
-  //   </Box>
-  // )
 }
 
 export default TableHeader

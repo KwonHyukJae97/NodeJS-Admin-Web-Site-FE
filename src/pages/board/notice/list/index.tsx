@@ -15,10 +15,7 @@ import {styled} from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
-import CardContent from '@mui/material/CardContent'
-import Select, {SelectChangeEvent} from '@mui/material/Select'
+import {SelectChangeEvent} from '@mui/material/Select'
 
 // ** Icons Imports
 import Laptop from 'mdi-material-ui/Laptop'
@@ -46,13 +43,10 @@ import {fetchData, deleteUser} from 'src/store/apps/user'
 // ** Types Imports
 import {RootState, AppDispatch} from 'src/store'
 import {ThemeColor} from 'src/@core/layouts/types'
-import {boardData, boardDate, BoardType, UsersType} from 'src/types/apps/userTypes'
+import {boardData, BoardType, UsersType} from 'src/types/apps/userTypes'
 
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/user/list/TableHeader'
-import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-import TableStickyHeader from "../../../../views/table/mui/TableStickyHeader";
-import PaginationSimple from "../../../../views/components/pagination/PaginationSimple";
 
 interface UserRoleType {
   [key: string]: ReactElement
@@ -211,27 +205,6 @@ const columns = [
               {row.id}
             </Typography>}
         </Box>
-
-        // <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        //   {renderClient(row)}
-        //   <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-        //     <Link href={`/apps/user/view/${id}`} passHref>
-        //       <Typography
-        //         noWrap
-        //         component='a'
-        //         variant='subtitle2'
-        //         sx={{ color: 'text.primary', textDecoration: 'none' }}
-        //       >
-        //         {nickname}
-        //       </Typography>
-        //     </Link>
-        //     <Link href={`/apps/user/view/${id}`} passHref>
-        //       <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
-        //         @{username}
-        //       </Typography>
-        //     </Link>
-        //   </Box>
-        // </Box>
       )
     }
   },
@@ -278,32 +251,6 @@ const columns = [
       )
     }
   },
-
-  // {
-  //   flex: 0.1,
-  //   minWidth: 110,
-  //   field: 'status',
-  //   headerName: 'Status',
-  //   renderCell: ({ row }: CellType) => {
-  //     return (
-  //       <CustomChip
-  //         skin='light'
-  //         size='small'
-  //         label={row.status}
-  //         color={userStatusObj[row.status]}
-  //         sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '18px' } }}
-  //       />
-  //     )
-  //   }
-  // },
-  // {
-  //   flex: 0.1,
-  //   minWidth: 90,
-  //   sortable: false,
-  //   field: 'actions',
-  //   headerName: 'Actions',
-  //   renderCell: ({ row }: CellType) => <RowOptions id={row.id} />
-  // }
 ]
 
 const UserList = () => {
@@ -361,10 +308,6 @@ const UserList = () => {
                       sx={{pb: 4, '& .MuiCardHeader-title': {letterSpacing: '.15px'}}}
                       style={{textAlign: "center", padding: '8px 0'}}/>
 
-          {/* Tables 컴포넌트 사용 */}
-          {/*<TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />*/}
-          {/*<TableStickyHeader />*/}
-
           {/* DataGrid 컴포넌트 사용 */}
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer}/>
           <DataGrid
@@ -381,103 +324,10 @@ const UserList = () => {
             onSelectionModelChange={rows => setSelectedRows(rows)}
             onPageSizeChange={newPageSize => setPageSize(newPageSize)}
           />
-          {/*<PaginationSimple />*/}
         </Card>
       </Grid>
     </Grid>
   )
-
-  // return (
-  //   <Grid container spacing={6}>
-  //     <Grid item xs={12}>
-  //       <Card>
-  //         <CardHeader title='공지사항' sx={{ pb: 4, '& .MuiCardHeader-title': { letterSpacing: '.15px' } }} />
-  //         <CardContent>
-  //           <Grid container spacing={6}>
-  //             <Grid item sm={4} xs={12}>
-  //               <FormControl fullWidth>
-  //                 <InputLabel id='role-select'>Select Role</InputLabel>
-  //                 <Select
-  //                   fullWidth
-  //                   value={role}
-  //                   id='select-role'
-  //                   label='Select Role'
-  //                   labelId='role-select'
-  //                   onChange={handleRoleChange}
-  //                   inputProps={{ placeholder: 'Select Role' }}
-  //                 >
-  //                   <MenuItem value=''>Select Role</MenuItem>
-  //                   <MenuItem value='admin'>Admin</MenuItem>
-  //                   <MenuItem value='author'>Author</MenuItem>
-  //                   <MenuItem value='editor'>Editor</MenuItem>
-  //                   <MenuItem value='maintainer'>Maintainer</MenuItem>
-  //                   <MenuItem value='subscriber'>Subscriber</MenuItem>
-  //                 </Select>
-  //               </FormControl>
-  //             </Grid>
-  //             <Grid item sm={4} xs={12}>
-  //               <FormControl fullWidth>
-  //                 <InputLabel id='plan-select'>Select Plan</InputLabel>
-  //                 <Select
-  //                   fullWidth
-  //                   value={plan}
-  //                   id='select-plan'
-  //                   label='Select Plan'
-  //                   labelId='plan-select'
-  //                   onChange={handlePlanChange}
-  //                   inputProps={{ placeholder: 'Select Plan' }}
-  //                 >
-  //                   <MenuItem value=''>Select Plan</MenuItem>
-  //                   <MenuItem value='basic'>Basic</MenuItem>
-  //                   <MenuItem value='company'>Company</MenuItem>
-  //                   <MenuItem value='enterprise'>Enterprise</MenuItem>
-  //                   <MenuItem value='team'>Team</MenuItem>
-  //                 </Select>
-  //               </FormControl>
-  //             </Grid>
-  //             <Grid item sm={4} xs={12}>
-  //               <FormControl fullWidth>
-  //                 <InputLabel id='status-select'>Select Status</InputLabel>
-  //                 <Select
-  //                   fullWidth
-  //                   value={status}
-  //                   id='select-status'
-  //                   label='Select Status'
-  //                   labelId='status-select'
-  //                   onChange={handleStatusChange}
-  //                   inputProps={{ placeholder: 'Select Role' }}
-  //                 >
-  //                   <MenuItem value=''>Select Role</MenuItem>
-  //                   <MenuItem value='pending'>Pending</MenuItem>
-  //                   <MenuItem value='active'>Active</MenuItem>
-  //                   <MenuItem value='inactive'>Inactive</MenuItem>
-  //                 </Select>
-  //               </FormControl>
-  //             </Grid>
-  //           </Grid>
-  //         </CardContent>
-  //       </Card>
-  //     </Grid>
-  //     <Grid item xs={12}>
-  //       <Card>
-  //         <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
-  //         <DataGrid
-  //           autoHeight
-  //           rows={store.data}
-  //           columns={columns}
-  //           checkboxSelection
-  //           pageSize={pageSize}
-  //           disableSelectionOnClick
-  //           rowsPerPageOptions={[10, 25, 50]}
-  //           sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-  //           onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
-  //         />
-  //       </Card>
-  //     </Grid>
-  //
-  //     <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
-  //   </Grid>
-  // )
 }
 
 export default UserList
