@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 // ** React Imports
-import { MouseEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // ** MUI Imports
 import Avatar from '@mui/material/Avatar';
@@ -338,26 +338,35 @@ const RolesCards = () => {
       roleName: roleName,
       roleDto: [],
     };
-
+    console.log('permissionData', permissionData);
     permissionData.forEach((value: permissionType) => {
       let type = '';
-      if (value.isWrite == true) {
-        type = '0';
-      } else if (value.isRead == true) {
-        type = '1';
-      } else if (value.isUpdate == true) {
-        type = '2';
-      } else if (value.isDelete == true) {
-        type = '3';
-      }
 
-      const temp = {
-        permissionId: value.permissionId,
-        grantType: type,
+      const pushData = () => {
+        updateFetchData.roleDto.push({
+          permissionId: value.permissionId,
+          grantType: type,
+        });
       };
 
-      updateFetchData.roleDto.push(temp);
+      if (value.isWrite == true) {
+        type = '0';
+        pushData();
+      }
+      if (value.isRead == true) {
+        type = '1';
+        pushData();
+      }
+      if (value.isUpdate == true) {
+        type = '2';
+        pushData();
+      }
+      if (value.isDelete == true) {
+        type = '3';
+        pushData();
+      }
     });
+
     console.log(updateFetchData);
 
     if (confirm('수정 하시겠습니까?')) {
