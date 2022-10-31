@@ -50,6 +50,7 @@
     "jsonwebtoken": "8.5.1",
     "keen-slider": "6.6.5",
     "mdi-material-ui": "7.1.0",
+    "moment": "^2.29.4",
     "next": "12.1.6",
     "nprogress": "0.2.0",
     "payment": "2.4.6",
@@ -80,6 +81,7 @@
     "yup": "0.32.9"
   },
   "devDependencies": {
+    "@mdi/js": "^7.0.96",
     "@types/cleave.js": "1.4.6",
     "@types/draft-js": "0.11.8",
     "@types/jsonwebtoken": "8.5.8",

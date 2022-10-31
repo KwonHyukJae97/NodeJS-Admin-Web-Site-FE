@@ -30,6 +30,8 @@ const Home = () => {
     if (auth.user) {
       router.replace('/dashboards/crm')
       console.log('auth.user 정보', auth.user)
+    } else {
+      router.replace('/login')
     }
   }, [])
 
