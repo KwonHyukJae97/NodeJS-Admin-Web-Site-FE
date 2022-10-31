@@ -202,13 +202,17 @@ const AuthProvider = ({ children }: Props) => {
 
   // 회원가입 요청 시 실행
   const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
+    console.log('companyName 추가', params);
     axios
       .post(authConfig.registerEndpoint, params)
       .then((res) => {
         if (res.data.error) {
           if (errorCallback) errorCallback(res.data.error);
         } else {
-          handleLogin({ id: params.id, password: params.password });
+          //회원가입 완료 시 즉시 로그인 할 경우
+          // handleLogin({ id: params.id, password: params.password });
+          //회원가입 완료 시 로그인 페이지로 갈 경우
+          router.push('/login');
         }
       })
       .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null));

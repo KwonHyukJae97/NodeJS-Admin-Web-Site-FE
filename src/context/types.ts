@@ -22,10 +22,8 @@ export type RegisterParams = {
   nickname: string;
   birth: string;
   gender: string;
-  companyId: number;
-  roleId: number;
-  isSuper: boolean;
-  division: boolean;
+  companyName: string;
+  companyCode: number;
 };
 
 export type KakaoRegisterParams = {
@@ -36,6 +34,8 @@ export type KakaoRegisterParams = {
   gender: string;
   snsId: string;
   snsToken: string;
+  companyName: string;
+  companyCode: number;
 };
 
 // export type UserDataType = {

@@ -134,7 +134,9 @@ interface FormData {
   snsType: string;
   snsToken: string;
   gender: string;
-  division: boolean;
+  companyName: string;
+  companyCode: number;
+  // division: boolean;
 }
 
 const KakaoRegister = (params: any) => {
@@ -164,6 +166,8 @@ const KakaoRegister = (params: any) => {
     terms: false,
     // snsType: '',
     snsToken: snsToken,
+    companyName: '',
+    companyCode: null,
     // division: '',
   };
 
@@ -202,7 +206,7 @@ const KakaoRegister = (params: any) => {
     // snsId: yup.string().min(1).required(),
     // snsType: yup.string().min(1).required(),
     // snsToken: yup.string().min(1).required(),
-    // division: yup.string().min(1).required(),
+    companyCode: yup.number().min(1).required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
@@ -237,21 +241,17 @@ const KakaoRegister = (params: any) => {
 
   //화면 넘기기까지 완료 -> 데이터 입력후 가입 버튼 누르면 동작을 안하는데 동작하게끔 해야함. 동작만 하면 처리 과정 콘솔찍고 확인하기
   const onSubmit = (data: FormData) => {
-    const { name, phone, nickname, birth, snsId, snsToken, gender } = data;
-    auth.kakaoRegister({ name, phone, nickname, birth, snsId, snsToken, gender }, () => {
-      // if (err.snsId) {
-      //   setError('snsId', {
-      //     type: 'manual',
-      //     message: err.id,
-      //   });
-      // }
-      // if (err.name) {
-      //   setError('name', {
-      //     type: 'manual',
-      //     message: err.username,
-      //   });
-      // }
-    });
+    const { name, phone, nickname, birth, snsId, snsToken, gender, companyName, companyCode } =
+      data;
+    auth.kakaoRegister(
+      { name, phone, nickname, birth, snsId, snsToken, gender, companyName, companyCode },
+      () => {
+        setError('phone', {
+          type: 'manual',
+          message: '중복된 전화번호 입니다.',
+        });
+      },
+    );
   };
 
   const imageSource =
@@ -400,6 +400,28 @@ const KakaoRegister = (params: any) => {
             <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
+                  name="snsId"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      value={value}
+                      label="카카오아이디"
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={Boolean(errors.snsId)}
+                      // placeholder="user"
+                    />
+                  )}
+                />
+                {errors.snsId && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.snsId.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
                   name="name"
                   control={control}
                   rules={{ required: true }}
@@ -408,7 +430,7 @@ const KakaoRegister = (params: any) => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="Name"
+                      label="이름"
                       onChange={onChange}
                       // placeholder="01012345678"
                       error={Boolean(errors.name)}
@@ -431,7 +453,7 @@ const KakaoRegister = (params: any) => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label="Phone"
+                      label="전화번호"
                       onChange={onChange}
                       placeholder="ex) 01012345678"
                       error={Boolean(errors.phone)}
@@ -452,7 +474,7 @@ const KakaoRegister = (params: any) => {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       value={value}
-                      label="NickName"
+                      label="닉네임"
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.nickname)}
@@ -474,7 +496,7 @@ const KakaoRegister = (params: any) => {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       value={value}
-                      label="Gender"
+                      label="성별"
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.gender)}
@@ -496,7 +518,7 @@ const KakaoRegister = (params: any) => {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       value={value}
-                      label="Birth"
+                      label="생년월일"
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.birth)}
@@ -510,25 +532,48 @@ const KakaoRegister = (params: any) => {
                   </FormHelperText>
                 )}
               </FormControl>
+
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name="snsId"
+                  name="companyName"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       value={value}
-                      label="KakaoID"
+                      label="회원사명"
                       onBlur={onBlur}
                       onChange={onChange}
-                      error={Boolean(errors.snsId)}
-                      // placeholder="user"
+                      error={Boolean(errors.companyName)}
+                      placeholder="ex) 클라이교육"
                     />
                   )}
                 />
-                {errors.snsId && (
+                {errors.companyName && (
                   <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.snsId.message}
+                    {errors.companyName.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="companyCode"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      value={value}
+                      label="회원사코드"
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={Boolean(errors.companyCode)}
+                      placeholder="ex) 기업일 경우 1, 기관일 경우 2"
+                    />
+                  )}
+                />
+                {errors.companyCode && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.companyCode.message}
                   </FormHelperText>
                 )}
               </FormControl>
