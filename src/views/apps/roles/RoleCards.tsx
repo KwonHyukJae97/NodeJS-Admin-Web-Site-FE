@@ -62,7 +62,7 @@ const RolesCards = () => {
     [getData, setGetData] = useState<boolean>(true),
     [dialogTitle, setDialogTitle] = useState<'Add' | 'Edit' | 'View'>('Add'),
     [cardData, setCardData] = useState<any[]>([]),
-    [viewData, setViewData] = useState<any>({}),
+    [viewData, setViewData] = useState<any>([]),
     [permissionData, setPermissionData] = useState<any[]>([]),
     [grantType, setGrantType] = useState<any[]>([]),
     [permissionId, setPermissionId] = useState(0),
@@ -108,17 +108,15 @@ const RolesCards = () => {
 
   // 삭제 처리
   // To Do : 추후 권한 처리 적용 후 삭제 권한자만 보일 수 있도록 수정해야함
-  const handleDeleteClick = (roleId: number) => {
+  const handleDeleteClick = async (roleId: number) => {
     if (confirm('삭제 하시겠습니까?')) {
-      axios
-        .delete(`http://localhost:3000/role/${roleId}`)
-        .then(() => {
-          alert('삭제가 완료 되었습니다.');
-          location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        await axios.delete(`http://localhost:3000/role/${roleId}`);
+        alert('삭제가 완료 되었습니다.');
+        location.reload();
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -157,50 +155,46 @@ const RolesCards = () => {
   }, []);
 
   // 화면 이름(권한) 데이터 불러오기
-  const getPermissionData = () => {
-    axios
-      .get('http://localhost:3000/permission')
-      .then((res) => {
-        const permissionMap = new Map<number, permissionType>();
-        res.data.forEach((permission: { displayName: string; permissionId: number }) => {
-          if (!permissionMap.has(permission.permissionId)) {
-            const permissionData: permissionType = {
-              permissionId: permission.permissionId,
-              displayName: permission.displayName,
-              isWrite: false,
-              isDelete: false,
-              isUpdate: false,
-              isRead: false,
-              grantType: '',
-            };
-            permissionMap.set(permission.permissionId, permissionData);
-          }
-        });
-        const permissionDataList: permissionType[] = [];
-        permissionMap.forEach((value) => {
-          permissionDataList.push(value);
-        });
-        setPermissionData(permissionDataList);
-      })
-      .catch((err) => {
-        console.log(err);
+  const getPermissionData = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/permission');
+      const permissionMap = new Map<number, permissionType>();
+      res.data.forEach((permission: { displayName: string; permissionId: number }) => {
+        if (!permissionMap.has(permission.permissionId)) {
+          const permissionData: permissionType = {
+            permissionId: permission.permissionId,
+            displayName: permission.displayName,
+            isWrite: false,
+            isDelete: false,
+            isUpdate: false,
+            isRead: false,
+            grantType: '',
+          };
+          permissionMap.set(permission.permissionId, permissionData);
+        }
       });
+      const permissionDataList: permissionType[] = [];
+      permissionMap.forEach((value) => {
+        permissionDataList.push(value);
+      });
+      setPermissionData(permissionDataList);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   // 역할 상세 정보 불러오기
-  const getRoleView = (roleId: number) => {
-    axios
-      .get(`http://localhost:3000/role/${roleId}`)
-      .then((res) => {
-        setViewData(res.data);
-        setGetData(true);
-      })
-      .catch((err) => {
-        if (err.response.data) {
-          console.log('message:', err.response.data);
-          setGetData(false);
-        }
-      });
+  const getRoleView = async (roleId: number) => {
+    try {
+      const res = await axios.get(`http://localhost:3000/role/${roleId}`);
+      setViewData(res.data);
+      setGetData(true);
+    } catch (err) {
+      if (err) {
+        console.log('message:', err);
+        setGetData(false);
+      }
+    }
   };
 
   const renderCards = () =>
@@ -267,18 +261,16 @@ const RolesCards = () => {
 
   // 권한 타입 checkBox 처리
   const onCheckedType = (isChecked: boolean, value: string, permission: permissionType) => {
-    if (isChecked) {
-      if (value == '0') {
-        permission.isWrite = isChecked;
-      } else if (value == '1') {
-        permission.isRead = isChecked;
-      } else if (value == '2') {
-        permission.isUpdate = isChecked;
-      } else if (value == '3') {
-        permission.isDelete = isChecked;
-      }
-      console.log(isChecked, value, permission);
+    if (value == '0') {
+      permission.isWrite = isChecked;
+    } else if (value == '1') {
+      permission.isRead = isChecked;
+    } else if (value == '2') {
+      permission.isUpdate = isChecked;
+    } else if (value == '3') {
+      permission.isDelete = isChecked;
     }
+    console.log(isChecked, value, permission);
 
     // // 체크박스에 체크 되었을 때 값 저장
     // if (isChecked) {
@@ -299,7 +291,7 @@ const RolesCards = () => {
   useEffect(() => {}, [grantType]);
   useEffect(() => {}, [roleId]);
   useEffect(() => {}, [title]);
-
+  useEffect(() => {}, [viewData]);
   const onSubmit = (data: any) => {
     if (dialogTitle == 'Add') {
       registerRole(data);
@@ -310,30 +302,28 @@ const RolesCards = () => {
   };
 
   // 역할 등록
-  const registerRole = (data: { roleName: any }) => {
+  const registerRole = async (data: { roleName: any }) => {
     if (confirm('등록 하시겠습니까?')) {
-      axios
-        .post('http://localhost:3000/role', {
+      try {
+        const req = await axios.post('http://localhost:3000/role', {
           roleName: data.roleName,
           grantType: grantType,
           permissionId: permissionId,
 
           // TO DO : companyId 필터링적용 후 수정 필요
           companyId: 3,
-        })
-        .then((res) => {
-          console.log(res.data);
-          alert('등록이 완료 되었습니다.');
-          location.reload();
-        })
-        .catch((err) => {
-          console.log(err.response.data);
         });
+        console.log(req);
+        alert('등록이 완료 되었습니다.');
+        location.reload();
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
   // 역할 수정
-  const updateRole = (roleName: string, roleId: number) => {
+  const updateRole = async (roleName: string, roleId: number) => {
     const updateFetchData = {
       roleName: roleName,
       roleDto: [],
@@ -370,16 +360,14 @@ const RolesCards = () => {
     console.log(updateFetchData);
 
     if (confirm('수정 하시겠습니까?')) {
-      axios
-        .patch(`http://localhost:3000/role/${roleId}`, updateFetchData)
-        .then((res) => {
-          console.log(res.data);
-          alert('수정이 완료 되었습니다.');
-          location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        const req = await axios.patch(`http://localhost:3000/role/${roleId}`, updateFetchData);
+        console.log(req);
+        alert('수정이 완료 되었습니다.');
+        location.reload();
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -492,113 +480,138 @@ const RolesCards = () => {
                     </TableRow>
                   </TableHead>
                 ) : null}
+
                 {dialogTitle === 'View' && getData === true ? (
+                  // <TableBody>
+                  //   {viewData.map((data: any, index: number) => {
+                  //     return (
+                  //       <TableRow
+                  //         key={index}
+                  //         sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                  //       >
+                  //         <TableCell>{data.P_display_name}</TableCell>
+                  //         <TableCell>
+                  //           {`${data.RP_grant_type}` === '0'
+                  //             ? 'Write'
+                  //             : `${data.RP_grant_type}` === '1'
+                  //             ? 'Read'
+                  //             : `${data.RP_grant_type}` === '2'
+                  //             ? 'Update'
+                  //             : `${data.RP_grant_type}` === '3'
+                  //             ? 'Delete'
+                  //             : null}
+                  //         </TableCell>
+                  //         {`${data.RP_reg_date}` !== null ? (
+                  //           <TableCell>
+                  //             {moment(`${data.RP_reg_date}`).format('YYYY-MM-DD HH:mm')}
+                  //           </TableCell>
+                  //         ) : null}
+                  //         {`${data.RP_update_date}` !== null ? (
+                  //           <TableCell>
+                  //             {moment(`${data.RP_update_date}`).format('YYYY-MM-DD HH:mm')}
+                  //           </TableCell>
+                  //         ) : null}
+                  //       </TableRow>
+                  //     );
+                  //   })}
+                  // </TableBody>
+
                   <TableBody>
-                    <TableRow sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
-                      <TableCell>{viewData.P_display_name}</TableCell>
-                      <TableCell>
-                        {`${viewData.RP_grant_type}` === '0'
-                          ? 'Write'
-                          : `${viewData.RP_grant_type}` === '1'
-                          ? 'Read'
-                          : `${viewData.RP_grant_type}` === '2'
-                          ? 'Update'
-                          : `${viewData.RP_grant_type}` === '3'
-                          ? 'Delete'
-                          : null}
-                      </TableCell>
-                      {`${viewData.RP_reg_date}` !== null ? (
-                        <TableCell>
-                          {moment(`${viewData.RP_reg_date}`).format('YYYY-MM-DD HH:mm')}
-                        </TableCell>
-                      ) : null}
-                      {`${viewData.RP_update_date}` !== null ? (
-                        <TableCell>
-                          {moment(`${viewData.RP_update_date}`).format('YYYY-MM-DD HH:mm')}
-                        </TableCell>
-                      ) : null}
-                    </TableRow>
+                    {viewData.map((data: any, index: number) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                        >
+                          <TableCell>{data.P_display_name}</TableCell>
+
+                          <TableCell>
+                            {`${data.RP_grant_type}` === '0' ? (
+                              <FormControlLabel
+                                control={<Checkbox size="small" defaultChecked />}
+                                label="Write"
+                                value={'0'}
+                              />
+                            ) : null}
+                            {`${data.RP_grant_type}` === '1' ? (
+                              <FormControlLabel
+                                control={<Checkbox size="small" defaultChecked />}
+                                label="Read"
+                                value={'1'}
+                              />
+                            ) : null}
+                            {`${data.RP_grant_type}` === '2' ? (
+                              <FormControlLabel
+                                control={<Checkbox size="small" defaultChecked />}
+                                label="Update"
+                                value={'2'}
+                              />
+                            ) : null}
+                            {`${data.RP_grant_type}` === '3' ? (
+                              <FormControlLabel
+                                control={<Checkbox size="small" defaultChecked />}
+                                label="Delete"
+                                value={'3'}
+                              />
+                            ) : null}
+                          </TableCell>
+
+                          {`${data.RP_reg_date}` !== null ? (
+                            <TableCell>
+                              {moment(`${data.RP_reg_date}`).format('YYYY-MM-DD')}
+                            </TableCell>
+                          ) : null}
+                          {`${data.RP_update_date}` !== null ? (
+                            <TableCell>
+                              {moment(`${data.RP_update_date}`).format('YYYY-MM-DD')}
+                            </TableCell>
+                          ) : null}
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 ) : dialogTitle === 'View' ? (
                   <Typography variant="h6">등록된 정보가 없습니다.</Typography>
                 ) : null}
+
                 {dialogTitle != 'View' ? (
                   <TableBody>
-                    {
-                      permissionData.map((i, index: number) => {
-                        return (
-                          <TableRow
-                            key={index}
-                            sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                    {permissionData.map((i, index: number) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                        >
+                          <TableCell
+                            sx={{
+                              fontWeight: 600,
+                              color: (theme) => `${theme.palette.text.primary} !important`,
+                            }}
                           >
-                            <TableCell
-                              sx={{
-                                fontWeight: 600,
-                                color: (theme) => `${theme.palette.text.primary} !important`,
-                              }}
-                            >
-                              {i.displayName}
-                            </TableCell>
-                            <TableCell>
-                              {dataList.map((list) => (
-                                <FormControlLabel
-                                  name="grantType"
-                                  control={
-                                    <Checkbox
-                                      size="small"
-                                      onChange={(e) =>
-                                        onCheckedType(e.target.checked, e.target.value, i)
-                                      }
-                                    />
-                                  }
-                                  key={list.value}
-                                  label={list.type}
-                                  value={list.value}
-                                />
-                              ))}
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
+                            {i.displayName}
+                          </TableCell>
 
-                      // permissionData.map((i, index: number) => {
-                      //   return (
-                      //     <TableRow
-                      //       onClick={(event) => handleClick(event, i.permissionId)}
-                      //       key={index}
-                      //       sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
-                      //     >
-                      //       <TableCell
-                      //         sx={{
-                      //           fontWeight: 600,
-                      //           color: (theme) => `${theme.palette.text.primary} !important`,
-                      //         }}
-                      //       >
-                      //         {i.displayName}
-                      //       </TableCell>
-
-                      //       <TableCell>
-                      //         {dataList.map((list) => (
-                      //           <FormControlLabel
-                      //             name="grantType"
-                      //             control={
-                      //               <Checkbox
-                      //                 size="small"
-                      //                 onChange={(e) =>
-                      //                   onCheckedType(e.target.checked, e.target.value)
-                      //                 }
-                      //               />
-                      //             }
-                      //             key={list.value}
-                      //             label={list.type}
-                      //             value={list.value}
-                      //           />
-                      //         ))}
-                      //       </TableCell>
-                      //     </TableRow>
-                      //   );
-                      // })
-                    }
+                          <TableCell>
+                            {dataList.map((list) => (
+                              <FormControlLabel
+                                name="grantType"
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    onChange={(e) =>
+                                      onCheckedType(e.target.checked, e.target.value, i)
+                                    }
+                                  />
+                                }
+                                key={list.value}
+                                label={list.type}
+                                value={list.value}
+                              />
+                            ))}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 ) : null}
               </Table>
