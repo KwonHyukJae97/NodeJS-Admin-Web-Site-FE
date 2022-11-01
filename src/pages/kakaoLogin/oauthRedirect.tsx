@@ -32,7 +32,7 @@ const OauthRedirect = () => {
     const qs = require('qs');
     const body = qs.stringify({
       grant_type: 'authorization_code',
-      client_id: '214f882001474304a397de3fa79c9de0',
+      client_id: `${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}`,
       code: code,
     });
     return body;
@@ -100,7 +100,7 @@ const OauthRedirect = () => {
     return null;
   };
 
-  return <h4>로그인 중입니다. 잠시만 기다려주세요.</h4>;
+  return <h4>카카오 로그인 중입니다. 잠시만 기다려주세요.</h4>;
 };
 OauthRedirect.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>;
 OauthRedirect.guestGuard = true;

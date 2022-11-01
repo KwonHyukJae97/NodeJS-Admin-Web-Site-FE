@@ -10,6 +10,9 @@ import axios from 'axios';
 // ** Config
 import authConfig from 'src/configs/auth';
 
+// ** Config
+import apiConfig from 'src/configs/api';
+
 // ** Types
 import {
   AuthValuesType,
@@ -18,7 +21,9 @@ import {
   LoginParams,
   ErrCallbackType,
   UserDataType,
+  NaverRegisterParams,
 } from './types';
+import { PhoneReturnOutline } from 'mdi-material-ui';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -29,10 +34,12 @@ const defaultProvider: AuthValuesType = {
   isInitialized: false,
   login: () => Promise.resolve(),
   kakaoLogin: () => Promise.resolve(),
+  naverLogin: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   setIsInitialized: () => Boolean,
   register: () => Promise.resolve(),
   kakaoRegister: () => Promise.resolve(),
+  naverRegister: () => Promise.resolve(),
 };
 
 const AuthContext = createContext(defaultProvider);
@@ -143,13 +150,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('params!!', params);
 
     try {
-      const resData = await axios.post(authConfig.loginEndPoint2, params, {
+      const resData = await axios.post(`${apiConfig.apiEndpoint}/auth/kakao`, params, {
         withCredentials: true,
       });
       const data = resData.data;
 
       if (resData.data.loginSuccess == true) {
-        const res = await axios.get(authConfig.kakaoLoginEndPoint, {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
         const returnUrl = router.query.returnUrl;
@@ -192,6 +199,64 @@ const AuthProvider = ({ children }: Props) => {
     }
   };
 
+  //네이버 로그인 요청시 실행
+  const handleNaverLogin = async (params: any, errorCallback?: ErrCallbackType) => {
+    console.log('네이버 params !', params);
+
+    try {
+      const resData = await axios.post(`${apiConfig.apiEndpoint}/auth/naver`, params, {
+        withCredentials: true,
+      });
+      const data = resData.data;
+
+      if (resData.data.loginSuccess == true) {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          withCredentials: true,
+        });
+        const returnUrl = router.query.returnUrl;
+        console.log('네이버 사용자 정보 조회 성공 시 응답', res);
+
+        const user: UserDataType = {
+          accountId: res.data.accountId,
+          id: res.data.id,
+          name: res.data.name,
+          email: res.data.email,
+          nickname: res.data.nickname,
+          avatar: null,
+        };
+
+        setUser(user);
+        await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+        await router.replace(redirectURL as string);
+      } else {
+        console.log('loginSuccess 실패 시');
+
+        await router.replace({
+          pathname: '/naverRegister/',
+          query: {
+            discrimination: params.discrimination,
+            nickname: params.nickname,
+            name: params.name,
+            snsId: params.snsId,
+            gender: params.gender,
+            age: params.age,
+            birthday: params.birthday,
+            profileImages: params.profileImages,
+            birthyear: params.birthyear,
+            phone: params.phone,
+            snsToken: params.resNaverAccessToken,
+          },
+        });
+      }
+    } catch (err) {
+      console.log(errorCallback);
+      console.log(err);
+    }
+  };
+
   const handleLogout = () => {
     setUser(null);
     setIsInitialized(false);
@@ -200,56 +265,142 @@ const AuthProvider = ({ children }: Props) => {
     router.push('/login');
   };
 
+  // async await 형식으로 변환
   // 회원가입 요청 시 실행
-  const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
+  const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
     console.log('companyName 추가', params);
-    axios
-      .post(authConfig.registerEndpoint, params)
-      .then((res) => {
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error);
-        } else {
-          //회원가입 완료 시 즉시 로그인 할 경우
-          // handleLogin({ id: params.id, password: params.password });
-          //회원가입 완료 시 로그인 페이지로 갈 경우
-          router.push('/login');
-        }
-      })
-      .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null));
+
+    try {
+      const res = await axios.post(authConfig.registerEndpoint, params);
+
+      if (res.data.error) {
+        if (errorCallback) errorCallback(res.data.error);
+      } else {
+        router.push('/login');
+      }
+    } catch (err) {
+      console.log(errorCallback);
+      console.log(err);
+    }
+    // axios
+    //   .post(authConfig.registerEndpoint, params)
+    //   .then((res) => {
+    //     if (res.data.error) {
+    //       if (errorCallback) errorCallback(res.data.error);
+    //     } else {
+    //       //회원가입 완료 시 즉시 로그인 할 경우
+    //       // handleLogin({ id: params.id, password: params.password });
+    //       //회원가입 완료 시 로그인 페이지로 갈 경우
+    //       router.push('/login');
+    //     }
+    //   })
+    //   .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null));
   };
 
+  // async await 형식으로 변환
   //카카오 2차 정보 가입 요청 시 실행
-  const handleKakaoRegister = (params: KakaoRegisterParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.kakaoRegisterEndpoint, params)
-      .then((res) => {
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error);
-        } else {
-          // router.replace('/dashboards/crm');
-          const returnUrl = router.query.returnUrl;
-          console.log('returnUrl', returnUrl);
+  const handleKakaoRegister = async (
+    params: KakaoRegisterParams,
+    errorCallback?: ErrCallbackType,
+  ) => {
+    try {
+      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params);
+      if (res.data.error) {
+        if (errorCallback) errorCallback(res.data.error);
+      } else {
+        // router.replace('/dashboards/crm');
+        const returnUrl = router.query.returnUrl;
+        console.log('returnUrl', returnUrl);
 
-          console.log('사용자 정보 조회 성공 시, 응답', res);
+        console.log('사용자 정보 조회 성공 시, 응답', res);
 
-          const user: UserDataType = {
-            accountId: res.data.accountId,
-            id: res.data.id,
-            name: res.data.name,
-            email: res.data.email,
-            nickname: res.data.nickname,
-            avatar: null,
-          };
+        const user: UserDataType = {
+          accountId: res.data.accountId,
+          id: res.data.id,
+          name: res.data.name,
+          email: res.data.email,
+          nickname: res.data.nickname,
+          avatar: null,
+        };
 
-          setUser(user);
-          window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+        setUser(user);
+        window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
 
-          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
-          router.replace(redirectURL as string);
-        }
-      })
-      .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null));
+        router.replace(redirectURL as string);
+      }
+    } catch (err) {
+      console.log(errorCallback);
+      console.log(err);
+    }
+    // axios
+    //   .post(authConfig.kakaoRegisterEndpoint, params)
+    //   .then((res) => {
+    //     if (res.data.error) {
+    //       if (errorCallback) errorCallback(res.data.error);
+    //     } else {
+    //       // router.replace('/dashboards/crm');
+    //       const returnUrl = router.query.returnUrl;
+    //       console.log('returnUrl', returnUrl);
+
+    //       console.log('사용자 정보 조회 성공 시, 응답', res);
+
+    //       const user: UserDataType = {
+    //         accountId: res.data.accountId,
+    //         id: res.data.id,
+    //         name: res.data.name,
+    //         email: res.data.email,
+    //         nickname: res.data.nickname,
+    //         avatar: null,
+    //       };
+
+    //       setUser(user);
+    //       window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+    //       const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+    //       router.replace(redirectURL as string);
+    //     }
+    //   })
+    //   .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null));
+  };
+
+  //네이버 2차 정보 가입 요청 시 실행
+  const handleNaverRegister = async (
+    params: NaverRegisterParams,
+    errorCallback?: ErrCallbackType,
+  ) => {
+    try {
+      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params);
+      if (res.data.error) {
+        if (errorCallback) errorCallback(res.data.error);
+      } else {
+        const returnUrl = router.query.returnUrl;
+        console.log('returnUrl', returnUrl);
+
+        console.log('사용자 정보 조회 성공 시, 응답', res);
+
+        const user: UserDataType = {
+          accountId: res.data.accountId,
+          id: res.data.id,
+          name: res.data.name,
+          email: res.data.email,
+          nickname: res.data.nickname,
+          avatar: null,
+        };
+
+        setUser(user);
+        window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+        router.replace(redirectURL as string);
+      }
+    } catch (err) {
+      console.log(errorCallback);
+      console.log(err);
+    }
   };
 
   const values = {
@@ -261,9 +412,11 @@ const AuthProvider = ({ children }: Props) => {
     setIsInitialized,
     login: handleLogin,
     kakaoLogin: handleKakaoLogin,
+    naverLogin: handleNaverLogin,
     logout: handleLogout,
     register: handleRegister,
     kakaoRegister: handleKakaoRegister,
+    naverRegister: handleNaverRegister,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
