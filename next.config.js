@@ -25,5 +25,17 @@ module.exports = withTM({
     }
 
     return config
-  }
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/nid_naver/:path*',//api request path
+        destination: 'https://nid.naver.com/:path*',//목적 path
+      },
+      {
+        source: '/openapi_naver/:path*',//api request path
+        destination: 'https://openapi.naver.com/:path*',//목적 path
+      },
+    ]
+  },
 })

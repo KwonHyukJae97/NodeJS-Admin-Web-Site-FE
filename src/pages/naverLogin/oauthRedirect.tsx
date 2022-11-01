@@ -46,7 +46,7 @@ const OauthRedirect = () => {
 
     const response = await axios({
       method: 'POST',
-      url: 'https://nid.naver.com/oauth2.0/token',
+      url: '/nid_naver/oauth2.0/token',
       timeout: 30000,
       headers,
       data: body,
@@ -67,7 +67,7 @@ const OauthRedirect = () => {
 
     const responseUserInfo = await axios({
       method: 'GET',
-      url: 'https://openapi.naver.com/v1/nid/me',
+      url: '/openapi_naver/v1/nid/me',
       timeout: 30000,
       headers: headerUserInfo,
     });
