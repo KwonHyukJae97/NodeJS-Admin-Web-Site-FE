@@ -1,5 +1,5 @@
 // ** React Imports
-import {useState, useEffect, MouseEvent, useCallback, ReactElement} from 'react'
+import {MouseEvent, ReactElement, useCallback, useEffect, useState} from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -14,7 +14,6 @@ import MenuItem from '@mui/material/MenuItem'
 import {styled} from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
 import {SelectChangeEvent} from '@mui/material/Select'
 
 // ** Icons Imports
@@ -38,15 +37,16 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import {getInitials} from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import {fetchData, deleteUser} from 'src/store/apps/user'
+import {deleteUser, fetchData} from 'src/store/apps/user'
 
 // ** Types Imports
-import {RootState, AppDispatch} from 'src/store'
+import {AppDispatch, RootState} from 'src/store'
 import {ThemeColor} from 'src/@core/layouts/types'
 import {boardData, BoardType, UsersType} from 'src/types/apps/userTypes'
 
 // ** Custom Components Imports
-import TableHeader from 'src/views/apps/user/list/TableHeader'
+import PageCenterHeader from "../../../../@core/components/page-center-header";
+import TableSearchHeader from "../../../../views/board/list/TableSearchHeader";
 
 interface UserRoleType {
   [key: string]: ReactElement
@@ -185,23 +185,25 @@ const RowOptions = ({id}: { id: number | string }) => {
   )
 }
 
+// 테이블 컬럼 데이터 맵핑
 const columns = [
   {
-    flex: 0.05,
-    minWidth: 40,
+    flex: 0.06,
+    minWidth: 60,
     field: 'id',
     headerName: '번호',
     renderCell: ({row}: CellType) => {
       return (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          {row.isTop === true ? <CustomChip
+          {row.isTop === true ?
+            <CustomChip
               skin='light'
               size='small'
               label='중요'
               color='primary'
-              sx={{textTransform: 'capitalize', '& .MuiChip-label': {lineHeight: '18px'}, fontWeight: 600}}
-            /> :
-            <Typography noWrap variant='body2'>
+              sx={{'& .MuiChip-label': {lineHeight: '18px'}, fontWeight: 600}}
+            />
+            : <Typography variant='body2'>
               {row.id}
             </Typography>}
         </Box>
@@ -209,27 +211,27 @@ const columns = [
     }
   },
   {
-    flex: 0.25,
-    minWidth: 360,
+    flex: 0.4,
+    minWidth: 200,
     field: 'title',
     headerName: '제목',
     renderCell: ({row}: CellType) => {
       return (
-        <Typography noWrap variant='subtitle1' style={{marginLeft: '20px'}}>
+        <Typography variant='subtitle1' style={{marginLeft: '20px'}}>
           {row.title}
         </Typography>
       )
     }
   },
   {
-    flex: 0.1,
-    minWidth: 80,
+    flex: 0.04,
+    minWidth: 60,
     headerName: '조회수',
     field: 'viewCnt',
     renderCell: ({row}: CellType) => {
       return (
-        <Box sx={{display: 'block', justifyContent: 'center', margin: '0 auto'}}>
-          <Typography noWrap variant='subtitle1'>
+        <Box sx={{margin: '0 auto'}}>
+          <Typography variant='subtitle2'>
             {row.viewCnt}
           </Typography>
         </Box>
@@ -243,8 +245,8 @@ const columns = [
     field: 'regDate',
     renderCell: ({row}: CellType) => {
       return (
-        <Box sx={{display: 'block', justifyContent: 'center', margin: '0 auto'}}>
-          <Typography noWrap variant='subtitle1'>
+        <Box sx={{margin: '0 auto'}}>
+          <Typography variant='subtitle2'>
             {row.regDate}
           </Typography>
         </Box>
@@ -294,29 +296,22 @@ const UserList = () => {
     setStatus(e.target.value)
   }, [])
 
-  const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={<Typography variant='h4'>회원사용 공지사항</Typography>}
-                      sx={{pb: 4, '& .MuiCardHeader-title': {letterSpacing: '.15px'}}}
-                      style={{textAlign: "center", paddingTop: '82px', paddingBottom: '10px'}}/>
-          <hr style={{width: '30px', color: 'lightgrey'}}/>
-          <CardHeader title={<Typography variant='subtitle1'>TenPick의 이벤트 및 업데이트 정보 등 다양한 소식을 알려드립니다.</Typography>}
-                      sx={{pb: 4, '& .MuiCardHeader-title': {letterSpacing: '.15px'}}}
-                      style={{textAlign: "center", padding: '8px 0'}}/>
-
-          {/* DataGrid 컴포넌트 사용 */}
-          <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer}/>
+          <PageCenterHeader
+            title={'회원사용 공지사항'}
+            subtitle={'TenPick의 이벤트 및 업데이트 정보 등 다양한 소식을 알려드립니다.'}
+            maincategory={'공지사항'}
+            subcategory={'회원사용'}
+          />
+          <TableSearchHeader value={value} handleFilter={handleFilter}/>
           <DataGrid
             autoHeight
             pagination
             rows={boardData}
             columns={columns}
-
-            // checkboxSelection
             disableSelectionOnClick
             pageSize={Number(pageSize)}
             rowsPerPageOptions={[10, 25, 50]}
