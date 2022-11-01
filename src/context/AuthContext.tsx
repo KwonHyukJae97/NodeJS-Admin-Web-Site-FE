@@ -18,6 +18,7 @@ import {
   LoginParams,
   ErrCallbackType,
   UserDataType,
+  NaverRegisterParams,
 } from './types';
 import { PhoneReturnOutline } from 'mdi-material-ui';
 
@@ -35,6 +36,7 @@ const defaultProvider: AuthValuesType = {
   setIsInitialized: () => Boolean,
   register: () => Promise.resolve(),
   kakaoRegister: () => Promise.resolve(),
+  naverRegister: () => Promise.resolve(),
 };
 
 const AuthContext = createContext(defaultProvider);
@@ -230,7 +232,7 @@ const AuthProvider = ({ children }: Props) => {
         console.log('loginSuccess 실패 시');
 
         await router.replace({
-          pathname: '/kakaoRegister/',
+          pathname: '/naverRegister/',
           query: {
             discrimination: params.discrimination,
             nickname: params.nickname,
@@ -242,7 +244,7 @@ const AuthProvider = ({ children }: Props) => {
             profileImages: params.profileImages,
             birthyear: params.birthyear,
             phone: params.phone,
-            resNaverAccessToken: params.resNaverAccessToken,
+            snsToken: params.resNaverAccessToken,
           },
         });
       }
@@ -361,6 +363,43 @@ const AuthProvider = ({ children }: Props) => {
     //   .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null));
   };
 
+  //네이버 2차 정보 가입 요청 시 실행
+  const handleNaverRegister = async (
+    params: NaverRegisterParams,
+    errorCallback?: ErrCallbackType,
+  ) => {
+    try {
+      const res = await axios.post(authConfig.naverRegisterEndpoint, params);
+      if (res.data.error) {
+        if (errorCallback) errorCallback(res.data.error);
+      } else {
+        const returnUrl = router.query.returnUrl;
+        console.log('returnUrl', returnUrl);
+
+        console.log('사용자 정보 조회 성공 시, 응답', res);
+
+        const user: UserDataType = {
+          accountId: res.data.accountId,
+          id: res.data.id,
+          name: res.data.name,
+          email: res.data.email,
+          nickname: res.data.nickname,
+          avatar: null,
+        };
+
+        setUser(user);
+        window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+        router.replace(redirectURL as string);
+      }
+    } catch (err) {
+      console.log(errorCallback);
+      console.log(err);
+    }
+  };
+
   const values = {
     user,
     loading,
@@ -374,6 +413,7 @@ const AuthProvider = ({ children }: Props) => {
     logout: handleLogout,
     register: handleRegister,
     kakaoRegister: handleKakaoRegister,
+    naverRegister: handleNaverRegister,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

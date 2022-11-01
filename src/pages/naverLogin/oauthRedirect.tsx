@@ -31,7 +31,7 @@ const OauthRedirect = () => {
     const body = qs.stringify({
       grant_type: 'authorization_code',
       client_id: `${process.env.NEXT_PUBLIC_NAVER_CLIENT_ID}`,
-      client_secret: 'VbKqfxcl6e',
+      client_secret: `${process.env.NEXT_PUBLIC_NAVER_CLIENT_SECRET}`,
       code: code,
       state: encodeURI(`${process.env.NEXT_PUBLIC_NAVER_STATE_STRING}`),
     });
@@ -116,7 +116,7 @@ const OauthRedirect = () => {
       console.log('네이버 정보 전체', naverAccount);
       console.log('네이버 토큰', resNaverAccessToken);
 
-      // auth.naverLogin(naverUserInfo);
+      auth.naverLogin(naverUserInfo);
     }
     return null;
   };

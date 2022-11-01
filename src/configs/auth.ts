@@ -9,6 +9,7 @@ export default {
   storageUserDataKeyName: 'userData',
   registerEndpoint: 'http://localhost:3000/auth/register/admin',
   kakaoRegisterEndpoint: 'http://localhost:3000/auth/register/kakao/admin',
+  naverRegisterEndpoint: 'http://localhost:3000/auth/register/naver/admin',
   storageTokenKeyName: 'authorization',
 };
 

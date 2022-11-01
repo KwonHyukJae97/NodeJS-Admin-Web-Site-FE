@@ -26,7 +26,21 @@ export type RegisterParams = {
   companyCode: number;
 };
 
+//카카오 2차정보 데이터 정의
 export type KakaoRegisterParams = {
+  name: string;
+  phone: string;
+  nickname: string;
+  birth: string;
+  gender: string;
+  snsId: string;
+  snsToken: string;
+  companyName: string;
+  companyCode: number;
+};
+
+//네이버 2차정보 데이터 정의
+export type NaverRegisterParams = {
   name: string;
   phone: string;
   nickname: string;
@@ -71,4 +85,5 @@ export type AuthValuesType = {
   naverLogin: (params: any) => void;
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void;
   kakaoRegister: (params: KakaoRegisterParams, errorCallback?: ErrCallbackType) => void;
+  naverRegister: (params: NaverRegisterParams, errorCallback?: ErrCallbackType) => void;
 };
