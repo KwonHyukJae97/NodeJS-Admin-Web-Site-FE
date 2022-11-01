@@ -1,16 +1,13 @@
 export default {
-  meEndpoint: 'http://localhost:3000/auth/me',
-  loginEndpoint: 'http://localhost:3000/auth/login/admin',
-  // meEndpoint: 'http://localhost:3001/auth/me',
-  // loginEndpoint: 'http://localhost:3001/auth/login/admin',
-  kakaoLoginEndpoint: 'http://localhost:3000/auth/kakao',
-  LoginInfoEndpoint: 'http://localhost:3000/auth/me',
-  naverLoginEndpoint: 'http://localhost:3000/auth/naver',
-  storageUserDataKeyName: 'userData',
-  registerEndpoint: 'http://localhost:3000/auth/register/admin',
-  kakaoRegisterEndpoint: 'http://localhost:3000/auth/register/kakao/admin',
-  naverRegisterEndpoint: 'http://localhost:3000/auth/register/naver/admin',
-  storageTokenKeyName: 'authorization',
+  meEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/me`,
+  loginEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login/admin`,
+
+  loginEndPoint2: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/kakao`,
+  kakaoLoginEndPoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/me`,
+  storageUserDataKeyName: `userData`,
+  registerEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register/admin`,
+  kakaoRegisterEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register/kakao/admin`,
+  storageTokenKeyName: `authorization`,
 };
 
 // export default {

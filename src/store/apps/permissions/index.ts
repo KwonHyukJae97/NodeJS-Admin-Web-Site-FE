@@ -4,6 +4,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // ** Axios Imports
 import axios from 'axios';
 
+// ** Config
+import apiConfig from 'src/configs/api';
+
 // 통신 성공 시 가져오게 될 데이터 타입
 interface DataParams {
   q: string;
@@ -16,7 +19,7 @@ export const fetchData = createAsyncThunk(
   'appPermissions/fetchData',
   async (params: DataParams) => {
     await axios
-      .get('http://localhost:3000/permission', {
+      .get(`${apiConfig.apiEndpoint}/permission`, {
         params,
       })
       .then((res) => {
