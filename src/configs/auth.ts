@@ -3,8 +3,9 @@ export default {
   loginEndpoint: 'http://localhost:3000/auth/login/admin',
   // meEndpoint: 'http://localhost:3001/auth/me',
   // loginEndpoint: 'http://localhost:3001/auth/login/admin',
-  loginEndPoint2: 'http://localhost:3000/auth/kakao',
-  kakaoLoginEndPoint: 'http://localhost:3000/auth/me',
+  kakaoLoginEndpoint: 'http://localhost:3000/auth/kakao',
+  LoginInfoEndpoint: 'http://localhost:3000/auth/me',
+  naverLoginEndpoint: 'http://localhost:3000/auth/naver',
   storageUserDataKeyName: 'userData',
   registerEndpoint: 'http://localhost:3000/auth/register/admin',
   kakaoRegisterEndpoint: 'http://localhost:3000/auth/register/kakao/admin',
@@ -17,3 +18,4 @@ export default {
 //   registerEndpoint: '/jwt/register',
 //   storageTokenKeyName: 'authorization'
 // }
+//--force npm install

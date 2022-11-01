@@ -100,7 +100,7 @@ const OauthRedirect = () => {
     return null;
   };
 
-  return <h4>로그인 중입니다. 잠시만 기다려주세요.</h4>;
+  return <h4>카카오 로그인 중입니다. 잠시만 기다려주세요.</h4>;
 };
 OauthRedirect.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>;
 OauthRedirect.guestGuard = true;

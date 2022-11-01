@@ -68,6 +68,7 @@ export type AuthValuesType = {
   setIsInitialized: (value: boolean) => void;
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
   kakaoLogin: (params: any) => void;
+  naverLogin: (params: any) => void;
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void;
   kakaoRegister: (params: KakaoRegisterParams, errorCallback?: ErrCallbackType) => void;
 };
