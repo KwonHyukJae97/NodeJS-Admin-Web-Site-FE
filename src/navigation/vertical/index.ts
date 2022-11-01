@@ -262,16 +262,24 @@ const navigation = (): VerticalNavItemsType => {
       icon: FormSelect,
       children: [
         {
-          title: '본사용(A안)',
+          title: '본사용',
           path: '/apps/notice'
         },
         {
-          title: '회원사용(B안)',
+          title: '회원사용',
           path: '/board/notice/list'
         },
         {
           title: '사용자용',
           path: '/apps/notice/view'
+        },
+        {
+          title: '상세(A안)',
+          path: '/board/notice/detail/a'
+        },
+        {
+          title: '상세(B안)',
+          path: '/board/notice/detail/b'
         }
       ]
     },
