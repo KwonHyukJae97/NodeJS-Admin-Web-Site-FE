@@ -10,6 +10,9 @@ import axios from 'axios';
 // ** Config
 import authConfig from 'src/configs/auth';
 
+// ** Config
+import apiConfig from 'src/configs/api';
+
 // ** Types
 import {
   AuthValuesType,
@@ -147,13 +150,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('params!!', params);
 
     try {
-      const resData = await axios.post(authConfig.kakaoLoginEndpoint, params, {
+      const resData = await axios.post(`${apiConfig.apiEndpoint}/auth/kakao`, params, {
         withCredentials: true,
       });
       const data = resData.data;
 
       if (resData.data.loginSuccess == true) {
-        const res = await axios.get(authConfig.LoginInfoEndpoint, {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
         const returnUrl = router.query.returnUrl;
@@ -201,13 +204,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('네이버 params !', params);
 
     try {
-      const resData = await axios.post(authConfig.naverLoginEndpoint, params, {
+      const resData = await axios.post(`${apiConfig.apiEndpoint}/auth/naver`, params, {
         withCredentials: true,
       });
       const data = resData.data;
 
       if (resData.data.loginSuccess == true) {
-        const res = await axios.get(authConfig.LoginInfoEndpoint, {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
         const returnUrl = router.query.returnUrl;
@@ -301,7 +304,7 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(authConfig.kakaoRegisterEndpoint, params);
+      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params);
       if (res.data.error) {
         if (errorCallback) errorCallback(res.data.error);
       } else {
@@ -369,7 +372,7 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(authConfig.naverRegisterEndpoint, params);
+      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params);
       if (res.data.error) {
         if (errorCallback) errorCallback(res.data.error);
       } else {
