@@ -32,6 +32,9 @@ import { IconButton } from '@mui/material';
 // ** Third Party Imports
 import { Controller, useForm } from 'react-hook-form';
 
+// ** Config
+import apiConfig from 'src/configs/api';
+
 // ** axios Imports
 import axios from 'axios';
 
@@ -111,7 +114,7 @@ const RolesCards = () => {
   const handleDeleteClick = (roleId: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       axios
-        .delete(`http://localhost:3000/role/${roleId}`)
+        .delete(`${apiConfig.apiEndpoint}/role/${roleId}`)
         .then(() => {
           alert('삭제가 완료 되었습니다.');
           location.reload();
@@ -125,7 +128,7 @@ const RolesCards = () => {
   //role 데이터 불러오기
   useEffect(() => {
     axios
-      .get('http://localhost:3000/role')
+      .get(`${apiConfig.apiEndpoint}/role`)
       .then((res) => {
         const roleMap = new Map<number, CardDataType>();
         res.data.forEach((role: { roleName: string; roleId: any }) => {
@@ -159,7 +162,7 @@ const RolesCards = () => {
   // 화면 이름(권한) 데이터 불러오기
   const getPermissionData = () => {
     axios
-      .get('http://localhost:3000/permission')
+      .get(`${apiConfig.apiEndpoint}/permission`)
       .then((res) => {
         const permissionMap = new Map<number, permissionType>();
         res.data.forEach((permission: { displayName: string; permissionId: number }) => {
@@ -190,7 +193,7 @@ const RolesCards = () => {
   // 역할 상세 정보 불러오기
   const getRoleView = (roleId: number) => {
     axios
-      .get(`http://localhost:3000/role/${roleId}`)
+      .get(`${apiConfig.apiEndpoint}/role/${roleId}`)
       .then((res) => {
         setViewData(res.data);
         setGetData(true);
@@ -313,7 +316,7 @@ const RolesCards = () => {
   const registerRole = (data: { roleName: any }) => {
     if (confirm('등록 하시겠습니까?')) {
       axios
-        .post('http://localhost:3000/role', {
+        .post(`${apiConfig.apiEndpoint}/role`, {
           roleName: data.roleName,
           grantType: grantType,
           permissionId: permissionId,
@@ -371,7 +374,7 @@ const RolesCards = () => {
 
     if (confirm('수정 하시겠습니까?')) {
       axios
-        .patch(`http://localhost:3000/role/${roleId}`, updateFetchData)
+        .patch(`${apiConfig.apiEndpoint}/role/${roleId}`, updateFetchData)
         .then((res) => {
           console.log(res.data);
           alert('수정이 완료 되었습니다.');

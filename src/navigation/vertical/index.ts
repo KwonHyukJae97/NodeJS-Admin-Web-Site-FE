@@ -93,6 +93,10 @@ const navigation = (): VerticalNavItemsType => {
           title: '레벨테스트',
           path: '/apps/invoice/list'
         },
+        {
+          title: '역할',
+          path: '/apps/roles'
+        },
       ]
     },
     // {
