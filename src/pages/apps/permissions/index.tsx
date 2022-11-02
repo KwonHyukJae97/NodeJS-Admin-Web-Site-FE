@@ -31,7 +31,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
 // ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip';
 import PageHeader from 'src/@core/components/page-header';
 import TableHeader from 'src/views/apps/permissions/TableHeader';
 
@@ -43,14 +42,14 @@ import { PermissionRowType } from 'src/types/apps/permissionTypes';
 import { fetchData } from 'src/store/apps/permissions';
 
 // ** Types
-import { ThemeColor } from 'src/@core/layouts/types';
+// import { ThemeColor } from 'src/@core/layouts/types';
 
 import moment from 'moment';
 
 // 색 지정
-interface Colors {
-  [key: string]: ThemeColor;
-}
+// interface Colors {
+//   [key: string]: ThemeColor;
+// }
 
 // 컬럼명 정의
 interface CellType {
@@ -58,13 +57,13 @@ interface CellType {
 }
 
 // assigned to에 적용할 색 정의
-const colors: Colors = {
-  support: 'info',
-  users: 'success',
-  manager: 'warning',
-  administrator: 'primary',
-  'restricted-user': 'error',
-};
+// const colors: Colors = {
+//   support: 'info',
+//   users: 'success',
+//   manager: 'warning',
+//   administrator: 'primary',
+//   'restricted-user': 'error',
+// };
 
 // 기본 테이블 컬럼 정의
 const defaultColumns = [

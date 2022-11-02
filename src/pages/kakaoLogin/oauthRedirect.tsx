@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from 'src/hooks/useAuth';
 import BlankLayout from 'src/@core/layouts/BlankLayout';
+import qs from 'qs';
 
 // 리다이렉트 될 화면 (인가코드 받음) / 로그인 처리 진행시 보여질 화면
 const OauthRedirect = () => {
@@ -29,7 +30,6 @@ const OauthRedirect = () => {
   });
 
   const getBody = (code: any) => {
-    const qs = require('qs');
     const body = qs.stringify({
       grant_type: 'authorization_code',
       client_id: `${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}`,
