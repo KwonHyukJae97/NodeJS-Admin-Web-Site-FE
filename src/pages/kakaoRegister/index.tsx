@@ -536,6 +536,7 @@ const KakaoRegister = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.gender)}
+
                       // placeholder="user"
                     />
                   )}
