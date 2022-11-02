@@ -1,9 +1,9 @@
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Link from '@mui/material/Link'
-import { Theme } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import { Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const FooterContent = () => {
   // ** Var
@@ -23,12 +23,12 @@ const FooterContent = () => {
     // console.log('test', test)
     // console.log('test11', KAKAO_AUTH_URL)
   }
-  
+
 return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography sx={{ mr: 2 }}>
         {`© ${new Date().getFullYear()}, Made with2 `}
-        <Box component='span' sx={{ color: 'error.main' }}>
+        <Box component="span" sx={{ color: 'error.main' }}>
           ❤️
           {/* <img onClick={() => loginWithKakao()} alt={'kakao-login'} style={{ borderRadius: '4px' }}></img> */}
           <img
@@ -39,31 +39,38 @@ return (
           />
         </Box>
         {` by `}
-        <Link target='_blank' href='https://pixinvent.com/'>
+        <Link target="_blank" href="https://pixinvent.com/">
           Pixinvent
         </Link>
       </Typography>
       {hidden ? null : (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
-          <Link target='_blank' href='https://themeforest.net/licenses/standard'>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            '& :not(:last-child)': { mr: 4 },
+          }}
+        >
+          <Link target="_blank" href="https://themeforest.net/licenses/standard">
             License
           </Link>
-          <Link target='_blank' href='https://1.envato.market/pixinvent_portfolio'>
+          <Link target="_blank" href="https://1.envato.market/pixinvent_portfolio">
             More Themes
           </Link>
           <Link
-            target='_blank'
-            href='https://pixinvent.com/demo/materialize-mui-react-nextjs-admin-template/documentation'
+            target="_blank"
+            href="https://pixinvent.com/demo/materialize-mui-react-nextjs-admin-template/documentation"
           >
             Documentation
           </Link>
-          <Link target='_blank' href='https://pixinvent.ticksy.com/'>
+          <Link target="_blank" href="https://pixinvent.ticksy.com/">
             Support
           </Link>
         </Box>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default FooterContent
+export default FooterContent;

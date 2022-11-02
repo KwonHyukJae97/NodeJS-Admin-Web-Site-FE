@@ -1,5 +1,5 @@
 // ** React Imports
-import {MouseEvent, ReactNode, useState} from 'react';
+import { useState, ReactNode, MouseEvent } from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
@@ -162,21 +162,24 @@ const LoginPage = () => {
   const imageSource =
     skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration';
 
-  // const CLIENT_ID = '214f882001474304a397de3fa79c9de0'
-  // const REDIRECT_URI = 'http://localhost:3000/auth/kakao'
-
-  // const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`
-
+  // 카카오 로그인 버튼 클릭 시 실행
   function loginWithKakao() {
-    const CLIENT_ID = '214f882001474304a397de3fa79c9de0';
-    const REDIRECT_URI = 'http://localhost:3002/kakaoLogin/oauthRedirect';
-
-    // const REDIRECT_URI = `${process.env.REACT_APP_REDIRECT_URI}`
-    // const CLIENT_ID = `${process.env.REACT_APP_KAKAO_KEY}`
+    const CLIENT_ID = `${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}`;
+    const REDIRECT_URI = `${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}`;
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
     // const test = window.location.replace(KAKAO_AUTH_URL)
     window.location.href = KAKAO_AUTH_URL;
+  }
+
+  // 네이버 로그인 버튼 클릭 시 실행
+  function loginWithNaver() {
+    const CLIENT_ID = `${process.env.NEXT_PUBLIC_NAVER_CLIENT_ID}`;
+    const STATE_STRING = `${process.env.NEXT_PUBLIC_NAVER_STATE_STRING}`;
+    const CALLBACK_URL = `${process.env.NEXT_PUBLIC_NAVER_REDIRECT_URI}`;
+    const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${CLIENT_ID}&state=${STATE_STRING}&redirect_uri=${CALLBACK_URL}`;
+    console.log(NAVER_AUTH_URL);
+    window.location.href = NAVER_AUTH_URL;
   }
 
   return (
@@ -428,23 +431,23 @@ const LoginPage = () => {
               </Box>
               <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Link href="/" passHref>
+                {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
                   >
                     <Facebook sx={{ color: '#497ce2' }} />
                   </IconButton>
-                </Link>
-                <Link href="/" passHref>
+                </Link> */}
+                {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
                   >
                     <Twitter sx={{ color: '#1da1f2' }} />
                   </IconButton>
-                </Link>
-                <Link href="/" passHref>
+                </Link> */}
+                {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
@@ -456,20 +459,28 @@ const LoginPage = () => {
                       }}
                     />
                   </IconButton>
-                </Link>
-                <Link href="/" passHref>
+                </Link> */}
+                {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
                   >
                     <Google sx={{ color: '#db4437' }} />
                   </IconButton>
-                </Link>
+                </Link> */}
+                {/* <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider> */}
                 <img
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
-                  src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
-                  width="180"
+                  src="/images/avatars/kakao.png"
+                  // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
+                  width="170"
+                />
+                <img
+                  onClick={() => loginWithNaver()}
+                  alt={'naver-login'}
+                  src="/images/avatars/naver.png"
+                  width="150"
                 />
               </Box>
             </form>
