@@ -22,6 +22,7 @@ const Table = (theme: Theme) => {
             fontSize: '1rem',
             lineHeight: '1.35rem',
             letterSpacing: '0.17px',
+
             // backgroundColor: 'red',
             textAlign: 'center'
           }
@@ -51,6 +52,7 @@ const Table = (theme: Theme) => {
         root: {
           '& .MuiTableCell-head:first-child, & .MuiTableCell-root:first-child ': {
             paddingLeft: theme.spacing(10),
+
             // paddingRight: theme.spacing(15)
           },
           '& .MuiTableCell-head:last-child, & .MuiTableCell-root:last-child': {
