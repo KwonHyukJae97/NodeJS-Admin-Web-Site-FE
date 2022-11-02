@@ -99,6 +99,7 @@ const AuthProvider = ({ children }: Props) => {
       } else {
         setLoading(false);
         console.log('사용자 정보 없음');
+        router.push('login');
       }
     };
     initAuth();

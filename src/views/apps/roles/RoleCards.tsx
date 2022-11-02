@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 // ** React Imports
 import { useEffect, useState } from 'react';
@@ -28,6 +29,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { DeleteOutline } from 'mdi-material-ui';
 import { IconButton } from '@mui/material';
+import { deepPurple } from '@mui/material/colors';
 
 // ** Third Party Imports
 import { Controller, useForm } from 'react-hook-form';
@@ -37,8 +39,6 @@ import apiConfig from 'src/configs/api';
 
 // ** axios Imports
 import axios from 'axios';
-
-import moment from 'moment';
 
 // 역할 리스트 타입 정의
 interface CardDataType {
@@ -58,28 +58,48 @@ interface permissionType {
   isDelete: boolean;
   grantType: string;
 }
+const arr: permissionType[] = [];
+
+// 권한에 따른 체크 박스 컴포넌트
+const FormGrantLabel = ({ label, value, isChecked }: any) => {
+  return (
+    <FormControlLabel
+      control={
+        <Checkbox
+          size="small"
+          defaultChecked={isChecked}
+          disabled
+          sx={{
+            color: deepPurple[400],
+            '&.Mui-checked': {
+              color: deepPurple[400],
+            },
+          }}
+        />
+      }
+      label={label}
+      value={value}
+    />
+  );
+};
 
 const RolesCards = () => {
   // ** States
   const [open, setOpen] = useState<boolean>(false),
     [getData, setGetData] = useState<boolean>(true),
-    [dialogTitle, setDialogTitle] = useState<'Add' | 'Edit' | 'View'>('Add'),
+    [dialogTitle, setDialogTitle] = useState<'등록' | '수정' | '보기'>('등록'),
     [cardData, setCardData] = useState<any[]>([]),
-    [viewData, setViewData] = useState<any>({}),
+    [viewData, setViewData] = useState<any>([]),
     [permissionData, setPermissionData] = useState<any[]>([]),
-    [grantType, setGrantType] = useState<any[]>([]),
-    [permissionId, setPermissionId] = useState(0),
     [roleId, setRoleId] = useState(0),
-    [title, setTitle] = useState(''),
-    [checkedItem, setCheckedItem] = useState(new Set()),
-    [permissionMap, setPermissionMap] = useState(new Map<number, permissionType>());
+    [title, setTitle] = useState('');
 
   // 권한 데이터 정의
   const dataList = [
-    { value: '0', type: 'Write' },
-    { value: '1', type: 'Read' },
-    { value: '2', type: 'Update' },
-    { value: '3', type: 'Delete' },
+    { value: '0', type: '등록' },
+    { value: '1', type: '조회' },
+    { value: '2', type: '수정' },
+    { value: '3', type: '삭제' },
   ];
 
   // ** Hooks
@@ -88,17 +108,20 @@ const RolesCards = () => {
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ defaultValues: { roleName: '' } });
 
   // 버튼 열기
   const handleClickOpen = (action: string, roleId: number) => {
     setOpen(true);
-    if (action === 'Edit') {
+    if (action === '수정') {
       getPermissionData();
       getRoleView(roleId);
     }
-    if (action === 'View') {
+    if (action === '보기') {
       getRoleView(roleId);
+    }
+    if (action === '등록') {
+      getPermissionData();
     }
   };
 
@@ -106,26 +129,170 @@ const RolesCards = () => {
   const handleClose = () => {
     setOpen(false);
     setValue('roleName', '');
-    checkedItem.clear();
   };
 
-  // 삭제 처리
-  // To Do : 추후 권한 처리 적용 후 삭제 권한자만 보일 수 있도록 수정해야함
-  const handleDeleteClick = (roleId: number) => {
-    if (confirm('삭제 하시겠습니까?')) {
-      axios
-        .delete(`${apiConfig.apiEndpoint}/role/${roleId}`)
-        .then(() => {
-          alert('삭제가 완료 되었습니다.');
-          location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+  // 권한 타입 checkBox 처리
+  const onCheckedType = (isChecked: boolean, value: string, permission: permissionType) => {
+    if (value == '0') {
+      permission.isWrite = isChecked;
+    } else if (value == '1') {
+      permission.isRead = isChecked;
+    } else if (value == '2') {
+      permission.isUpdate = isChecked;
+    } else if (value == '3') {
+      permission.isDelete = isChecked;
     }
   };
 
-  //role 데이터 불러오기
+  const onSubmit = (data: any) => {
+    let getRoleName = data.roleName;
+    if (getRoleName === '') {
+      getRoleName = title;
+    } else {
+      getRoleName = data.roleName;
+    }
+    const roleData: any = {
+      roleName: getRoleName,
+      roleDto: [],
+    };
+
+    permissionData.forEach((value: permissionType) => {
+      let type = '';
+
+      const pushData = () => {
+        roleData.roleDto.push({
+          permissionId: value.permissionId,
+          grantType: type,
+        });
+      };
+
+      if (value.isWrite == true) {
+        type = '0';
+        pushData();
+      }
+      if (value.isRead == true) {
+        type = '1';
+        pushData();
+      }
+      if (value.isUpdate == true) {
+        type = '2';
+        pushData();
+      }
+      if (value.isDelete == true) {
+        type = '3';
+        pushData();
+      }
+    });
+    console.log('roleData', roleData);
+
+    if (dialogTitle == '등록') {
+      registerRole(roleData);
+    } else if (dialogTitle == '수정') {
+      updateRole(roleData, roleId);
+    }
+    handleClose();
+  };
+
+  // 화면 이름(권한) 데이터 조회 API호출
+  const getPermissionData = async () => {
+    try {
+      const res = await axios.get(`${apiConfig.apiEndpoint}/permission`);
+      const permissionMap = new Map<number, permissionType>();
+      res.data.forEach((permission: { displayName: string; permissionId: number }) => {
+        if (!permissionMap.has(permission.permissionId)) {
+          const permissionData: permissionType = {
+            permissionId: permission.permissionId,
+            displayName: permission.displayName,
+            isWrite: false,
+            isDelete: false,
+            isUpdate: false,
+            isRead: false,
+            grantType: '',
+          };
+          permissionMap.set(permission.permissionId, permissionData);
+        }
+      });
+      const permissionDataList: permissionType[] = [];
+      permissionMap.forEach((value) => {
+        permissionDataList.push(value);
+      });
+      setPermissionData(permissionDataList);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 역할 등록 API호출
+  const registerRole = async (roleData: any) => {
+    if (confirm('등록 하시겠습니까?')) {
+      try {
+        const req = await axios.post(`${apiConfig.apiEndpoint}/role`, {
+          roleName: roleData.roleName,
+          roleDto: roleData.roleDto,
+
+          // TO DO : companyId 필터링적용 후 수정 필요
+          companyId: 3,
+        });
+        alert('등록이 완료 되었습니다.');
+        location.reload();
+      } catch (err) {
+        console.log(err);
+        alert('등록에 실패하였습니다.');
+      }
+    }
+  };
+
+  // 역할 수정 API호출
+  const updateRole = async (roleData: any, roleId: number) => {
+    if (confirm('수정 하시겠습니까?')) {
+      try {
+        const req = await axios.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, roleData);
+        alert('수정이 완료 되었습니다.');
+        location.reload();
+      } catch (err: any) {
+        console.log('err', err.response.data);
+        alert('수정에 실패 하였습니다.');
+      }
+    }
+  };
+
+  // 역할 삭제 API호출
+  // To Do : 추후 권한 처리 적용 후 삭제 권한자만 보일 수 있도록 수정해야함
+  const handleDeleteClick = async (roleId: number) => {
+    if (confirm('삭제 하시겠습니까?')) {
+      try {
+        await axios.delete(`${apiConfig.apiEndpoint}/role/${roleId}`);
+        alert('삭제가 완료 되었습니다.');
+        location.reload();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
+  // 역할 상세 정보 조회 API호출
+  const getRoleView = async (roleId: number) => {
+    try {
+      const res = await axios.get(`${apiConfig.apiEndpoint}/role/${roleId}`);
+      setViewData(res.data);
+      setGetData(true);
+    } catch (err) {
+      if (err) {
+        console.log('message:', err);
+        setGetData(false);
+      }
+    }
+  };
+
+  const isCheckedGrantType = (receiveGrantTypeList: [], grantType: string) => {
+    const filterLength = receiveGrantTypeList.filter((receiveGrantType: { grant_type: string }) => {
+      return receiveGrantType.grant_type == grantType;
+    }).length;
+
+    return filterLength > 0;
+  };
+
+  //역할 리스트 조회 API호출
   useEffect(() => {
     axios
       .get(`${apiConfig.apiEndpoint}/role`)
@@ -159,53 +326,12 @@ const RolesCards = () => {
       });
   }, []);
 
-  // 화면 이름(권한) 데이터 불러오기
-  const getPermissionData = () => {
-    axios
-      .get(`${apiConfig.apiEndpoint}/permission`)
-      .then((res) => {
-        const permissionMap = new Map<number, permissionType>();
-        res.data.forEach((permission: { displayName: string; permissionId: number }) => {
-          if (!permissionMap.has(permission.permissionId)) {
-            const permissionData: permissionType = {
-              permissionId: permission.permissionId,
-              displayName: permission.displayName,
-              isWrite: false,
-              isDelete: false,
-              isUpdate: false,
-              isRead: false,
-              grantType: '',
-            };
-            permissionMap.set(permission.permissionId, permissionData);
-          }
-        });
-        const permissionDataList: permissionType[] = [];
-        permissionMap.forEach((value) => {
-          permissionDataList.push(value);
-        });
-        setPermissionData(permissionDataList);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  // useState 비동기 문제 해결을 위한 useEffect 사용
+  useEffect(() => {}, [roleId]);
+  useEffect(() => {}, [title]);
+  useEffect(() => {}, [viewData]);
 
-  // 역할 상세 정보 불러오기
-  const getRoleView = (roleId: number) => {
-    axios
-      .get(`${apiConfig.apiEndpoint}/role/${roleId}`)
-      .then((res) => {
-        setViewData(res.data);
-        setGetData(true);
-      })
-      .catch((err) => {
-        if (err.response.data) {
-          console.log('message:', err.response.data);
-          setGetData(false);
-        }
-      });
-  };
-
+  // 역할 리스트 출력
   const renderCards = () =>
     cardData.map((item, index: number) => (
       <Grid item xs={12} sm={6} lg={4} key={index}>
@@ -214,7 +340,7 @@ const RolesCards = () => {
             <Box
               sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <Typography variant="body2">Total {item.totalUsers} users</Typography>
+              <Typography variant="body2">등록된 사용자: {item.totalUsers} 명</Typography>
               <AvatarGroup
                 max={4}
                 sx={{
@@ -234,8 +360,8 @@ const RolesCards = () => {
                 onClick={() => {
                   setRoleId(item.roleId);
                   setTitle(item.title);
-                  handleClickOpen('View', item.roleId);
-                  setDialogTitle('View');
+                  handleClickOpen('보기', item.roleId);
+                  setDialogTitle('보기');
                 }}
               >
                 {item.title}
@@ -248,11 +374,11 @@ const RolesCards = () => {
                 onClick={() => {
                   setRoleId(item.roleId);
                   setTitle(item.title);
-                  handleClickOpen('Edit', item.roleId);
-                  setDialogTitle('Edit');
+                  handleClickOpen('수정', item.roleId);
+                  setDialogTitle('수정');
                 }}
               >
-                Edit Role
+                수정하기
               </Typography>
               <IconButton
                 size="small"
@@ -268,124 +394,6 @@ const RolesCards = () => {
       </Grid>
     ));
 
-  // 권한 타입 checkBox 처리
-  const onCheckedType = (isChecked: boolean, value: string, permission: permissionType) => {
-    if (isChecked) {
-      if (value == '0') {
-        permission.isWrite = isChecked;
-      } else if (value == '1') {
-        permission.isRead = isChecked;
-      } else if (value == '2') {
-        permission.isUpdate = isChecked;
-      } else if (value == '3') {
-        permission.isDelete = isChecked;
-      }
-      console.log(isChecked, value, permission);
-    }
-
-    // // 체크박스에 체크 되었을 때 값 저장
-    // if (isChecked) {
-    //   checkedItem.add(value);
-    //   setCheckedItem(checkedItem);
-
-    //   // 체크 안됨&체크박스 두번 누를 경우 중복데이터 삭제 후 값 저장
-    // } else if (!isChecked && checkedItem.has(value)) {
-    //   checkedItem.delete(value);
-    //   setCheckedItem(checkedItem);
-    // }
-
-    // // Set을 Array타입으로 변환
-    // setGrantType(Array.from(checkedItem));
-  };
-
-  // useState 비동기 문제 해결을 위한 useEffect 사용
-  useEffect(() => {}, [grantType]);
-  useEffect(() => {}, [roleId]);
-  useEffect(() => {}, [title]);
-
-  const onSubmit = (data: any) => {
-    if (dialogTitle == 'Add') {
-      registerRole(data);
-    } else if (dialogTitle == 'Edit') {
-      updateRole(data.roleName, roleId);
-    }
-    handleClose();
-  };
-
-  // 역할 등록
-  const registerRole = (data: { roleName: any }) => {
-    if (confirm('등록 하시겠습니까?')) {
-      axios
-        .post(`${apiConfig.apiEndpoint}/role`, {
-          roleName: data.roleName,
-          grantType: grantType,
-          permissionId: permissionId,
-
-          // TO DO : companyId 필터링적용 후 수정 필요
-          companyId: 3,
-        })
-        .then((res) => {
-          console.log(res.data);
-          alert('등록이 완료 되었습니다.');
-          location.reload();
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-        });
-    }
-  };
-
-  // 역할 수정
-  const updateRole = (roleName: string, roleId: number) => {
-    const updateFetchData = {
-      roleName: roleName,
-      roleDto: [],
-    };
-    console.log('permissionData', permissionData);
-    permissionData.forEach((value: permissionType) => {
-      let type = '';
-
-      const pushData = () => {
-        updateFetchData.roleDto.push({
-          permissionId: value.permissionId,
-          grantType: type,
-        });
-      };
-
-      if (value.isWrite == true) {
-        type = '0';
-        pushData();
-      }
-      if (value.isRead == true) {
-        type = '1';
-        pushData();
-      }
-      if (value.isUpdate == true) {
-        type = '2';
-        pushData();
-      }
-      if (value.isDelete == true) {
-        type = '3';
-        pushData();
-      }
-    });
-
-    console.log(updateFetchData);
-
-    if (confirm('수정 하시겠습니까?')) {
-      axios
-        .patch(`${apiConfig.apiEndpoint}/role/${roleId}`, updateFetchData)
-        .then((res) => {
-          console.log(res.data);
-          alert('수정이 완료 되었습니다.');
-          location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-
   return (
     <Grid container spacing={6} className="match-height">
       {renderCards()}
@@ -393,8 +401,8 @@ const RolesCards = () => {
         <Card
           sx={{ cursor: 'pointer' }}
           onClick={() => {
-            handleClickOpen('Add', 0);
-            setDialogTitle('Add');
+            handleClickOpen('등록', 0);
+            setDialogTitle('등록');
           }}
         >
           <Grid container sx={{ height: '100%' }}>
@@ -417,13 +425,15 @@ const RolesCards = () => {
                     variant="contained"
                     sx={{ mb: 2.5, whiteSpace: 'nowrap' }}
                     onClick={() => {
-                      handleClickOpen('Add', 0);
-                      setDialogTitle('Add');
+                      handleClickOpen('등록', 0);
+                      setDialogTitle('등록');
                     }}
                   >
-                    Add Role
+                    등록하기
                   </Button>
-                  <Typography variant="body2">Add role, if it doesn't exist.</Typography>
+                  <Typography variant="body2">
+                    새로운 역할을 등록하시려면 등록하기 버튼을 눌러주세요.
+                  </Typography>
                 </Box>
               </CardContent>
             </Grid>
@@ -434,13 +444,27 @@ const RolesCards = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle sx={{ textAlign: 'center' }}>
             <Typography variant="h4" component="span">
-              {`${dialogTitle} Role`}
+              {`역할 ${dialogTitle}`}
             </Typography>
           </DialogTitle>
           <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
             <Box sx={{ my: 4 }}>
               <FormControl>
-                {dialogTitle != 'View' ? (
+                {dialogTitle === '수정' ? (
+                  <Controller
+                    name="roleName"
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value}
+                        label={`${title}`}
+                        onChange={onChange}
+                        error={Boolean()}
+                      />
+                    )}
+                  />
+                ) : dialogTitle === '등록' ? (
                   <Controller
                     name="roleName"
                     control={control}
@@ -448,179 +472,129 @@ const RolesCards = () => {
                     render={({ field: { value, onChange } }) => (
                       <TextField
                         value={value}
-                        label={`${title}`}
+                        label={'역할 이름'}
                         onChange={onChange}
                         error={Boolean(errors.roleName)}
-                        defaultValue={`${title}`}
-                        placeholder="Enter Role Name"
                       />
                     )}
                   />
-                ) : (
+                ) : dialogTitle === '보기' || dialogTitle === '수정' ? (
                   <Typography variant="h6">{title}</Typography>
-                )}
-                {errors.roleName && (
+                ) : null}
+                {dialogTitle === '등록' && errors.roleName && (
                   <FormHelperText sx={{ color: 'error.main' }}>
-                    Please enter a valid role name
+                    역할 이름을 입력해 주세요.
                   </FormHelperText>
                 )}
               </FormControl>
             </Box>
 
-            {/* {dialogTitle != 'View' ? (
-              <Typography variant="h6">Role Permissions</Typography>
-            ) : (
-              <Typography variant="h6">{title}</Typography>
-            )} */}
             <TableContainer>
               <Table size="small">
-                {dialogTitle === 'View' && getData === true ? (
+                {dialogTitle === '보기' && getData === true ? (
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ pl: '0 !important' }}>
                         <Box
                           sx={{
                             display: 'flex',
-                            fontSize: '0.875rem',
+                            fontSize: '0.85rem',
                             alignItems: 'center',
                             textTransform: 'capitalize',
                           }}
                         >
-                          Permission Name
+                          권한 이름
                         </Box>
                       </TableCell>
-                      <TableCell>Grant Type</TableCell>
-                      <TableCell>Register Date</TableCell>
-                      <TableCell>Update Date</TableCell>
+                      <TableCell colSpan={4}>권한 종류</TableCell>
                     </TableRow>
                   </TableHead>
                 ) : null}
-                {dialogTitle === 'View' && getData === true ? (
+
+                {dialogTitle === '보기' && getData === true ? (
                   <TableBody>
-                    <TableRow sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
-                      <TableCell>{viewData.P_display_name}</TableCell>
-                      <TableCell>
-                        {`${viewData.RP_grant_type}` === '0'
-                          ? 'Write'
-                          : `${viewData.RP_grant_type}` === '1'
-                          ? 'Read'
-                          : `${viewData.RP_grant_type}` === '2'
-                          ? 'Update'
-                          : `${viewData.RP_grant_type}` === '3'
-                          ? 'Delete'
-                          : null}
-                      </TableCell>
-                      {`${viewData.RP_reg_date}` !== null ? (
-                        <TableCell>
-                          {moment(`${viewData.RP_reg_date}`).format('YYYY-MM-DD HH:mm')}
-                        </TableCell>
-                      ) : null}
-                      {`${viewData.RP_update_date}` !== null ? (
-                        <TableCell>
-                          {moment(`${viewData.RP_update_date}`).format('YYYY-MM-DD HH:mm')}
-                        </TableCell>
-                      ) : null}
-                    </TableRow>
+                    {viewData.map((data: any, index: number) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                        >
+                          <TableCell>{data.display_name}</TableCell>
+
+                          {dataList.map((list, dataListIndex) => (
+                            <TableCell key={dataListIndex}>
+                              <FormGrantLabel
+                                label={list.type}
+                                value={list.value}
+                                isChecked={isCheckedGrantType(data.grant_type_list, list.value)}
+                              />
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
-                ) : dialogTitle === 'View' ? (
+                ) : dialogTitle === '보기' ? (
                   <Typography variant="h6">등록된 정보가 없습니다.</Typography>
                 ) : null}
-                {dialogTitle != 'View' ? (
+
+                {dialogTitle === '수정' || dialogTitle === '등록' ? (
                   <TableBody>
-                    {
-                      permissionData.map((i, index: number) => {
-                        return (
-                          <TableRow
-                            key={index}
-                            sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                    {permissionData.map((i, index: number) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
+                        >
+                          <TableCell
+                            sx={{
+                              fontWeight: 600,
+                              color: (theme) => `${theme.palette.text.primary} !important`,
+                            }}
                           >
-                            <TableCell
-                              sx={{
-                                fontWeight: 600,
-                                color: (theme) => `${theme.palette.text.primary} !important`,
-                              }}
-                            >
-                              {i.displayName}
-                            </TableCell>
-                            <TableCell>
-                              {dataList.map((list) => (
-                                <FormControlLabel
-                                  name="grantType"
-                                  control={
-                                    <Checkbox
-                                      size="small"
-                                      onChange={(e) =>
-                                        onCheckedType(e.target.checked, e.target.value, i)
-                                      }
-                                    />
-                                  }
-                                  key={list.value}
-                                  label={list.type}
-                                  value={list.value}
-                                />
-                              ))}
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
+                            {i.displayName}
+                          </TableCell>
 
-                      // permissionData.map((i, index: number) => {
-                      //   return (
-                      //     <TableRow
-                      //       onClick={(event) => handleClick(event, i.permissionId)}
-                      //       key={index}
-                      //       sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
-                      //     >
-                      //       <TableCell
-                      //         sx={{
-                      //           fontWeight: 600,
-                      //           color: (theme) => `${theme.palette.text.primary} !important`,
-                      //         }}
-                      //       >
-                      //         {i.displayName}
-                      //       </TableCell>
-
-                      //       <TableCell>
-                      //         {dataList.map((list) => (
-                      //           <FormControlLabel
-                      //             name="grantType"
-                      //             control={
-                      //               <Checkbox
-                      //                 size="small"
-                      //                 onChange={(e) =>
-                      //                   onCheckedType(e.target.checked, e.target.value)
-                      //                 }
-                      //               />
-                      //             }
-                      //             key={list.value}
-                      //             label={list.type}
-                      //             value={list.value}
-                      //           />
-                      //         ))}
-                      //       </TableCell>
-                      //     </TableRow>
-                      //   );
-                      // })
-                    }
+                          <TableCell key={index}>
+                            {dataList.map((list) => (
+                              <FormControlLabel
+                                name="grantType"
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    onChange={(e) =>
+                                      onCheckedType(e.target.checked, e.target.value, i)
+                                    }
+                                  />
+                                }
+                                key={list.value}
+                                label={list.type}
+                                value={list.value}
+                              />
+                            ))}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 ) : null}
               </Table>
             </TableContainer>
           </DialogContent>
           <DialogActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
-            {dialogTitle != 'View' ? (
+            {dialogTitle != '보기' ? (
               <Box className="demo-space-x">
                 <Button size="large" type="submit" variant="contained">
-                  Submit
+                  등록
                 </Button>
                 <Button size="large" color="secondary" variant="outlined" onClick={handleClose}>
-                  Discard
+                  취소
                 </Button>
               </Box>
             ) : (
               <Box className="demo-space-x">
                 <Button size="large" variant="outlined" onClick={handleClose}>
-                  Discard
+                  확인
                 </Button>
               </Box>
             )}

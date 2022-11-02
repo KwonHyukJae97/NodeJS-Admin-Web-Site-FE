@@ -33,11 +33,9 @@ const Home = () => {
     } else {
       router.replace('/login');
     }
-  });
-
-  // }, [])
+  }, [auth, router])
 
   return <Spinner />;
-};
+}
 
 export default Home;

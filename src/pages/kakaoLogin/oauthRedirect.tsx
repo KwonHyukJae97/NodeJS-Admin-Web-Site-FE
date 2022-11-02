@@ -29,7 +29,6 @@ const OauthRedirect = () => {
   });
 
   const getBody = (code: any) => {
-    /* eslint-disable @typescript-eslint/no-var-requires */
     const qs = require('qs');
     const body = qs.stringify({
       grant_type: 'authorization_code',

@@ -16,6 +16,9 @@ export type UsersType = {
   contact: string
   nickname: string
   username: string
+
+  // Table 컴포넌트에서 발생하는 에러 처리를 위해 임시로 name 필드 추가
+  name: string
   currentPlan: string
   avatarColor?: ThemeColor
 }
