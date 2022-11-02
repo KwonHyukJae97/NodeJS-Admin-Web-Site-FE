@@ -136,6 +136,7 @@ interface FormData {
   gender: string;
   companyName: string;
   companyCode: number;
+
   // division: boolean;
 }
 
@@ -156,18 +157,23 @@ const KakaoRegister = (params: any) => {
     //카카오에서 가져옴
     name: name,
     phone: '',
+
     //카카오에서 가져옴
     nickname: nickname,
     birth: '',
+
     //카카오에서 가져옴
     gender: gender,
+
     //카카오에서 가져옴
     snsId: snsId,
     terms: false,
+
     // snsType: '',
     snsToken: snsToken,
     companyName: '',
     companyCode: null,
+
     // division: '',
   };
 
@@ -192,6 +198,7 @@ const KakaoRegister = (params: any) => {
   const theme = useTheme();
 
   const auth = useAuth();
+
   // const { register } = useAuth()
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
@@ -410,6 +417,7 @@ const KakaoRegister = (params: any) => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.snsId)}
+
                       // placeholder="user"
                     />
                   )}
@@ -432,6 +440,7 @@ const KakaoRegister = (params: any) => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
+
                       // placeholder="01012345678"
                       error={Boolean(errors.name)}
                     />
@@ -478,6 +487,7 @@ const KakaoRegister = (params: any) => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.nickname)}
+
                       // placeholder="user"
                     />
                   )}
@@ -500,6 +510,7 @@ const KakaoRegister = (params: any) => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.gender)}
+
                       // placeholder="user"
                     />
                   )}
