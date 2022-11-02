@@ -103,7 +103,7 @@ const AuthProvider = ({ children }: Props) => {
       }
     };
     initAuth();
-  }, []);
+  });
 
   // } []);
 

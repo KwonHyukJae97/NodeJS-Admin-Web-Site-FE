@@ -2,6 +2,7 @@ import axios from 'axios';
 import { ReactNode, useEffect } from 'react';
 import BlankLayout from 'src/@core/layouts/BlankLayout';
 import { useAuth } from 'src/hooks/useAuth';
+import qs from 'qs';
 
 const OauthRedirect = () => {
   const auth = useAuth();
@@ -27,8 +28,6 @@ const OauthRedirect = () => {
   });
 
   const getBody = (code: any) => {
-    /* eslint-disable @typescript-eslint/no-var-requires */
-    const qs = require('qs');
     const body = qs.stringify({
       grant_type: 'authorization_code',
       client_id: `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`,
