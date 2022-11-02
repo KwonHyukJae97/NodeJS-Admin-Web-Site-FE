@@ -10,7 +10,7 @@ import Divider from "@mui/material/Divider";
 // 목록 페이지 헤더 컴포넌트 (왼쪽 정렬 + 카드 영역 외부에서 사용시)
 const PageLeftOutHeader = (props: PageLeftHeaderProps) => {
   // ** Props
-  const {title, subtitle, maincategory, subcategory} = props
+  const {title, maincategory, subcategory} = props
 
   return (
     <Grid item xs={12}>

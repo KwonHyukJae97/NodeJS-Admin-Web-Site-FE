@@ -6,7 +6,7 @@ import PageLeftOutHeader from "../../../../../@core/components/page-left-out-hea
 
 // ** Demo Components Imports
 import TableSearchHeader from "../../../../../views/board/list/TableSearchHeader";
-import {DataGrid, GridRowId} from "@mui/x-data-grid";
+import {DataGrid} from "@mui/x-data-grid";
 import {boardData, BoardType} from "../../../../../types/apps/userTypes";
 import Box from "@mui/material/Box";
 import CustomChip from "../../../../../@core/components/mui/chip";
@@ -93,7 +93,8 @@ const RolesComponent = () => {
   // ** State
   const [value, setValue] = useState<string>('')
   const [pageSize, setPageSize] = useState<number>(10)
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
+
+  // const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
 
   const handleFilter = useCallback((val: string) => {
     setValue(val)
@@ -119,7 +120,8 @@ const RolesComponent = () => {
             pageSize={Number(pageSize)}
             rowsPerPageOptions={[10, 25, 50]}
             sx={{'& .MuiDataGrid-columnHeaders': {borderRadius: 0}}}
-            onSelectionModelChange={rows => setSelectedRows(rows)}
+
+            // onSelectionModelChange={rows => setSelectedRows(rows)}
             onPageSizeChange={newPageSize => setPageSize(newPageSize)}
           />
         </Card>

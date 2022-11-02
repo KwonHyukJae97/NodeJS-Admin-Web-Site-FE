@@ -11,16 +11,20 @@ const FooterContent = () => {
   function loginWithKakao() {
     const CLIENT_ID = '214f882001474304a397de3fa79c9de0'
     const REDIRECT_URI = 'http://localhost:3002/kakaoLogin/oauthRedirect'
+
     // const REDIRECT_URI = `${process.env.REACT_APP_REDIRECT_URI}`
     // const CLIENT_ID = `${process.env.REACT_APP_KAKAO_KEY}`
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`
+
     // const test = window.location.href(KAKAO_AUTH_URL)
     // const test = window.location.replace(KAKAO_AUTH_URL)
     window.location.href = KAKAO_AUTH_URL
+
     // console.log('test', test)
     // console.log('test11', KAKAO_AUTH_URL)
   }
-  return (
+  
+return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography sx={{ mr: 2 }}>
         {`© ${new Date().getFullYear()}, Made with2 `}

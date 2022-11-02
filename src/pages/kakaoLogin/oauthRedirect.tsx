@@ -35,7 +35,8 @@ const OauthRedirect = () => {
       client_id: '214f882001474304a397de3fa79c9de0',
       code: code,
     });
-    return body;
+    
+return body;
   };
 
   const getKakaoToken = async (body: any) => {
@@ -54,7 +55,8 @@ const OauthRedirect = () => {
 
     if (response.status === 200) {
       const kakaoAccessToken = response.data.access_token;
-      return kakaoAccessToken;
+      
+return kakaoAccessToken;
     }
 
     return null;

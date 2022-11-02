@@ -34,6 +34,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
           sx={{
             mb: 2,
             padding: '0.55rem 0.2rem 0.55rem 0.8rem',
+
             // pt: 2.5,
             // pb: 2,
             // pl: 4,

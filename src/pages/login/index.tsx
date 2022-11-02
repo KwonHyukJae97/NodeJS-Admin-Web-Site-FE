@@ -1,9 +1,8 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react';
+import {MouseEvent, ReactNode, useState} from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
-import KakaoLogin from 'react-kakao-login';
 
 // ** MUI Components
 // import Alert from '@mui/material/Alert'
@@ -14,15 +13,15 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
-import Box, { BoxProps } from '@mui/material/Box';
+import Box, {BoxProps} from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { styled, useTheme } from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
-import Typography, { TypographyProps } from '@mui/material/Typography';
-import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
+import Typography, {TypographyProps} from '@mui/material/Typography';
+import MuiFormControlLabel, {FormControlLabelProps} from '@mui/material/FormControlLabel';
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google';
@@ -31,16 +30,17 @@ import Twitter from 'mdi-material-ui/Twitter';
 import Facebook from 'mdi-material-ui/Facebook';
 import EyeOutline from 'mdi-material-ui/EyeOutline';
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline';
+
 // ** Third Party Imports
 import * as yup from 'yup';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import {Controller, useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
 
 // ** Hooks
-import { useAuth } from 'src/hooks/useAuth';
+import {useAuth} from 'src/hooks/useAuth';
 
 // import useBgColor from 'src/@core/hooks/useBgColor'
-import { useSettings } from 'src/@core/hooks/useSettings';
+import {useSettings} from 'src/@core/hooks/useSettings';
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig';
@@ -111,6 +111,7 @@ const schema = yup.object().shape({
 const defaultValues = {
   id: 'admin223',
   password: '12341234',
+
   // id: 'super',
   // password: 'admin0000'
 };
@@ -169,9 +170,11 @@ const LoginPage = () => {
   function loginWithKakao() {
     const CLIENT_ID = '214f882001474304a397de3fa79c9de0';
     const REDIRECT_URI = 'http://localhost:3002/kakaoLogin/oauthRedirect';
+
     // const REDIRECT_URI = `${process.env.REACT_APP_REDIRECT_URI}`
     // const CLIENT_ID = `${process.env.REACT_APP_KAKAO_KEY}`
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
     // const test = window.location.replace(KAKAO_AUTH_URL)
     window.location.href = KAKAO_AUTH_URL;
   }

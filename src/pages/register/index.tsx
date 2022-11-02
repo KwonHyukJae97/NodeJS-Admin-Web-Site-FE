@@ -170,6 +170,7 @@ const Register = () => {
     gender: yup.string().required(),
     companyName: yup.string().required(),
     companyCode: yup.number().required(),
+
     // roleId: yup.string().required(),
     // isSuper: yup.string().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),

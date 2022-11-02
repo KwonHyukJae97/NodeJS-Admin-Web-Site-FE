@@ -25,6 +25,7 @@ const users: UserDataType[] = [
   //   email: 'client@materialize.com'
   // }
 ]
+
 //
 // // ! These two secrets should be in .env file and not in any other file
 // const jwtConfig = {
