@@ -45,8 +45,8 @@ import {ThemeColor} from 'src/@core/layouts/types'
 import {boardData, BoardType, UsersType} from 'src/types/apps/userTypes'
 
 // ** Custom Components Imports
-import PageCenterHeader from "../../../../@core/components/page-center-header";
-import TableSearchHeader from "../../../../views/board/list/TableSearchHeader";
+import TableSearchHeader from "../../../../../views/board/list/TableSearchHeader";
+import PageLeftInHeader from "../../../../../@core/components/page-left-in-header";
 
 interface UserRoleType {
   [key: string]: ReactElement
@@ -255,6 +255,7 @@ const columns = [
   },
 ]
 
+// 공지사항 목록 B안 페이지
 const UserList = () => {
   // ** State
   const [role, setRole] = useState<string>('')
@@ -300,11 +301,11 @@ const UserList = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <PageCenterHeader
-            title={'회원사용 공지사항'}
+          <PageLeftInHeader
+            title={'본사용 공지사항'}
             subtitle={'TenPick의 이벤트 및 업데이트 정보 등 다양한 소식을 알려드립니다.'}
             maincategory={'공지사항'}
-            subcategory={'회원사용'}
+            subcategory={'본사용'}
           />
           <TableSearchHeader value={value} handleFilter={handleFilter}/>
           <DataGrid

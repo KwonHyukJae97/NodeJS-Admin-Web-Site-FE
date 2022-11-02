@@ -10,19 +10,25 @@ import Typography from "@mui/material/Typography";
 import CustomChip from "../../../../../@core/components/mui/chip";
 import Button from "@mui/material/Button";
 
-// 공지사항 상세 B안 페이지
+// 공지사항 상세 B-1안 페이지
 const FormLayouts = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <Box sx={{ mr:14, ml:14, mt: 10, display:'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Typography variant='subtitle1' sx={{ fontWeight: 600 }}>
-              본사용 공지사항
-            </Typography>
-            <Typography variant='body2' sx={{ fontWeight: 500 }}>
-              공지사항 {'>'} 본사용
-            </Typography>
+
+          <Box sx={{ mt: 10, ml: 14, display:'flex', alignItems: 'center' }}>
+            <Box>
+              <Typography variant='subtitle1' sx={{ fontWeight: 600 }}>본사용 공지사항</Typography>
+            </Box>
+            <Divider sx={{ ml: 3, mr: 3, borderLeftWidth: 'unset', height: 16}} />
+            <Box sx={{ display: 'flex'}}>
+              <Typography variant='body2'>공지사항</Typography>
+              <Box sx={{ ml: 1.2, mr: 1.2}}>
+                <Typography variant='body2'>{'>'}</Typography>
+              </Box>
+              <Typography variant='body2'>본사용</Typography>
+            </Box>
           </Box>
 
           <Divider sx={{ ml: 12, mr: 12, borderBottomWidth: 'unset' }} />

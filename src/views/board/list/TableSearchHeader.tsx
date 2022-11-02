@@ -21,7 +21,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
   const { handleFilter, value } = props
 
   return (
-    <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between'}}>
+    <Box sx={{ p: 5, pb: 3, mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between'}}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center'}} >
         <TextField
           size='small'

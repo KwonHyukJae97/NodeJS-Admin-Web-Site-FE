@@ -262,25 +262,29 @@ const navigation = (): VerticalNavItemsType => {
       icon: FormSelect,
       children: [
         {
-          title: '본사용',
-          path: '/apps/notice'
-        },
-        {
-          title: '회원사용',
-          path: '/board/notice/list'
-        },
-        {
-          title: '사용자용',
-          path: '/apps/notice/view'
+          title: '목록(A안)',
+          path: '/board/notice/list/a'
         },
         {
           title: '상세(A안)',
           path: '/board/notice/detail/a'
         },
         {
+          title: '목록(B안)',
+          path: '/board/notice/list/b'
+        },
+        {
           title: '상세(B안)',
           path: '/board/notice/detail/b'
-        }
+        },
+        {
+          title: '목록(B-1안)',
+          path: '/board/notice/list/b-1'
+        },
+        {
+          title: '상세(B-1안)',
+          path: '/board/notice/detail/b-1'
+        },
       ]
     },
     {
