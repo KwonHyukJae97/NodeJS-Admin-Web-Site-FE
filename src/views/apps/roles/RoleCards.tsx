@@ -29,7 +29,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { DeleteOutline } from 'mdi-material-ui';
 import { IconButton } from '@mui/material';
-import { deepPurple } from '@mui/material/colors';
+import { blue } from '@mui/material/colors';
 
 // ** Third Party Imports
 import { Controller, useForm } from 'react-hook-form';
@@ -70,9 +70,9 @@ const FormGrantLabel = ({ label, value, isChecked }: any) => {
           defaultChecked={isChecked}
           disabled
           sx={{
-            color: deepPurple[400],
+            color: blue[400],
             '&.Mui-checked': {
-              color: deepPurple[400],
+              color: blue[400],
             },
           }}
         />
@@ -129,6 +129,7 @@ const RolesCards = () => {
   const handleClose = () => {
     setOpen(false);
     setValue('roleName', '');
+    setViewData([]);
   };
 
   // 권한 타입 checkBox 처리
@@ -284,6 +285,7 @@ const RolesCards = () => {
     }
   };
 
+  // 권한에 따른 역할 상세정보 체크박스 활성화 표시
   const isCheckedGrantType = (receiveGrantTypeList: [], grantType: string) => {
     const filterLength = receiveGrantTypeList.filter((receiveGrantType: { grant_type: string }) => {
       return receiveGrantType.grant_type == grantType;
@@ -511,8 +513,14 @@ const RolesCards = () => {
                   </TableHead>
                 ) : null}
 
-                {dialogTitle === '보기' && getData === true ? (
+                {dialogTitle === '수정' || (dialogTitle === '보기' && getData === true) ? (
                   <TableBody>
+                    {dialogTitle === '수정' ? (
+                      <Typography align="inherit" variant="h6">
+                        등록된 역할 정보 :{' '}
+                      </Typography>
+                    ) : null}
+
                     {viewData.map((data: any, index: number) => {
                       return (
                         <TableRow
@@ -533,6 +541,9 @@ const RolesCards = () => {
                         </TableRow>
                       );
                     })}
+                    <TableRow>
+                      <TableCell colSpan={5} />
+                    </TableRow>
                   </TableBody>
                 ) : dialogTitle === '보기' ? (
                   <Typography variant="h6">등록된 정보가 없습니다.</Typography>
@@ -555,7 +566,7 @@ const RolesCards = () => {
                             {i.displayName}
                           </TableCell>
 
-                          <TableCell key={index}>
+                          <TableCell key={index} colSpan={4}>
                             {dataList.map((list) => (
                               <FormControlLabel
                                 name="grantType"
