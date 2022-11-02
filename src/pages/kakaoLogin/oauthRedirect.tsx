@@ -26,7 +26,7 @@ const OauthRedirect = () => {
       }
     }
     getTest();
-  }, []);
+  });
 
   const getBody = (code: any) => {
     const qs = require('qs');
@@ -35,8 +35,8 @@ const OauthRedirect = () => {
       client_id: `${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}`,
       code: code,
     });
-    
-return body;
+
+    return body;
   };
 
   const getKakaoToken = async (body: any) => {
@@ -55,8 +55,8 @@ return body;
 
     if (response.status === 200) {
       const kakaoAccessToken = response.data.access_token;
-      
-return kakaoAccessToken;
+
+      return kakaoAccessToken;
     }
 
     return null;

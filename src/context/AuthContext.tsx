@@ -22,8 +22,8 @@ import {
   ErrCallbackType,
   UserDataType,
   NaverRegisterParams,
+  GoogleRegisterParams,
 } from './types';
-import { PhoneReturnOutline } from 'mdi-material-ui';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -35,11 +35,13 @@ const defaultProvider: AuthValuesType = {
   login: () => Promise.resolve(),
   kakaoLogin: () => Promise.resolve(),
   naverLogin: () => Promise.resolve(),
+  googleLogin: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   setIsInitialized: () => Boolean,
   register: () => Promise.resolve(),
   kakaoRegister: () => Promise.resolve(),
   naverRegister: () => Promise.resolve(),
+  googleRegister: () => Promise.resolve(),
 };
 
 const AuthContext = createContext(defaultProvider);
@@ -103,6 +105,8 @@ const AuthProvider = ({ children }: Props) => {
     initAuth();
   }, []);
 
+  // } []);
+
   // 로그인 요청 시, 실행
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     axios
@@ -151,12 +155,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('params!!', params);
 
     try {
-      const resData = await axios.post(`${apiConfig.apiEndpoint}/auth/kakao`, params, {
+      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/kakao`, params, {
         withCredentials: true,
       });
-      const data = resData.data;
 
-      if (resData.data.loginSuccess == true) {
+      // const data = responseData.data;
+
+      if (responseData.data.loginSuccess == true) {
         const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
@@ -200,17 +205,70 @@ const AuthProvider = ({ children }: Props) => {
     }
   };
 
-  //네이버 로그인 요청시 실행
+  //구글 로그인 요청 시 실행
+  const handleGoogleLogin = async (params: any, errorCallback?: ErrCallbackType) => {
+    console.log('구글 params', params);
+
+    try {
+      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/google`, params, {
+        withCredentials: true,
+      });
+
+      // const data = responseData.data;
+
+      if (responseData.data.loginSuccess == true) {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          withCredentials: true,
+        });
+        const returnUrl = router.query.returnUrl;
+        console.log('네이버 사용자 정보 조회 성공 시 응답', res);
+
+        const user: UserDataType = {
+          accountId: res.data.accountId,
+          id: res.data.id,
+          name: res.data.name,
+          email: res.data.email,
+          nickname: res.data.nickname,
+          avatar: null,
+        };
+
+        setUser(user);
+        await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+        await router.replace(redirectURL as string);
+      } else {
+        console.log('loginFailed!');
+        console.log('param.email', params.snsId);
+        console.log('param.token', params.resGoogleAccessToken);
+
+        await router.replace({
+          pathname: '/googleRegister',
+          query: {
+            snsId: params.snsId,
+            snsToken: params.resGoogleAccessToken,
+          },
+        });
+      }
+    } catch (err) {
+      console.log(errorCallback);
+      console.log(err);
+    }
+  };
+
+  //네이버 로그인 요청 시 실행
   const handleNaverLogin = async (params: any, errorCallback?: ErrCallbackType) => {
     console.log('네이버 params !', params);
 
     try {
-      const resData = await axios.post(`${apiConfig.apiEndpoint}/auth/naver`, params, {
+      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/naver`, params, {
         withCredentials: true,
       });
-      const data = resData.data;
 
-      if (resData.data.loginSuccess == true) {
+      // const data = responseData.data;
+
+      if (responseData.data.loginSuccess == true) {
         const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
@@ -283,6 +341,7 @@ const AuthProvider = ({ children }: Props) => {
       console.log(errorCallback);
       console.log(err);
     }
+
     // axios
     //   .post(authConfig.registerEndpoint, params)
     //   .then((res) => {
@@ -335,6 +394,7 @@ const AuthProvider = ({ children }: Props) => {
       console.log(errorCallback);
       console.log(err);
     }
+
     // axios
     //   .post(authConfig.kakaoRegisterEndpoint, params)
     //   .then((res) => {
@@ -404,6 +464,43 @@ const AuthProvider = ({ children }: Props) => {
     }
   };
 
+  //구글 2차 정보 가입 요청 시 실행
+  const handleGoogleRegister = async (
+    params: GoogleRegisterParams,
+    errorCallback?: ErrCallbackType,
+  ) => {
+    try {
+      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params);
+      if (res.data.error) {
+        if (errorCallback) errorCallback(res.data.error);
+      } else {
+        const returnUrl = router.query.returnUrl;
+        console.log('returnUrl', returnUrl);
+
+        console.log('사용자 정보 조회 성공 시, 응답', res);
+
+        const user: UserDataType = {
+          accountId: res.data.accountId,
+          id: res.data.id,
+          name: res.data.name,
+          email: res.data.email,
+          nickname: res.data.nickname,
+          avatar: null,
+        };
+
+        setUser(user);
+        window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+        router.replace(redirectURL as string);
+      }
+    } catch (err) {
+      console.log(errorCallback);
+      console.log(err);
+    }
+  };
+
   const values = {
     user,
     loading,
@@ -414,10 +511,12 @@ const AuthProvider = ({ children }: Props) => {
     login: handleLogin,
     kakaoLogin: handleKakaoLogin,
     naverLogin: handleNaverLogin,
+    googleLogin: handleGoogleLogin,
     logout: handleLogout,
     register: handleRegister,
     kakaoRegister: handleKakaoRegister,
     naverRegister: handleNaverRegister,
+    googleRegister: handleGoogleRegister,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

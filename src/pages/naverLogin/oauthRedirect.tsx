@@ -24,9 +24,10 @@ const OauthRedirect = () => {
       }
     }
     getTest();
-  }, []);
+  });
 
   const getBody = (code: any) => {
+    /* eslint-disable @typescript-eslint/no-var-requires */
     const qs = require('qs');
     const body = qs.stringify({
       grant_type: 'authorization_code',
@@ -35,6 +36,7 @@ const OauthRedirect = () => {
       code: code,
       state: encodeURI(`${process.env.NEXT_PUBLIC_NAVER_STATE_STRING}`),
     });
+
     return body;
   };
 
@@ -54,8 +56,10 @@ const OauthRedirect = () => {
 
     if (response.status === 200) {
       const naverAccessToken = response.data.access_token;
+
       return naverAccessToken;
     }
+
     return null;
   };
 
@@ -118,6 +122,7 @@ const OauthRedirect = () => {
 
       auth.naverLogin(naverUserInfo);
     }
+
     return null;
   };
 

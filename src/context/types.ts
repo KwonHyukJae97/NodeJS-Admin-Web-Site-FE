@@ -52,6 +52,19 @@ export type NaverRegisterParams = {
   companyCode: number;
 };
 
+//구글 2차정보 데이터 정의
+export type GoogleRegisterParams = {
+  name: string;
+  phone: string;
+  nickname: string;
+  birth: string;
+  gender: string;
+  snsId: string;
+  snsToken: string;
+  companyName: string;
+  companyCode: number;
+};
+
 // export type UserDataType = {
 //   id: number
 //   role: string
@@ -83,7 +96,9 @@ export type AuthValuesType = {
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
   kakaoLogin: (params: any) => void;
   naverLogin: (params: any) => void;
+  googleLogin: (params: any) => void;
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void;
   kakaoRegister: (params: KakaoRegisterParams, errorCallback?: ErrCallbackType) => void;
   naverRegister: (params: NaverRegisterParams, errorCallback?: ErrCallbackType) => void;
+  googleRegister: (params: NaverRegisterParams, errorCallback?: ErrCallbackType) => void;
 };

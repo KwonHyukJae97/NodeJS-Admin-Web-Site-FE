@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react';
+import { useState, ReactNode } from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
@@ -24,10 +24,6 @@ import Typography, {TypographyProps} from '@mui/material/Typography';
 import MuiFormControlLabel, {FormControlLabelProps} from '@mui/material/FormControlLabel';
 
 // ** Icons Imports
-import Google from 'mdi-material-ui/Google';
-import Github from 'mdi-material-ui/Github';
-import Twitter from 'mdi-material-ui/Twitter';
-import Facebook from 'mdi-material-ui/Facebook';
 import EyeOutline from 'mdi-material-ui/EyeOutline';
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline';
 
@@ -180,6 +176,16 @@ const LoginPage = () => {
     const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${CLIENT_ID}&state=${STATE_STRING}&redirect_uri=${CALLBACK_URL}`;
     console.log(NAVER_AUTH_URL);
     window.location.href = NAVER_AUTH_URL;
+  }
+
+  //구글 로그인 버튼 클릭 시 실행
+  function loginWithGoogle() {
+    const CLIENT_ID = `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`;
+    const REDIRECT_URI = `${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}`;
+
+    //scope=email => 이메일 값. scope=profile => 이름
+    const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?scope=email&response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
+    window.location.href = GOOGLE_AUTH_URL;
   }
 
   return (
@@ -430,8 +436,8 @@ const LoginPage = () => {
                 </Typography>
               </Box>
               <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* <Link href="/" passHref>
+              {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}> */}
+              {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
@@ -439,7 +445,7 @@ const LoginPage = () => {
                     <Facebook sx={{ color: '#497ce2' }} />
                   </IconButton>
                 </Link> */}
-                {/* <Link href="/" passHref>
+              {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
@@ -447,7 +453,7 @@ const LoginPage = () => {
                     <Twitter sx={{ color: '#1da1f2' }} />
                   </IconButton>
                 </Link> */}
-                {/* <Link href="/" passHref>
+              {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
@@ -460,7 +466,7 @@ const LoginPage = () => {
                     />
                   </IconButton>
                 </Link> */}
-                {/* <Link href="/" passHref>
+              {/* <Link href="/" passHref>
                   <IconButton
                     component="a"
                     onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
@@ -468,14 +474,24 @@ const LoginPage = () => {
                     <Google sx={{ color: '#db4437' }} />
                   </IconButton>
                 </Link> */}
-                {/* <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider> */}
+              {/* <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider> */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
                 <img
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
                   src="/images/avatars/kakao.png"
+
                   // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                   width="170"
                 />
+
                 <img
                   onClick={() => loginWithNaver()}
                   alt={'naver-login'}
@@ -483,6 +499,28 @@ const LoginPage = () => {
                   width="150"
                 />
               </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <img
+                  onClick={() => loginWithGoogle()}
+                  alt={'google-login'}
+                  src="/images/avatars/google.png"
+                  width="160"
+                />
+                <img
+                  onClick={() => loginWithGoogle()}
+                  alt={'apple-login'}
+                  src="/images/avatars/apple.png"
+                  width="160"
+                />
+              </Box>
+              {/* </Box> */}
             </form>
           </BoxWrapper>
         </Box>
