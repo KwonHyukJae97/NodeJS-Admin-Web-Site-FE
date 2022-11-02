@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState, Fragment, MouseEvent } from 'react';
+import { ReactNode, Fragment, MouseEvent } from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
@@ -10,15 +10,12 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import Box, { BoxProps } from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled, useTheme } from '@mui/material/styles';
 import FormHelperText from '@mui/material/FormHelperText';
-import InputAdornment from '@mui/material/InputAdornment';
 import Typography, { TypographyProps } from '@mui/material/Typography';
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
 
@@ -27,8 +24,6 @@ import Google from 'mdi-material-ui/Google';
 import Github from 'mdi-material-ui/Github';
 import Twitter from 'mdi-material-ui/Twitter';
 import Facebook from 'mdi-material-ui/Facebook';
-import EyeOutline from 'mdi-material-ui/EyeOutline';
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline';
 
 // ** Third Party Imports
 import * as yup from 'yup';
@@ -48,6 +43,7 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import { useRouter } from 'next/router';
+import { FormLabel, Radio, RadioGroup } from '@mui/material';
 
 // const defaultValues = {
 //   //카카오에서 가져옴
@@ -135,11 +131,13 @@ interface FormData {
   snsToken: string;
   gender: string;
   companyName: string;
+  radio: string;
   companyCode: number;
+
   // division: boolean;
 }
 
-const KakaoRegister = (params: any) => {
+const KakaoRegister = () => {
   // ** States
   // const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -156,18 +154,24 @@ const KakaoRegister = (params: any) => {
     //카카오에서 가져옴
     name: name,
     phone: '',
+
     //카카오에서 가져옴
     nickname: nickname,
     birth: '',
+
     //카카오에서 가져옴
     gender: gender,
+
     //카카오에서 가져옴
     snsId: snsId,
     terms: false,
+
     // snsType: '',
     snsToken: snsToken,
     companyName: '',
+    radio: '',
     companyCode: null,
+
     // division: '',
   };
 
@@ -192,6 +196,7 @@ const KakaoRegister = (params: any) => {
   const theme = useTheme();
 
   const auth = useAuth();
+
   // const { register } = useAuth()
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
@@ -249,7 +254,11 @@ const KakaoRegister = (params: any) => {
         setError('phone', {
           type: 'manual',
           message: '중복된 전화번호 입니다.',
-        });
+        }),
+          setError('companyName', {
+            type: 'manual',
+            message: '중복된 회원사명 입니다.',
+          });
       },
     );
   };
@@ -410,6 +419,7 @@ const KakaoRegister = (params: any) => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.snsId)}
+
                       // placeholder="user"
                     />
                   )}
@@ -432,6 +442,7 @@ const KakaoRegister = (params: any) => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
+
                       // placeholder="01012345678"
                       error={Boolean(errors.name)}
                     />
@@ -478,6 +489,7 @@ const KakaoRegister = (params: any) => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.nickname)}
+
                       // placeholder="user"
                     />
                   )}
@@ -489,6 +501,30 @@ const KakaoRegister = (params: any) => {
                 )}
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
+                <FormLabel>성별</FormLabel>
+                <Controller
+                  name="gender"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <RadioGroup row {...field} aria-label="gender" name="validation-basic-radio">
+                      <FormControlLabel
+                        value="0"
+                        label="남"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                      <FormControlLabel
+                        value="1"
+                        label="여"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="gender"
                   control={control}
@@ -509,7 +545,7 @@ const KakaoRegister = (params: any) => {
                     {errors.gender.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="birth"
@@ -556,6 +592,35 @@ const KakaoRegister = (params: any) => {
                 )}
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
+                <FormLabel>회원사코드</FormLabel>
+                <Controller
+                  name="companyCode"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <RadioGroup
+                      row
+                      {...field}
+                      aria-label="companyCode"
+                      name="validation-basic-radio"
+                    >
+                      <FormControlLabel
+                        value="1"
+                        label="기업"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                      <FormControlLabel
+                        value="2"
+                        label="기관"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="companyCode"
                   control={control}
@@ -576,7 +641,7 @@ const KakaoRegister = (params: any) => {
                     {errors.companyCode.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
               {/* <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="snsType"

@@ -52,7 +52,8 @@ export default NextAuth({
 
         if (res.status === 201) {
           console.log(credentialsInfo)
-          return credentialsInfo;
+          
+return credentialsInfo;
 
         } else {
           return null;

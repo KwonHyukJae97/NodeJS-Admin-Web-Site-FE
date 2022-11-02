@@ -1,14 +1,14 @@
 // ** React Imports
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 // ** Next Imports
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 // ** Spinner Import
-import Spinner from 'src/@core/components/spinner'
+import Spinner from 'src/@core/components/spinner';
 
 // ** Hook Imports
-import { useAuth } from 'src/hooks/useAuth'
+import { useAuth } from 'src/hooks/useAuth';
 
 /**
  *  Set Home URL based on User Roles
@@ -22,20 +22,22 @@ import { useAuth } from 'src/hooks/useAuth'
 // 홈 화면 실행
 const Home = () => {
   // ** Hooks
-  const auth = useAuth()
-  const router = useRouter()
+  const auth = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     // 사용자 정보가 있을 경우, 페이지 이동 처리
     if (auth.user) {
-      router.replace('/dashboards/crm')
-      console.log('auth.user 정보', auth.user)
+      router.replace('/dashboards/crm');
+      console.log('auth.user 정보', auth.user);
     } else {
-      router.replace('/login')
+      router.replace('/login');
     }
-  }, [])
+  });
 
-  return <Spinner />
-}
+  // }, [])
 
-export default Home
+  return <Spinner />;
+};
+
+export default Home;

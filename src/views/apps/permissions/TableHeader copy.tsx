@@ -27,6 +27,7 @@ const TableHeader = (props: TableHeaderProps) => {
   const { value, handleFilter } = props;
 
   const defaultTypes = ['CREATE', 'READ', 'UPDATE', 'DELETE'];
+
   // ** State
   const [open, setOpen] = useState<boolean>(false),
     [checked, setChecked] = useState([]),

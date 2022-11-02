@@ -31,6 +31,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: HomeOutline,
       badgeContent: 'new',
       badgeColor: 'error',
+
       // children: [
       //   {
       //     title: 'CRM',
@@ -99,6 +100,7 @@ const navigation = (): VerticalNavItemsType => {
         },
       ]
     },
+
     // {
     //   title: 'User',
     //   icon: AccountOutline,
@@ -293,6 +295,7 @@ const navigation = (): VerticalNavItemsType => {
         }
       ]
     },
+
     // {
     //   title: 'Typography',
     //   icon: FormatLetterCase,

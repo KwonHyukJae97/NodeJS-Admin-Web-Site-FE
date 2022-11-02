@@ -26,15 +26,17 @@ const OauthRedirect = () => {
       }
     }
     getTest();
-  }, []);
+  });
 
   const getBody = (code: any) => {
+    /* eslint-disable @typescript-eslint/no-var-requires */
     const qs = require('qs');
     const body = qs.stringify({
       grant_type: 'authorization_code',
       client_id: `${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}`,
       code: code,
     });
+
     return body;
   };
 
@@ -54,6 +56,7 @@ const OauthRedirect = () => {
 
     if (response.status === 200) {
       const kakaoAccessToken = response.data.access_token;
+
       return kakaoAccessToken;
     }
 

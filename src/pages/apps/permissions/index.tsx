@@ -75,6 +75,7 @@ const defaultColumns = [
     headerName: 'Name',
     renderCell: ({ row }: CellType) => <Typography>{row.menuName}</Typography>,
   },
+
   // {
   //   flex: 0.35,
   //   minWidth: 280,

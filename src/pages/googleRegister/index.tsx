@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState, Fragment, MouseEvent } from 'react';
+import React, { ReactNode, useState, Fragment, MouseEvent } from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
@@ -10,15 +10,12 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import Box, { BoxProps } from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled, useTheme } from '@mui/material/styles';
 import FormHelperText from '@mui/material/FormHelperText';
-import InputAdornment from '@mui/material/InputAdornment';
 import Typography, { TypographyProps } from '@mui/material/Typography';
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
 
@@ -27,8 +24,6 @@ import Google from 'mdi-material-ui/Google';
 import Github from 'mdi-material-ui/Github';
 import Twitter from 'mdi-material-ui/Twitter';
 import Facebook from 'mdi-material-ui/Facebook';
-import EyeOutline from 'mdi-material-ui/EyeOutline';
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline';
 
 // ** Third Party Imports
 import * as yup from 'yup';
@@ -42,18 +37,29 @@ import themeConfig from 'src/configs/themeConfig';
 import BlankLayout from 'src/@core/layouts/BlankLayout';
 
 // ** Hooks
-// import { useAuth } from 'src/hooks/useAuth'
+import { useAuth } from 'src/hooks/useAuth';
 import { useSettings } from 'src/@core/hooks/useSettings';
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
-import { useAuth } from 'src/hooks/useAuth';
+import { useRouter } from 'next/router';
+import { FormLabel, Radio, RadioGroup } from '@mui/material';
 
 // const defaultValues = {
-//   id: '',
-//   username: '',
-//   password: '',
+//   //카카오에서 가져옴
+//   name: '',
+//   phone: '',
+//   //카카오에서 가져옴
+//   nickname: '',
+//   birth: '',
+//   //카카오에서 가져옴
+//   gender: '',
+//   //카카오에서 가져옴
+//   snsId: '',
 //   terms: false,
+//   snsType: '',
+//   snsToken: '',
+//   division: '',
 // };
 
 // interface FormData {
@@ -114,36 +120,51 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   },
 }));
 
-const defaultValues = {
-  id: '',
-  password: '',
-  name: '',
-  email: '',
-  phone: '',
-  nickname: '',
-  birth: '',
-  gender: '',
-  companyName: '',
-  companyCode: null,
-  terms: false,
-};
-
+//카카오 2차 정보 추가
 interface FormData {
-  id: string;
-  password: string;
   name: string;
-  email: string;
   phone: string;
   nickname: string;
   birth: string;
+  snsId: string;
+  snsType: string;
+  snsToken: string;
   gender: string;
   companyName: string;
+  redio: string;
   companyCode: number;
+
+  // division: boolean;
 }
 
-const Register = () => {
+// const GoogleRegister = (params: any) => {
+const GoogleRegister = () => {
   // ** States
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  // const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  //   const { name, nickname, gender, snsId } = router.query;
+
+  const { snsId, snsToken } = router.query;
+
+  const defaultValues = {
+    name: '',
+    phone: '',
+    nickname: '',
+    birth: '',
+    gender: '',
+    snsId: snsId,
+    terms: false,
+
+    // snsType: '',
+    snsToken: snsToken,
+    companyName: '',
+    radio: '',
+    companyCode: null,
+
+    // division: '',
+  };
 
   // ** Hooks
   const theme = useTheme();
@@ -157,19 +178,14 @@ const Register = () => {
   // ** Vars
   const { skin } = settings;
   const schema = yup.object().shape({
-    id: yup.string().min(8).required(),
-    password: yup.string().min(8).required(),
-    name: yup.string().min(3).required(),
-    email: yup.string().email().required(),
-    phone: yup.string().min(11).required(),
-    nickname: yup.string().min(3).required(),
-    birth: yup.string().min(3).required(),
-    gender: yup.string().required(),
-    companyName: yup.string().required(),
-    companyCode: yup.number().required(),
-
-    // roleId: yup.string().required(),
-    // isSuper: yup.string().required(),
+    // name: yup.string().min(1).required(),
+    // phone: yup.string().min(1).required(),
+    // nickname: yup.string().min(1).required(),
+    // birth: yup.string().min(1).required(),
+    // snsId: yup.string().min(1).required(),
+    // snsType: yup.string().min(1).required(),
+    // snsToken: yup.string().min(1).required(),
+    companyCode: yup.number().min(1).required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
@@ -184,56 +200,28 @@ const Register = () => {
     resolver: yupResolver(schema),
   });
 
-  // const onSubmit = (data: FormData) => {
-  //   const { id, username, password } = data
-  //   register({ id, username, password }, err => {
-  //     if (err.id) {
-  //       setError('id', {
-  //         type: 'manual',
-  //         message: err.id
-  //       })
-  //     }
-  //     if (err.username) {
-  //       setError('username', {
-  //         type: 'manual',
-  //         message: err.username
-  //       })
-  //     }
-  //   })
-  // }
-
+  //화면 넘기기까지 완료 -> 데이터 입력후 가입 버튼 누르면 동작을 안하는데 동작하게끔 해야함. 동작만 하면 처리 과정 콘솔찍고 확인하기
   const onSubmit = (data: FormData) => {
-    const { id, password, name, email, phone, nickname, birth, gender, companyName, companyCode } =
+    const { name, phone, nickname, birth, snsId, snsToken, gender, companyName, companyCode } =
       data;
-    auth.register(
-      {
-        id,
-        password,
-        name,
-        email,
-        phone,
-        nickname,
-        birth,
-        gender,
-        companyName,
-        companyCode,
-      },
+    auth.googleRegister(
+      { name, phone, nickname, birth, snsId, snsToken, gender, companyName, companyCode },
       () => {
-        setError('id', {
+        setError('snsId', {
           type: 'manual',
           message: '중복된 아이디 입니다.',
         }),
-          setError('email', {
+          setError('phone', {
             type: 'manual',
-            message: '중복된 이메일 입니다.',
-          });
-        setError('phone', {
-          type: 'manual',
-          message: '중복된 전화번호 입니다.',
-        }),
+            message: '중복된 전화번호 입니다.',
+          }),
           setError('nickname', {
             type: 'manual',
             message: '중복된 닉네임 입니다.',
+          }),
+          setError('companyName', {
+            type: 'manual',
+            message: '중복된 회원사명 입니다.',
           });
       },
     );
@@ -380,63 +368,29 @@ const Register = () => {
               <TypographyStyled variant="h5">
                 열Pick 로그인을 위한 필수 정보를 입력해주세요!
               </TypographyStyled>
-              <Typography variant="body2">아래 내용을 입력해주세요!</Typography>
+              <Typography variant="body2">아래 내용 입력!</Typography>
             </Box>
             <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name="id"
+                  name="snsId"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       value={value}
-                      label="아이디"
+                      label="구글아이디"
                       onBlur={onBlur}
                       onChange={onChange}
-                      error={Boolean(errors.id)}
-                      placeholder="tenpick123"
+                      error={Boolean(errors.snsId)}
+
+                      // placeholder="user"
                     />
                   )}
                 />
-                {errors.id && (
-                  <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>
-                )}
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <InputLabel htmlFor="auth-login-v2-password" error={Boolean(errors.password)}>
-                  비밀번호
-                </InputLabel>
-                <Controller
-                  name="password"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <OutlinedInput
-                      value={value}
-                      label="비밀번호"
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      id="auth-login-v2-password"
-                      error={Boolean(errors.password)}
-                      type={showPassword ? 'text' : 'password'}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            edge="end"
-                            onMouseDown={(e) => e.preventDefault()}
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                  )}
-                />
-                {errors.password && (
+                {errors.snsId && (
                   <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.password.message}
+                    {errors.snsId.message}
                   </FormHelperText>
                 )}
               </FormControl>
@@ -452,7 +406,8 @@ const Register = () => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
-                      placeholder="johndoe"
+
+                      // placeholder="01012345678"
                       error={Boolean(errors.name)}
                     />
                   )}
@@ -465,30 +420,6 @@ const Register = () => {
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name="email"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      autoFocus
-                      value={value}
-                      onBlur={onBlur}
-                      label="이메일"
-                      onChange={onChange}
-                      placeholder="johndoe"
-                      error={Boolean(errors.email)}
-                    />
-                  )}
-                />
-                {errors.email && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.email.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
-
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
                   name="phone"
                   control={control}
                   rules={{ required: true }}
@@ -499,7 +430,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="전화번호"
                       onChange={onChange}
-                      placeholder="01011112222"
+                      placeholder="ex) 01012345678"
                       error={Boolean(errors.phone)}
                     />
                   )}
@@ -510,7 +441,6 @@ const Register = () => {
                   </FormHelperText>
                 )}
               </FormControl>
-
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="nickname"
@@ -518,13 +448,13 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
-                      onBlur={onBlur}
                       label="닉네임"
+                      onBlur={onBlur}
                       onChange={onChange}
-                      placeholder="johndoe123"
                       error={Boolean(errors.nickname)}
+
+                      // placeholder="user"
                     />
                   )}
                 />
@@ -536,19 +466,65 @@ const Register = () => {
               </FormControl>
 
               <FormControl fullWidth sx={{ mb: 4 }}>
+                <FormLabel>성별</FormLabel>
+                <Controller
+                  name="gender"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <RadioGroup row {...field} aria-label="gender" name="validation-basic-radio">
+                      <FormControlLabel
+                        value="0"
+                        label="남"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                      <FormControlLabel
+                        value="1"
+                        label="여"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
+
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="gender"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      value={value}
+                      label="성별"
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={Boolean(errors.gender)}
+                      // placeholder="user"
+                    />
+                  )}
+                />
+                {errors.gender && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.gender.message}
+                  </FormHelperText>
+                )}
+              </FormControl> */}
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="birth"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
-                      onBlur={onBlur}
                       label="생년월일"
+                      onBlur={onBlur}
                       onChange={onChange}
-                      placeholder="ex) 971113"
                       error={Boolean(errors.birth)}
+                      placeholder="ex) 971113"
                     />
                   )}
                 />
@@ -561,42 +537,17 @@ const Register = () => {
 
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name="gender"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      autoFocus
-                      value={value}
-                      onBlur={onBlur}
-                      label="성별"
-                      onChange={onChange}
-                      placeholder="ex) male"
-                      error={Boolean(errors.gender)}
-                    />
-                  )}
-                />
-                {errors.gender && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.gender.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
-
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
                   name="companyName"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
-                      onBlur={onBlur}
                       label="회원사명"
+                      onBlur={onBlur}
                       onChange={onChange}
-                      placeholder="companyName"
                       error={Boolean(errors.companyName)}
+                      placeholder="ex) 클라이교육"
                     />
                   )}
                 />
@@ -607,19 +558,48 @@ const Register = () => {
                 )}
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
+                <FormLabel>회원사코드</FormLabel>
+                <Controller
+                  name="companyCode"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <RadioGroup
+                      row
+                      {...field}
+                      aria-label="companyCode"
+                      name="validation-basic-radio"
+                    >
+                      <FormControlLabel
+                        value="1"
+                        label="기업"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                      <FormControlLabel
+                        value="2"
+                        label="기관"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
+
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="companyCode"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
-                      onBlur={onBlur}
                       label="회원사코드"
+                      onBlur={onBlur}
                       onChange={onChange}
-                      placeholder="ex) 기업일 경우 1, 기관일 경우 2"
                       error={Boolean(errors.companyCode)}
+                      placeholder="ex) 기업일 경우 1, 기관일 경우 2"
                     />
                   )}
                 />
@@ -628,8 +608,76 @@ const Register = () => {
                     {errors.companyCode.message}
                   </FormHelperText>
                 )}
+              </FormControl> */}
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="snsType"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="snsType"
+                      onChange={onChange}
+                      // placeholder="01012345678"
+                      error={Boolean(errors.snsType)}
+                    />
+                  )}
+                />
+                {errors.snsType && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.snsType.message}
+                  </FormHelperText>
+                )}
               </FormControl>
-
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="snsToken"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="SnsToken"
+                      onChange={onChange}
+                      // placeholder="01012345678"
+                      error={Boolean(errors.snsToken)}
+                    />
+                  )}
+                />
+                {errors.snsToken && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.snsToken.message}
+                  </FormHelperText>
+                )}
+              </FormControl> */}
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="division"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={value}
+                      onBlur={onBlur}
+                      label="division"
+                      onChange={onChange}
+                      // placeholder="01012345678"
+                      error={Boolean(errors.division)}
+                    />
+                  )}
+                />
+                {errors.division && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.division.message}
+                  </FormHelperText>
+                )}
+              </FormControl> */}
               <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
                 <Controller
                   name="terms"
@@ -750,8 +798,8 @@ const Register = () => {
   );
 };
 
-Register.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>;
+GoogleRegister.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>;
 
-Register.guestGuard = true;
+GoogleRegister.guestGuard = true;
 
-export default Register;
+export default GoogleRegister;
