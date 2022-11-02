@@ -81,7 +81,7 @@ const RolesCards = () => {
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ defaultValues: { roleName: '' } });
 
   // 버튼 열기
   const handleClickOpen = (action: string, roleId: number) => {
@@ -118,8 +118,14 @@ const RolesCards = () => {
   };
 
   const onSubmit = (data: any) => {
+    let getRoleName = data.roleName;
+    if (getRoleName === '') {
+      getRoleName = title;
+    } else {
+      getRoleName = data.roleName;
+    }
     const roleData = {
-      roleName: data.roleName,
+      roleName: getRoleName,
       roleDto: [],
     };
 
@@ -200,11 +206,11 @@ const RolesCards = () => {
           // TO DO : companyId 필터링적용 후 수정 필요
           companyId: 3,
         });
-        console.log(req);
         alert('등록이 완료 되었습니다.');
         location.reload();
       } catch (err) {
         console.log(err);
+        alert('등록에 실패하였습니다.');
       }
     }
   };
@@ -214,11 +220,11 @@ const RolesCards = () => {
     if (confirm('수정 하시겠습니까?')) {
       try {
         const req = await axios.patch(`http://localhost:3000/role/${roleId}`, roleData);
-        console.log(req);
         alert('수정이 완료 되었습니다.');
         location.reload();
       } catch (err) {
-        console.log(err);
+        console.log('err', err.response.data);
+        alert('수정에 실패 하였습니다.');
       }
     }
   };
@@ -413,15 +419,13 @@ const RolesCards = () => {
                   <Controller
                     name="roleName"
                     control={control}
-                    rules={{ required: true }}
+                    rules={{ required: false }}
                     render={({ field: { value, onChange } }) => (
                       <TextField
                         value={value}
                         label={`${title}`}
                         onChange={onChange}
-                        error={Boolean(errors.roleName)}
-                        defaultValue={`${title}`}
-                        placeholder="Enter Role Name"
+                        error={Boolean()}
                       />
                     )}
                   />
@@ -433,19 +437,18 @@ const RolesCards = () => {
                     render={({ field: { value, onChange } }) => (
                       <TextField
                         value={value}
-                        label={'Role Name'}
+                        label={'역할 이름'}
                         onChange={onChange}
                         error={Boolean(errors.roleName)}
-                        placeholder="Enter Role Name"
                       />
                     )}
                   />
                 ) : dialogTitle === '보기' || dialogTitle === '수정' ? (
                   <Typography variant="h6">{title}</Typography>
                 ) : null}
-                {errors.roleName && (
+                {dialogTitle === '등록' && errors.roleName && (
                   <FormHelperText sx={{ color: 'error.main' }}>
-                    Please enter a valid role name
+                    역할 이름을 입력해 주세요.
                   </FormHelperText>
                 )}
               </FormControl>
@@ -490,7 +493,7 @@ const RolesCards = () => {
                                     control={
                                       <Checkbox
                                         size="small"
-                                        defaultChecked
+                                        defaultChecked={true}
                                         disabled
                                         sx={{
                                           color: deepPurple[400],
@@ -503,8 +506,6 @@ const RolesCards = () => {
                                     label="등록"
                                     value={'0'}
                                   />
-                                ) : !`${grantType.grant_type}` ? (
-                                  <FormControlLabel disabled control={<Checkbox />} label="등록" />
                                 ) : null}
                                 {`${grantType.grant_type}` === '1' ? (
                                   <FormControlLabel
@@ -524,10 +525,7 @@ const RolesCards = () => {
                                     label="조회"
                                     value={'1'}
                                   />
-                                ) : !`${grantType.grant_type}` ? (
-                                  <FormControlLabel disabled control={<Checkbox />} label="조회" />
-                                ) : null}
-                                {`${grantType.grant_type}` === '2' ? (
+                                ) : `${grantType.grant_type}` === '2' ? (
                                   <FormControlLabel
                                     control={
                                       <Checkbox
@@ -545,8 +543,7 @@ const RolesCards = () => {
                                     label="수정"
                                     value={'2'}
                                   />
-                                ) : null}
-                                {`${grantType.grant_type}` === '3' ? (
+                                ) : `${grantType.grant_type}` === '3' ? (
                                   <FormControlLabel
                                     control={
                                       <Checkbox
