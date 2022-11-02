@@ -1,11 +1,11 @@
 // ** JWT import
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
 // ** Mock Adapter
-import mock from 'src/@fake-db/mock'
+import mock from 'src/@fake-db/mock';
 
 // ** Types
-import { UserDataType } from 'src/context/types'
+import { UserDataType } from 'src/context/types';
 
 const users: UserDataType[] = [
   {
@@ -14,7 +14,7 @@ const users: UserDataType[] = [
     password: 'admin',
     nickname: 'John Doe',
     name: 'johndoe',
-    email: 'admin@materialize.com'
+    email: 'admin@materialize.com',
   },
   {
     id: 2,
@@ -22,57 +22,57 @@ const users: UserDataType[] = [
     password: 'client',
     nickname: 'Jane Doe',
     name: 'janedoe',
-    email: 'client@materialize.com'
-  }
-]
+    email: 'client@materialize.com',
+  },
+];
 
 // ! These two secrets should be in .env file and not in any other file
 const jwtConfig = {
   secret: 'dd5f3089-40c3-403d-af14-d0c228b05cb4',
-  refreshTokenSecret: '7c4c1c50-3230-45bf-9eae-c9b2e401c767'
-}
+  refreshTokenSecret: '7c4c1c50-3230-45bf-9eae-c9b2e401c767',
+};
 
-mock.onPost('/jwt/login').reply(request => {
-  const { email, password } = JSON.parse(request.data)
+mock.onPost('/jwt/login').reply((request) => {
+  const { email, password } = JSON.parse(request.data);
 
   let error = {
-    email: ['Something went wrong']
-  }
+    email: ['Something went wrong'],
+  };
 
-  const user = users.find(u => u.email === email && u.password === password)
+  const user = users.find((u) => u.email === email && u.password === password);
 
   if (user) {
-    const accessToken = jwt.sign({ id: user.id }, jwtConfig.secret)
+    const accessToken = jwt.sign({ id: user.id }, jwtConfig.secret);
 
     const response = {
-      accessToken
-    }
+      accessToken,
+    };
 
-    return [200, response]
+    return [200, response];
   } else {
     error = {
-      email: ['email or Password is Invalid']
-    }
+      email: ['email or Password is Invalid'],
+    };
 
-    return [400, { error }]
+    return [400, { error }];
   }
-})
+});
 
-mock.onPost('/jwt/register').reply(request => {
+mock.onPost('/jwt/register').reply((request) => {
   if (request.data.length > 0) {
-    const { email, password, name } = JSON.parse(request.data)
-    const isEmailAlreadyInUse = users.find(user => user.email === email)
-    const isUsernameAlreadyInUse = users.find(user => user.name === name)
+    const { email, password, name } = JSON.parse(request.data);
+    const isEmailAlreadyInUse = users.find((user) => user.email === email);
+    const isUsernameAlreadyInUse = users.find((user) => user.name === name);
     const error = {
       email: isEmailAlreadyInUse ? 'This email is already in use.' : null,
-      name: isUsernameAlreadyInUse ? 'This name is already in use.' : null
-    }
+      name: isUsernameAlreadyInUse ? 'This name is already in use.' : null,
+    };
 
     if (!error.name && !error.email) {
-      const { length } = users
-      let lastIndex = 0
+      const { length } = users;
+      let lastIndex = 0;
       if (length) {
-        lastIndex = users[length - 1].id
+        lastIndex = users[length - 1].id;
       }
       const userData = {
         id: lastIndex + 1,
@@ -81,44 +81,44 @@ mock.onPost('/jwt/register').reply(request => {
         name,
         avatar: null,
         nickname: '',
-        role: 'admin'
-      }
+        role: 'admin',
+      };
 
-      users.push(userData)
+      users.push(userData);
 
-      const accessToken = jwt.sign({ id: userData.id }, jwtConfig.secret)
+      const accessToken = jwt.sign({ id: userData.id }, jwtConfig.secret);
 
-      const user = { ...userData }
-      delete user.password
+      const user = { ...userData };
+      delete user.password;
 
-      const response = { accessToken }
+      const response = { accessToken };
 
-      return [200, response]
+      return [200, response];
     }
 
-    return [200, { error }]
+    return [200, { error }];
   } else {
-    return [401, { error: 'Invalid Data' }]
+    return [401, { error: 'Invalid Data' }];
   }
-})
+});
 
-mock.onGet('/auth/me').reply(config => {
+mock.onGet('/auth/me').reply((config) => {
   // @ts-ignore
-  const token = config.headers.Authorization as string
+  const token = config.headers.Authorization as string;
 
   // get the decoded payload and header
-  const decoded = jwt.decode(token, { complete: true })
+  const decoded = jwt.decode(token, { complete: true });
 
   if (decoded) {
     // @ts-ignore
-    const { id: userId } = decoded.payload
+    const { id: userId } = decoded.payload;
 
-    const userData = JSON.parse(JSON.stringify(users.find((u: UserDataType) => u.id === userId)))
+    const userData = JSON.parse(JSON.stringify(users.find((u: UserDataType) => u.id === userId)));
 
-    delete userData.password
+    delete userData.password;
 
-    return [200, { userData }]
+    return [200, { userData }];
   } else {
-    return [401, { error: { error: 'Invalid User' } }]
+    return [401, { error: { error: 'Invalid User' } }];
   }
-})
+});

@@ -39,6 +39,7 @@ const TextField = styled(MuiTextField)<TextFieldProps>(({ theme }) => ({
   }
 }))
 
+// FAQ 헤더(검색창) 컴포넌트
 const FaqHeader = (props: Props) => {
   // ** Props
   const { searchTerm, setSearchTerm } = props
@@ -61,7 +62,7 @@ const FaqHeader = (props: Props) => {
         </Typography>
         <TextField
           value={searchTerm}
-          placeholder='Ask a question....'
+          placeholder='궁금한 키워드를 입력해보세요.'
           onChange={e => handleFaqFilter(e)}
           InputProps={{
             startAdornment: (

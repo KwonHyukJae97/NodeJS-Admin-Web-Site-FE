@@ -39,6 +39,7 @@ const StyledBox2 = styled(Box)<BoxProps>(({ theme }) => ({
   }
 }))
 
+// FAQ 푸터 컴포넌트
 const FaqFooter = () => {
   return (
     <Box sx={{ mt: theme => `${theme.spacing(12)} !important` }}>

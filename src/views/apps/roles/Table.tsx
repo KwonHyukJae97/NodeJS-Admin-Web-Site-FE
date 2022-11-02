@@ -8,7 +8,6 @@ import Link from 'next/link'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import { DataGrid } from '@mui/x-data-grid'
 import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
@@ -42,6 +41,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/roles/TableHeader'
+import TableStickyHeader from "../../table/mui/TableStickyHeader";
 
 interface UserRoleType {
   [key: string]: ReactElement
@@ -107,7 +107,7 @@ const columns = [
     field: 'nickname',
     headerName: 'User',
     renderCell: ({ row }: CellType) => {
-      const { id, nickname, name } = row
+      const { id, nickname, username } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -125,7 +125,7 @@ const columns = [
             </Link>
             <Link href={`/apps/user/view/${id}`} passHref>
               <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
-                @{name}
+                @{username}
               </Typography>
             </Link>
           </Box>
@@ -242,17 +242,7 @@ const UserList = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader plan={plan} value={value} handleFilter={handleFilter} handlePlanChange={handlePlanChange} />
-          <DataGrid
-            autoHeight
-            rows={store.data}
-            columns={columns}
-            checkboxSelection
-            pageSize={pageSize}
-            disableSelectionOnClick
-            rowsPerPageOptions={[10, 25, 50]}
-            onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-            sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-          />
+          <TableStickyHeader />
         </Card>
       </Grid>
     </Grid>

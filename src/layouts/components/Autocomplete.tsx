@@ -111,11 +111,11 @@ const defaultSuggestionsData: DefaultSuggestionsType[] = [
   {
     category: 'Apps & Pages',
     suggestions: [
-      {
-        suggestion: 'Calendar',
-        link: '/apps/calendar/',
-        icon: <CalendarBlank fontSize='small' sx={{ mr: 2.5, color: 'text.primary' }} />
-      },
+      // {
+      //   suggestion: 'Calendar',
+      //   link: '/apps/calendar/',
+      //   icon: <CalendarBlank fontSize='small' sx={{ mr: 2.5, color: 'text.primary' }} />
+      // },
       {
         suggestion: 'Invoice List',
         link: '/apps/invoice/list/',

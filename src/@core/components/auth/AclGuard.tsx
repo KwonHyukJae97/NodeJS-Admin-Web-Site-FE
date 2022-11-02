@@ -30,7 +30,7 @@ const AclGuard = (props: AclGuardProps) => {
   // ** Props
   const { aclAbilities, children, guestGuard } = props
 
-  const [ability, setAbility] = useState<AppAbility | undefined>(undefined)
+  const [ability, setAbility] = useState<AppAbility | undefined>()
 
   // ** Hooks
   const auth = useAuth()
@@ -42,8 +42,13 @@ const AclGuard = (props: AclGuardProps) => {
   }
 
   // User is logged in, build ability for the user based on his role
-  if (auth.user && auth.user.role && !ability) {
-    setAbility(buildAbilityFor(auth.user.role, aclAbilities.subject))
+  // if (auth.user && auth.user.role && !ability) {
+  //   setAbility(buildAbilityFor(auth.user.role, aclAbilities.subject))
+  // }
+
+  // 테스트용
+  if (auth.user && !ability) {
+    setAbility(buildAbilityFor('admin', 'manage'))
   }
 
   // Check the access of current user and render pages

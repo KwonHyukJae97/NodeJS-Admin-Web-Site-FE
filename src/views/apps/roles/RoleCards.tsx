@@ -34,6 +34,9 @@ import { deepPurple } from '@mui/material/colors';
 // ** Third Party Imports
 import { Controller, useForm } from 'react-hook-form';
 
+// ** Config
+import apiConfig from 'src/configs/api';
+
 // ** axios Imports
 import axios from 'axios';
 
@@ -55,6 +58,30 @@ interface permissionType {
   isDelete: boolean;
   grantType: string;
 }
+const arr: permissionType[] = [];
+
+// 권한에 따른 체크 박스 컴포넌트
+const FormGrantLabel = ({ label, value, isChecked }: any) => {
+  return (
+    <FormControlLabel
+      control={
+        <Checkbox
+          size="small"
+          defaultChecked={isChecked}
+          disabled
+          sx={{
+            color: deepPurple[400],
+            '&.Mui-checked': {
+              color: deepPurple[400],
+            },
+          }}
+        />
+      }
+      label={label}
+      value={value}
+    />
+  );
+};
 
 const RolesCards = () => {
   // ** States
@@ -124,7 +151,7 @@ const RolesCards = () => {
     } else {
       getRoleName = data.roleName;
     }
-    const roleData = {
+    const roleData: any = {
       roleName: getRoleName,
       roleDto: [],
     };
@@ -169,7 +196,7 @@ const RolesCards = () => {
   // 화면 이름(권한) 데이터 조회 API호출
   const getPermissionData = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/permission');
+      const res = await axios.get(`${apiConfig.apiEndpoint}/permission`);
       const permissionMap = new Map<number, permissionType>();
       res.data.forEach((permission: { displayName: string; permissionId: number }) => {
         if (!permissionMap.has(permission.permissionId)) {
@@ -199,7 +226,7 @@ const RolesCards = () => {
   const registerRole = async (roleData: any) => {
     if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.post('http://localhost:3000/role', {
+        const req = await axios.post(`${apiConfig.apiEndpoint}/role`, {
           roleName: roleData.roleName,
           roleDto: roleData.roleDto,
 
@@ -219,10 +246,10 @@ const RolesCards = () => {
   const updateRole = async (roleData: any, roleId: number) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`http://localhost:3000/role/${roleId}`, roleData);
+        const req = await axios.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, roleData);
         alert('수정이 완료 되었습니다.');
         location.reload();
-      } catch (err) {
+      } catch (err: any) {
         console.log('err', err.response.data);
         alert('수정에 실패 하였습니다.');
       }
@@ -234,7 +261,7 @@ const RolesCards = () => {
   const handleDeleteClick = async (roleId: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        await axios.delete(`http://localhost:3000/role/${roleId}`);
+        await axios.delete(`${apiConfig.apiEndpoint}/role/${roleId}`);
         alert('삭제가 완료 되었습니다.');
         location.reload();
       } catch (err) {
@@ -246,7 +273,7 @@ const RolesCards = () => {
   // 역할 상세 정보 조회 API호출
   const getRoleView = async (roleId: number) => {
     try {
-      const res = await axios.get(`http://localhost:3000/role/${roleId}`);
+      const res = await axios.get(`${apiConfig.apiEndpoint}/role/${roleId}`);
       setViewData(res.data);
       setGetData(true);
     } catch (err) {
@@ -257,10 +284,18 @@ const RolesCards = () => {
     }
   };
 
+  const isCheckedGrantType = (receiveGrantTypeList: [], grantType: string) => {
+    const filterLength = receiveGrantTypeList.filter((receiveGrantType: { grant_type: string }) => {
+      return receiveGrantType.grant_type == grantType;
+    }).length;
+
+    return filterLength > 0;
+  };
+
   //역할 리스트 조회 API호출
   useEffect(() => {
     axios
-      .get('http://localhost:3000/role')
+      .get(`${apiConfig.apiEndpoint}/role`)
       .then((res) => {
         const roleMap = new Map<number, CardDataType>();
         res.data.forEach((role: { roleName: string; roleId: any }) => {
@@ -485,86 +520,16 @@ const RolesCards = () => {
                           sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
                         >
                           <TableCell>{data.display_name}</TableCell>
-                          {data.grant_type_list.map((grantType: any, index: number) => {
-                            return (
-                              <TableCell key={index}>
-                                {`${grantType.grant_type}` === '0' ? (
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        size="small"
-                                        defaultChecked={true}
-                                        disabled
-                                        sx={{
-                                          color: deepPurple[400],
-                                          '&.Mui-checked': {
-                                            color: deepPurple[400],
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label="등록"
-                                    value={'0'}
-                                  />
-                                ) : null}
-                                {`${grantType.grant_type}` === '1' ? (
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        size="small"
-                                        defaultChecked
-                                        disabled
-                                        sx={{
-                                          color: deepPurple[400],
-                                          '&.Mui-checked': {
-                                            color: deepPurple[400],
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label="조회"
-                                    value={'1'}
-                                  />
-                                ) : `${grantType.grant_type}` === '2' ? (
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        size="small"
-                                        defaultChecked
-                                        disabled
-                                        sx={{
-                                          color: deepPurple[400],
-                                          '&.Mui-checked': {
-                                            color: deepPurple[400],
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label="수정"
-                                    value={'2'}
-                                  />
-                                ) : `${grantType.grant_type}` === '3' ? (
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        size="small"
-                                        defaultChecked
-                                        disabled
-                                        sx={{
-                                          color: deepPurple[400],
-                                          '&.Mui-checked': {
-                                            color: deepPurple[400],
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label="삭제"
-                                    value={'3'}
-                                  />
-                                ) : null}
-                              </TableCell>
-                            );
-                          })}
+
+                          {dataList.map((list, dataListIndex) => (
+                            <TableCell key={dataListIndex}>
+                              <FormGrantLabel
+                                label={list.type}
+                                value={list.value}
+                                isChecked={isCheckedGrantType(data.grant_type_list, list.value)}
+                              />
+                            </TableCell>
+                          ))}
                         </TableRow>
                       );
                     })}
