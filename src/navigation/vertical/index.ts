@@ -76,6 +76,10 @@ const navigation = (): VerticalNavItemsType => {
           path: '/board/notice/list',
         },
         {
+          title: '등록',
+          path: '/board/notice/add',
+        },
+        {
           title: '목록(A안)',
           path: '/board/notice/list/a',
         },

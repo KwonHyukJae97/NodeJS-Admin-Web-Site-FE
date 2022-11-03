@@ -1,3 +1,6 @@
+// ** Next Import
+import Link from 'next/link';
+
 // ** MUI Imports
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -77,11 +80,17 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
           onClick={handleSearchKeyword}
         />
       </Box>
-      <Button sx={{ mr: 10, mb: 2, padding: '10px 18px' }} variant="contained" startIcon={<Plus />}>
-        <Typography variant="subtitle2" style={{ color: 'white', fontWeight: 700 }}>
-          등록
-        </Typography>
-      </Button>
+      <Link href="/board/notice/add" passHref>
+        <Button
+          sx={{ mr: 10, mb: 2, padding: '10px 18px' }}
+          variant="contained"
+          startIcon={<Plus />}
+        >
+          <Typography variant="subtitle2" style={{ color: 'white', fontWeight: 700 }}>
+            등록
+          </Typography>
+        </Button>
+      </Link>
     </Box>
   );
 };
