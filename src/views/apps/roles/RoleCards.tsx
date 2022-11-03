@@ -61,14 +61,14 @@ interface permissionType {
 const arr: permissionType[] = [];
 
 // 권한에 따른 체크 박스 컴포넌트
-const FormGrantLabel = ({ label, value, isChecked }: any) => {
+const FormGrantLabel = ({ label, value, isChecked, isDisabled }: any) => {
   return (
     <FormControlLabel
       control={
         <Checkbox
           size="small"
           defaultChecked={isChecked}
-          disabled
+          disabled={isDisabled}
           sx={{
             color: blue[400],
             '&.Mui-checked': {
@@ -513,14 +513,8 @@ const RolesCards = () => {
                   </TableHead>
                 ) : null}
 
-                {dialogTitle === '수정' || (dialogTitle === '보기' && getData === true) ? (
+                {dialogTitle === '보기' && getData === true ? (
                   <TableBody>
-                    {dialogTitle === '수정' ? (
-                      <Typography align="inherit" variant="h6">
-                        등록된 역할 정보 :{' '}
-                      </Typography>
-                    ) : null}
-
                     {viewData.map((data: any, index: number) => {
                       return (
                         <TableRow
@@ -535,23 +529,19 @@ const RolesCards = () => {
                                 label={list.type}
                                 value={list.value}
                                 isChecked={isCheckedGrantType(data.grant_type_list, list.value)}
+                                isDisabled={true}
                               />
                             </TableCell>
                           ))}
                         </TableRow>
                       );
                     })}
-                    <TableRow>
-                      <TableCell colSpan={5} />
-                    </TableRow>
                   </TableBody>
-                ) : dialogTitle === '보기' ? (
-                  <Typography variant="h6">등록된 정보가 없습니다.</Typography>
                 ) : null}
 
-                {dialogTitle === '수정' || dialogTitle === '등록' ? (
+                {dialogTitle === '등록' || dialogTitle === '수정' ? (
                   <TableBody>
-                    {permissionData.map((i, index: number) => {
+                    {permissionData.map((permission, index: number) => {
                       return (
                         <TableRow
                           key={index}
@@ -563,7 +553,7 @@ const RolesCards = () => {
                               color: (theme) => `${theme.palette.text.primary} !important`,
                             }}
                           >
-                            {i.displayName}
+                            {permission.displayName}
                           </TableCell>
 
                           <TableCell key={index} colSpan={4}>
@@ -574,13 +564,14 @@ const RolesCards = () => {
                                   <Checkbox
                                     size="small"
                                     onChange={(e) =>
-                                      onCheckedType(e.target.checked, e.target.value, i)
+                                      onCheckedType(e.target.checked, e.target.value, permission)
                                     }
                                   />
                                 }
                                 key={list.value}
                                 label={list.type}
                                 value={list.value}
+                                sx={{ paddingInline: 3, marginInlineStart: 3 }}
                               />
                             ))}
                           </TableCell>
