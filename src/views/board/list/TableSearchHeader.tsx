@@ -13,16 +13,23 @@ import { ChangeEvent } from 'react';
 interface TableSearchHeaderProps {
   searchKeyword: string;
   setSearchKeyword: (value: string) => void;
+  setSearchAction: (value: string) => void;
 }
 
 // Notice 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
   // ** Props
-  const { searchKeyword, setSearchKeyword } = props;
+  const { searchKeyword, setSearchKeyword, setSearchAction } = props;
 
-  // 검색 버튼 클릭 시, 발생되는 이벤트 함수
-  const handleNoticeFilter = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+  // 입력창에 데이터 입력 시, searchKeyword 상태 변경하는 함수
+  const handleChangeKeyword = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setSearchKeyword(e.target.value);
+  };
+
+  // 검색 버튼 클릭 시, searchAction 상태 변경하는 함수
+  // 해당 함수를 탈 때마다 notice/list의 useEffect 실행됨
+  const handleSearchKeyword = () => {
+    setSearchAction(searchKeyword);
   };
 
   return (
@@ -48,7 +55,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
             '& .MuiInputBase-root': { borderTopRightRadius: 0, borderBottomRightRadius: 0 },
           }}
           placeholder="검색어를 입력해주세요."
-          onChange={(e) => handleNoticeFilter(e)}
+          onChange={(e) => handleChangeKeyword(e)}
         />
         <Button
           sx={{
@@ -67,6 +74,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
             minWidth: auto,
           }}
           startIcon={<Magnify color="primary" fontSize="large" />}
+          onClick={handleSearchKeyword}
         />
       </Box>
       <Button sx={{ mr: 10, mb: 2, padding: '10px 18px' }} variant="contained" startIcon={<Plus />}>

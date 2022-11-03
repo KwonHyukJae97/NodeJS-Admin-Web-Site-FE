@@ -1,5 +1,5 @@
 // ** React Imports
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // ** Next Import
 import { GetStaticProps, InferGetStaticPropsType } from 'next/types';
@@ -116,11 +116,12 @@ export const getDateTime = (utcTime: Date) => {
 // 공지사항 목록 페이지
 const NoticeList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) => {
   // ** State
+  const [data, setData] = useState<BoardType[] | null>(null);
   const [pageSize, setPageSize] = useState<number>(10);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [data, setData] = useState<BoardType[] | null>(null);
+  const [searchAction, setSearchAction] = useState<string>('');
 
-  // API로 조회한 데이터 리스트를 타입에 맞게 할당
+  // API로 조회한 데이터 리스트를 타입에 맞게 할당(SSR)
   const noticeData: BoardType[] = apiData.map((data: any, idx: number) => {
     const notice: BoardType = {
       id: apiData.length - idx,
@@ -134,6 +135,7 @@ const NoticeList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>)
   });
 
   // ** Hooks
+  // 검색어가 있는 상태에서 검색 버튼을 클릭할 때마다 화면 그려주도록 작성
   useEffect(() => {
     // 조회 권한과 역할에 대한 정보 임시 부여
     const role = '본사 관리자';
@@ -173,10 +175,13 @@ const NoticeList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>)
     // 검색어가 있을 경우
     if (searchKeyword !== '') {
       getSearchKeyword();
+
+      // 검색 결과 조회 후, 입력값 리셋
+      setSearchKeyword('');
     } else {
       setData(noticeData);
     }
-  }, [searchKeyword]);
+  }, [searchAction]);
 
   // 게시글이 없을 경우 처리하는 컴포넌트
   const renderNoResult = (
@@ -204,8 +209,11 @@ const NoticeList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>)
             maincategory={'공지사항'}
             subcategory={'본사용'}
           />
-          <TableSearchHeader searchKeyword={searchKeyword} setSearchKeyword={setSearchKeyword} />
-
+          <TableSearchHeader
+            searchKeyword={searchKeyword}
+            setSearchKeyword={setSearchKeyword}
+            setSearchAction={setSearchAction}
+          />
           {data !== null ? (
             <DataGrid
               autoHeight
