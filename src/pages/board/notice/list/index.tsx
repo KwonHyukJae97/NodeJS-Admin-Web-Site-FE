@@ -1,5 +1,5 @@
 // ** React Imports
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 // ** Next Import
 import { GetStaticProps, InferGetStaticPropsType } from 'next/types';
@@ -22,6 +22,7 @@ import TableSearchHeader from '../../../../views/board/list/TableSearchHeader';
 import axios from 'axios';
 import apiConfig from '../../../../configs/api';
 import moment from 'moment';
+import { AlertCircleOutline } from 'mdi-material-ui';
 
 // 게시글 타입 정의
 interface BoardType {
@@ -115,8 +116,9 @@ export const getDateTime = (utcTime: Date) => {
 // 공지사항 목록 페이지
 const NoticeList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) => {
   // ** State
-  const [value, setValue] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(10);
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [data, setData] = useState<BoardType[] | null>(null);
 
   // API로 조회한 데이터 리스트를 타입에 맞게 할당
   const noticeData: BoardType[] = apiData.map((data: any, idx: number) => {
@@ -131,9 +133,66 @@ const NoticeList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>)
     return notice;
   });
 
-  const handleFilter = useCallback((val: string) => {
-    setValue(val);
-  }, []);
+  // ** Hooks
+  useEffect(() => {
+    // 조회 권한과 역할에 대한 정보 임시 부여
+    const role = '본사 관리자';
+    const noticeGrant = '0|1|2';
+
+    // 검색 결과에 대한 데이터 가져오는 함수
+    const getSearchKeyword = async () => {
+      try {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
+          withCredentials: true,
+          params: { role, noticeGrant, keyword: searchKeyword },
+        });
+
+        if (res.data && res.data.length) {
+          setData(
+            res.data.map((d: any, idx: number) => {
+              const notice: BoardType = {
+                id: res.data.length - idx,
+                isTop: d.isTop,
+                title: d.board.title,
+                viewCnt: d.board.viewCount,
+                regDate: getDateTime(d.board.regDate),
+              };
+
+              return notice;
+            }),
+          );
+        } else {
+          setData(null);
+        }
+      } catch (err) {
+        console.log(err);
+        setData(null);
+      }
+    };
+
+    // 검색어가 있을 경우
+    if (searchKeyword !== '') {
+      getSearchKeyword();
+    } else {
+      setData(noticeData);
+    }
+  }, [searchKeyword]);
+
+  // 게시글이 없을 경우 처리하는 컴포넌트
+  const renderNoResult = (
+    <Box
+      sx={{
+        p: 10,
+        m: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <AlertCircleOutline sx={{ mr: 2 }} />
+      <Typography variant="h6">해당 검색에 대한 게시글이 없습니다.</Typography>
+    </Box>
+  );
 
   return (
     <Grid container spacing={6}>
@@ -145,19 +204,23 @@ const NoticeList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>)
             maincategory={'공지사항'}
             subcategory={'본사용'}
           />
-          <TableSearchHeader value={value} handleFilter={handleFilter} />
-          <DataGrid
-            autoHeight
-            pagination
-            rows={noticeData}
-            columns={columns}
-            disableSelectionOnClick
-            pageSize={Number(pageSize)}
-            rowsPerPageOptions={[10, 25, 50]}
-            sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-            // onSelectionModelChange={rows => setSelectedRows(rows)}
-            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          />
+          <TableSearchHeader searchKeyword={searchKeyword} setSearchKeyword={setSearchKeyword} />
+
+          {data !== null ? (
+            <DataGrid
+              autoHeight
+              pagination
+              rows={data}
+              columns={columns}
+              disableSelectionOnClick
+              pageSize={Number(pageSize)}
+              rowsPerPageOptions={[10, 25, 50]}
+              sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            />
+          ) : (
+            renderNoResult
+          )}
         </Card>
       </Grid>
     </Grid>
