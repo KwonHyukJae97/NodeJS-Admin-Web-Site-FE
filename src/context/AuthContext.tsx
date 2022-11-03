@@ -154,9 +154,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('params!!', params);
 
     try {
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/kakao`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       // const data = responseData.data;
 
@@ -209,9 +213,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('구글 params', params);
 
     try {
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/google`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/google`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       // const data = responseData.data;
 
@@ -261,9 +269,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('네이버 params !', params);
 
     try {
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/naver`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       // const data = responseData.data;
 
@@ -363,12 +375,16 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params, {
+      await axios.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params, {
         withCredentials: true,
       });
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/kakao`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (responseData.data.loginSuccess == true) {
         const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
@@ -437,12 +453,16 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params, {
+      await axios.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params, {
         withCredentials: true,
       });
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/naver`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (responseData.data.loginSuccess == true) {
         const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
@@ -480,12 +500,16 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params, {
+      await axios.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params, {
         withCredentials: true,
       });
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/google`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/google`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (responseData.data.loginSuccess == true) {
         const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {

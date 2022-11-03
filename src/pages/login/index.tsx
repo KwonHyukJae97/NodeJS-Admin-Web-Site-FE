@@ -9,19 +9,17 @@ import Link from 'next/link';
 import MuiLink from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
-import Box, {BoxProps} from '@mui/material/Box';
+import Box, { BoxProps } from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import {styled, useTheme} from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
-import Typography, {TypographyProps} from '@mui/material/Typography';
-import MuiFormControlLabel, {FormControlLabelProps} from '@mui/material/FormControlLabel';
+import Typography, { TypographyProps } from '@mui/material/Typography';
 
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline';
@@ -29,14 +27,14 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline';
 
 // ** Third Party Imports
 import * as yup from 'yup';
-import {Controller, useForm} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 // ** Hooks
-import {useAuth} from 'src/hooks/useAuth';
+import { useAuth } from 'src/hooks/useAuth';
 
 // import useBgColor from 'src/@core/hooks/useBgColor'
-import {useSettings} from 'src/@core/hooks/useSettings';
+import { useSettings } from 'src/@core/hooks/useSettings';
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig';
@@ -90,12 +88,13 @@ const TypographyStyled = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: { marginTop: theme.spacing(8) },
 }));
 
-const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ theme }) => ({
-  '& .MuiFormControlLabel-label': {
-    fontSize: '0.875rem',
-    color: theme.palette.text.secondary,
-  },
-}));
+//RememberMe
+// const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ theme }) => ({
+//   '& .MuiFormControlLabel-label': {
+//     fontSize: '0.875rem',
+//     color: theme.palette.text.secondary,
+//   },
+// }));
 
 // 로그인 입력값에 대한 유효성 체크
 const schema = yup.object().shape({
@@ -320,9 +319,7 @@ const LoginPage = () => {
             </Box>
             <Box sx={{ mb: 6 }}>
               <TypographyStyled variant="h5">{`Welcome to ${themeConfig.templateName}! 👋🏻`}</TypographyStyled>
-              <Typography variant="body2">
-                Please sign-in to your account and start the adventure
-              </Typography>
+              <Typography variant="body2">로그인 후 이용해 주세요!</Typography>
             </Box>
             {/*<Alert icon={false} sx={{ py: 3, mb: 6, ...bgClasses.primaryLight, '& .MuiAlert-message': { p: 0 } }}>*/}
             {/*  <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>*/}
@@ -402,14 +399,14 @@ const LoginPage = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <FormControlLabel
+                {/* <FormControlLabel
                   label="Remember Me"
                   control={<Checkbox />}
                   sx={{ '& .MuiFormControlLabel-label': { color: 'text.primary' } }}
-                />
+                /> */}
                 <Link passHref href="/forgot-password">
                   <Typography component={MuiLink} variant="body2" sx={{ color: 'primary.main' }}>
-                    Forgot Password?
+                    비밀번호를 잊으셨나요?
                   </Typography>
                 </Link>
               </Box>
@@ -424,13 +421,11 @@ const LoginPage = () => {
                   justifyContent: 'center',
                 }}
               >
-                <Typography sx={{ mr: 2, color: 'text.secondary' }}>
-                  New on our platform?
-                </Typography>
+                <Typography sx={{ mr: 2, color: 'text.secondary' }}>계정이 없으신가요?</Typography>
                 <Typography>
                   <Link passHref href="/register">
                     <Typography component={MuiLink} sx={{ color: 'primary.main' }}>
-                      Create an account
+                      회원가입으로
                     </Typography>
                   </Link>
                 </Typography>
@@ -477,6 +472,7 @@ const LoginPage = () => {
               {/* <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider> */}
               <Box
                 sx={{
+                  mb: 5,
                   display: 'flex',
                   alignItems: 'center',
                   flexWrap: 'wrap',
@@ -489,14 +485,23 @@ const LoginPage = () => {
                   src="/images/avatars/kakao.png"
 
                   // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
-                  width="170"
+                  width="190"
                 />
-
+              </Box>
+              <Box
+                sx={{
+                  mb: 5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
                 <img
                   onClick={() => loginWithNaver()}
                   alt={'naver-login'}
                   src="/images/avatars/naver.png"
-                  width="150"
+                  width="185"
                 />
               </Box>
               <Box
@@ -511,13 +516,7 @@ const LoginPage = () => {
                   onClick={() => loginWithGoogle()}
                   alt={'google-login'}
                   src="/images/avatars/google.png"
-                  width="160"
-                />
-                <img
-                  onClick={() => loginWithGoogle()}
-                  alt={'apple-login'}
-                  src="/images/avatars/apple.png"
-                  width="160"
+                  width="190"
                 />
               </Box>
               {/* </Box> */}
