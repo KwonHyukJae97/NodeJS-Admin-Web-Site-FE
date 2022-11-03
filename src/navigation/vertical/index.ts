@@ -95,6 +95,10 @@ const navigation = (): VerticalNavItemsType => {
           title: '상세(B-1안)',
           path: '/board/notice/detail/b-1'
         },
+        {
+          title: '본사용',
+          path: '/board/notice/list'
+        },
       ]
     },
     {

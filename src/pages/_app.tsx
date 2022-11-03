@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 import Head from 'next/head'
 import { Router } from 'next/router'
 import type { NextPage } from 'next'
-import type { AppProps } from 'next/app'
+import type {AppContext, AppProps} from 'next/app'
 
 // ** Store Imports
 import { store } from 'src/store'

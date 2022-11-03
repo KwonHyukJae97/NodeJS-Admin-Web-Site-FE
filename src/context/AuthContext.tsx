@@ -103,9 +103,7 @@ const AuthProvider = ({ children }: Props) => {
       }
     };
     initAuth();
-  });
-
-  // } []);
+  }, []);
 
   // 로그인 요청 시, 실행
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
