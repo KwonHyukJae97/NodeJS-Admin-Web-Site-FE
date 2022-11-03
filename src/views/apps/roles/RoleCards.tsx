@@ -29,7 +29,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { DeleteOutline } from 'mdi-material-ui';
 import { IconButton } from '@mui/material';
-import { deepPurple } from '@mui/material/colors';
+import { blue } from '@mui/material/colors';
 
 // ** Third Party Imports
 import { Controller, useForm } from 'react-hook-form';
@@ -61,18 +61,18 @@ interface permissionType {
 const arr: permissionType[] = [];
 
 // 권한에 따른 체크 박스 컴포넌트
-const FormGrantLabel = ({ label, value, isChecked }: any) => {
+const FormGrantLabel = ({ label, value, isChecked, isDisabled }: any) => {
   return (
     <FormControlLabel
       control={
         <Checkbox
           size="small"
           defaultChecked={isChecked}
-          disabled
+          disabled={isDisabled}
           sx={{
-            color: deepPurple[400],
+            color: blue[400],
             '&.Mui-checked': {
-              color: deepPurple[400],
+              color: blue[400],
             },
           }}
         />
@@ -129,6 +129,7 @@ const RolesCards = () => {
   const handleClose = () => {
     setOpen(false);
     setValue('roleName', '');
+    setViewData([]);
   };
 
   // 권한 타입 checkBox 처리
@@ -284,6 +285,7 @@ const RolesCards = () => {
     }
   };
 
+  // 권한에 따른 역할 상세정보 체크박스 활성화 표시
   const isCheckedGrantType = (receiveGrantTypeList: [], grantType: string) => {
     const filterLength = receiveGrantTypeList.filter((receiveGrantType: { grant_type: string }) => {
       return receiveGrantType.grant_type == grantType;
@@ -527,6 +529,7 @@ const RolesCards = () => {
                                 label={list.type}
                                 value={list.value}
                                 isChecked={isCheckedGrantType(data.grant_type_list, list.value)}
+                                isDisabled={true}
                               />
                             </TableCell>
                           ))}
@@ -534,13 +537,11 @@ const RolesCards = () => {
                       );
                     })}
                   </TableBody>
-                ) : dialogTitle === '보기' ? (
-                  <Typography variant="h6">등록된 정보가 없습니다.</Typography>
                 ) : null}
 
-                {dialogTitle === '수정' || dialogTitle === '등록' ? (
+                {dialogTitle === '등록' || dialogTitle === '수정' ? (
                   <TableBody>
-                    {permissionData.map((i, index: number) => {
+                    {permissionData.map((permission, index: number) => {
                       return (
                         <TableRow
                           key={index}
@@ -552,10 +553,10 @@ const RolesCards = () => {
                               color: (theme) => `${theme.palette.text.primary} !important`,
                             }}
                           >
-                            {i.displayName}
+                            {permission.displayName}
                           </TableCell>
 
-                          <TableCell key={index}>
+                          <TableCell key={index} colSpan={4}>
                             {dataList.map((list) => (
                               <FormControlLabel
                                 name="grantType"
@@ -563,13 +564,14 @@ const RolesCards = () => {
                                   <Checkbox
                                     size="small"
                                     onChange={(e) =>
-                                      onCheckedType(e.target.checked, e.target.value, i)
+                                      onCheckedType(e.target.checked, e.target.value, permission)
                                     }
                                   />
                                 }
                                 key={list.value}
                                 label={list.type}
                                 value={list.value}
+                                sx={{ paddingInline: 3, marginInlineStart: 3 }}
                               />
                             ))}
                           </TableCell>
