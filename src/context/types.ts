@@ -79,6 +79,7 @@ export type GoogleRegisterParams = {
 export type UserDataType = {
   accountId: number;
   id: string;
+  snsId: string;
   name: string;
   email: string;
   nickname: string;

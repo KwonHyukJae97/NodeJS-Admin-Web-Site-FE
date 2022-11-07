@@ -80,6 +80,7 @@ const AuthProvider = ({ children }: Props) => {
             const user: UserDataType = {
               accountId: response.data.accountId,
               id: response.data.id,
+              snsId: response.data.snsId,
               name: response.data.name,
               email: response.data.email,
               nickname: response.data.nickname,
@@ -127,6 +128,7 @@ const AuthProvider = ({ children }: Props) => {
             const user: UserDataType = {
               accountId: response.data.accountId,
               id: response.data.id,
+              snsId: response.data.snsId,
               name: response.data.name,
               email: response.data.email,
               nickname: response.data.nickname,
@@ -176,6 +178,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -233,6 +236,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -289,6 +293,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -332,6 +337,7 @@ const AuthProvider = ({ children }: Props) => {
     setIsInitialized(false);
     window.localStorage.removeItem('userData');
     window.localStorage.removeItem(authConfig.storageTokenKeyName);
+    // window.localStorage.clear();
     router.push('/login');
   };
 
@@ -397,6 +403,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -475,6 +482,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -522,6 +530,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,

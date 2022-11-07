@@ -43,7 +43,9 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import { useAuth } from 'src/hooks/useAuth';
-import { FormLabel, Radio, RadioGroup } from '@mui/material';
+import { FormLabel, Grid, Radio, RadioGroup } from '@mui/material';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 // ** Styled Components
 const RegisterIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -107,7 +109,6 @@ const defaultValues = {
   gender: '',
   companyName: '',
   companyCode: null,
-
   // terms: false,
   radio: '',
 };
@@ -526,8 +527,64 @@ const Register = () => {
                   </FormHelperText>
                 )}
               </FormControl>
-
               <FormControl fullWidth sx={{ mb: 4 }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <Controller
+                    name="birth"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange, onBlur } }) => (
+                      <TextField
+                        value={value}
+                        onBlur={onBlur}
+                        label="생년월일"
+                        onChange={onChange}
+                        placeholder="1997/11/13"
+                        error={Boolean(errors.birth)}
+                      />
+                    )}
+                  />
+                  {/* <DatePicker
+                    label="Basic"
+                    value={basicPicker}
+                    // onChange={(birth) => setBasicPicker(birth)}
+                    renderInput={(params) => <TextField {...params} />}
+                  /> */}
+                </LocalizationProvider>
+                {errors.nickname && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.nickname.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <Controller
+                    name="birth"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange } }) => (
+                      <DatePicker
+                        value={value}
+                        // onBlur={onBlur}
+                        label="생년월일"
+                        onChange={onChange}
+                        renderInput={(params) => <TextField {...params} />}
+                        // placeholder="ex) 971113"
+                        // error={Boolean(errors.birth)}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+                {errors.birth && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.birth.message}
+                  </FormHelperText>
+                )}
+              </FormControl> */}
+
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="birth"
                   control={control}
@@ -548,7 +605,7 @@ const Register = () => {
                     {errors.birth.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
 
               <FormControl fullWidth sx={{ mb: 1 }}>
                 <FormLabel>성별</FormLabel>
@@ -755,7 +812,6 @@ const Register = () => {
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
                   src="/images/avatars/kakao.png"
-
                   // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                   width="190"
                 />
