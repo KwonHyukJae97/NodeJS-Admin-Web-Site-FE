@@ -99,7 +99,6 @@ const AuthProvider = ({ children }: Props) => {
       } else {
         setLoading(false);
         console.log('사용자 정보 없음');
-        router.push('login');
       }
     };
     initAuth();
@@ -155,9 +154,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('params!!', params);
 
     try {
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/kakao`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       // const data = responseData.data;
 
@@ -210,9 +213,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('구글 params', params);
 
     try {
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/google`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/google`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       // const data = responseData.data;
 
@@ -262,9 +269,13 @@ const AuthProvider = ({ children }: Props) => {
     console.log('네이버 params !', params);
 
     try {
-      const responseData = await axios.post(`${apiConfig.apiEndpoint}/auth/naver`, params, {
-        withCredentials: true,
-      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
       // const data = responseData.data;
 
@@ -364,15 +375,24 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params);
-      if (res.data.error) {
-        if (errorCallback) errorCallback(res.data.error);
-      } else {
-        // router.replace('/dashboards/crm');
-        const returnUrl = router.query.returnUrl;
-        console.log('returnUrl', returnUrl);
+      await axios.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params, {
+        withCredentials: true,
+      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
-        console.log('사용자 정보 조회 성공 시, 응답', res);
+      if (responseData.data.loginSuccess == true) {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          withCredentials: true,
+        });
+
+        const returnUrl = router.query.returnUrl;
+        console.log('카카오 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -384,11 +404,11 @@ const AuthProvider = ({ children }: Props) => {
         };
 
         setUser(user);
-        window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+        await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
-        router.replace(redirectURL as string);
+        await router.replace(redirectURL as string);
       }
     } catch (err) {
       console.log(errorCallback);
@@ -433,14 +453,24 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params);
-      if (res.data.error) {
-        if (errorCallback) errorCallback(res.data.error);
-      } else {
-        const returnUrl = router.query.returnUrl;
-        console.log('returnUrl', returnUrl);
+      await axios.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params, {
+        withCredentials: true,
+      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
-        console.log('사용자 정보 조회 성공 시, 응답', res);
+      if (responseData.data.loginSuccess == true) {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          withCredentials: true,
+        });
+
+        const returnUrl = router.query.returnUrl;
+        console.log('네이버 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -452,11 +482,11 @@ const AuthProvider = ({ children }: Props) => {
         };
 
         setUser(user);
-        window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+        await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
-        router.replace(redirectURL as string);
+        await router.replace(redirectURL as string);
       }
     } catch (err) {
       console.log(errorCallback);
@@ -470,14 +500,24 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      const res = await axios.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params);
-      if (res.data.error) {
-        if (errorCallback) errorCallback(res.data.error);
-      } else {
-        const returnUrl = router.query.returnUrl;
-        console.log('returnUrl', returnUrl);
+      await axios.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params, {
+        withCredentials: true,
+      });
+      const responseData = await axios.post(
+        `${apiConfig.apiEndpoint}/auth/login/admin/google`,
+        params,
+        {
+          withCredentials: true,
+        },
+      );
 
-        console.log('사용자 정보 조회 성공 시, 응답', res);
+      if (responseData.data.loginSuccess == true) {
+        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          withCredentials: true,
+        });
+
+        const returnUrl = router.query.returnUrl;
+        console.log('구글 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -489,11 +529,11 @@ const AuthProvider = ({ children }: Props) => {
         };
 
         setUser(user);
-        window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+        await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
-        router.replace(redirectURL as string);
+        await router.replace(redirectURL as string);
       }
     } catch (err) {
       console.log(errorCallback);

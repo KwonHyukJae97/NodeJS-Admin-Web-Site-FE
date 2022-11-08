@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState, Fragment, MouseEvent } from 'react';
+import { ReactNode, useState } from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
@@ -8,7 +8,6 @@ import Link from 'next/link';
 import MuiLink from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
@@ -23,10 +22,6 @@ import Typography, { TypographyProps } from '@mui/material/Typography';
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
 
 // ** Icons Imports
-import Google from 'mdi-material-ui/Google';
-import Github from 'mdi-material-ui/Github';
-import Twitter from 'mdi-material-ui/Twitter';
-import Facebook from 'mdi-material-ui/Facebook';
 import EyeOutline from 'mdi-material-ui/EyeOutline';
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline';
 
@@ -48,20 +43,7 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import { useAuth } from 'src/hooks/useAuth';
-
-// const defaultValues = {
-//   id: '',
-//   username: '',
-//   password: '',
-//   terms: false,
-// };
-
-// interface FormData {
-//   id: string
-//   terms: boolean
-//   username: string
-//   password: string
-// }
+import { FormLabel, Radio, RadioGroup } from '@mui/material';
 
 // ** Styled Components
 const RegisterIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -125,7 +107,9 @@ const defaultValues = {
   gender: '',
   companyName: '',
   companyCode: null,
-  terms: false,
+
+  // terms: false,
+  radio: '',
 };
 
 interface FormData {
@@ -138,6 +122,7 @@ interface FormData {
   birth: string;
   gender: string;
   companyName: string;
+  radio: string;
   companyCode: number;
 }
 
@@ -168,9 +153,7 @@ const Register = () => {
     companyName: yup.string().required(),
     companyCode: yup.number().required(),
 
-    // roleId: yup.string().required(),
-    // isSuper: yup.string().required(),
-    terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
+    // terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
   const {
@@ -183,24 +166,6 @@ const Register = () => {
     mode: 'onBlur',
     resolver: yupResolver(schema),
   });
-
-  // const onSubmit = (data: FormData) => {
-  //   const { id, username, password } = data
-  //   register({ id, username, password }, err => {
-  //     if (err.id) {
-  //       setError('id', {
-  //         type: 'manual',
-  //         message: err.id
-  //       })
-  //     }
-  //     if (err.username) {
-  //       setError('username', {
-  //         type: 'manual',
-  //         message: err.username
-  //       })
-  //     }
-  //   })
-  // }
 
   const onSubmit = (data: FormData) => {
     const { id, password, name, email, phone, nickname, birth, gender, companyName, companyCode } =
@@ -243,6 +208,36 @@ const Register = () => {
     skin === 'bordered'
       ? 'auth-v2-register-illustration-bordered'
       : 'auth-v2-register-illustration';
+
+  // 카카오 로그인 버튼 클릭 시 실행
+  function loginWithKakao() {
+    const CLIENT_ID = `${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}`;
+    const REDIRECT_URI = `${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}`;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+    // const test = window.location.replace(KAKAO_AUTH_URL)
+    window.location.href = KAKAO_AUTH_URL;
+  }
+
+  // 네이버 로그인 버튼 클릭 시 실행
+  function loginWithNaver() {
+    const CLIENT_ID = `${process.env.NEXT_PUBLIC_NAVER_CLIENT_ID}`;
+    const STATE_STRING = `${process.env.NEXT_PUBLIC_NAVER_STATE_STRING}`;
+    const CALLBACK_URL = `${process.env.NEXT_PUBLIC_NAVER_REDIRECT_URI}`;
+    const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${CLIENT_ID}&state=${STATE_STRING}&redirect_uri=${CALLBACK_URL}`;
+    console.log(NAVER_AUTH_URL);
+    window.location.href = NAVER_AUTH_URL;
+  }
+
+  //구글 로그인 버튼 클릭 시 실행
+  function loginWithGoogle() {
+    const CLIENT_ID = `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`;
+    const REDIRECT_URI = `${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}`;
+
+    //scope=email => 이메일 값. scope=profile => 이름
+    const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?scope=email&response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
+    window.location.href = GOOGLE_AUTH_URL;
+  }
 
   return (
     <Box className="content-right">
@@ -390,6 +385,7 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
+                      autoFocus
                       value={value}
                       label="아이디"
                       onBlur={onBlur}
@@ -447,7 +443,6 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="이름"
@@ -470,7 +465,6 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="이메일"
@@ -494,7 +488,6 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="전화번호"
@@ -518,7 +511,6 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="닉네임"
@@ -542,7 +534,6 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="생년월일"
@@ -559,14 +550,37 @@ const Register = () => {
                 )}
               </FormControl>
 
-              <FormControl fullWidth sx={{ mb: 4 }}>
+              <FormControl fullWidth sx={{ mb: 1 }}>
+                <FormLabel>성별</FormLabel>
+                <Controller
+                  name="gender"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <RadioGroup row {...field} aria-label="gender" name="validation-basic-radio">
+                      <FormControlLabel
+                        value="0"
+                        label="남"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                      <FormControlLabel
+                        value="1"
+                        label="여"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="gender"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="성별"
@@ -581,16 +595,15 @@ const Register = () => {
                     {errors.gender.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
 
-              <FormControl fullWidth sx={{ mb: 4 }}>
+              <FormControl fullWidth sx={{ mb: 7 }}>
                 <Controller
                   name="companyName"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="회원사명"
@@ -607,13 +620,41 @@ const Register = () => {
                 )}
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
+                <FormLabel>회원사코드</FormLabel>
+                <Controller
+                  name="companyCode"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <RadioGroup
+                      row
+                      {...field}
+                      aria-label="companyCode"
+                      name="validation-basic-radio"
+                    >
+                      <FormControlLabel
+                        value="1"
+                        label="기업"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                      <FormControlLabel
+                        value="2"
+                        label="기관"
+                        sx={errors.radio ? { color: 'error.main' } : null}
+                        control={<Radio sx={errors.radio ? { color: 'error.main' } : null} />}
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="companyCode"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="회원사코드"
@@ -628,9 +669,9 @@ const Register = () => {
                     {errors.companyCode.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
 
-              <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
+              {/* <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
                 <Controller
                   name="terms"
                   control={control}
@@ -679,7 +720,7 @@ const Register = () => {
                     {errors.terms.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
               <Button fullWidth size="large" type="submit" variant="contained" sx={{ mb: 7 }}>
                 Sign up
               </Button>
@@ -691,19 +732,66 @@ const Register = () => {
                   justifyContent: 'center',
                 }}
               >
-                <Typography sx={{ mr: 2, color: 'text.secondary' }}>
-                  Already have an account?
-                </Typography>
+                <Typography sx={{ mr: 2, color: 'text.secondary' }}>이미 가입하셨나요?</Typography>
                 <Typography>
                   <Link passHref href="/login">
                     <Typography component={MuiLink} sx={{ color: 'primary.main' }}>
-                      Sign in instead
+                      로그인으로
                     </Typography>
                   </Link>
                 </Typography>
               </Box>
               <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Box
+                sx={{
+                  mb: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <img
+                  onClick={() => loginWithKakao()}
+                  alt={'kakao-login'}
+                  src="/images/avatars/kakao.png"
+
+                  // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
+                  width="190"
+                />
+              </Box>
+              <Box
+                sx={{
+                  mb: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <img
+                  onClick={() => loginWithNaver()}
+                  alt={'naver-login'}
+                  src="/images/avatars/naver.png"
+                  width="185"
+                />
+              </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <img
+                  onClick={() => loginWithGoogle()}
+                  alt={'google-login'}
+                  src="/images/avatars/google.png"
+                  width="190"
+                />
+              </Box>
+              {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Link href="/" passHref>
                   <IconButton
                     component="a"
@@ -741,7 +829,7 @@ const Register = () => {
                     <Google sx={{ color: '#db4437' }} />
                   </IconButton>
                 </Link>
-              </Box>
+              </Box> */}
             </form>
           </BoxWrapper>
         </Box>

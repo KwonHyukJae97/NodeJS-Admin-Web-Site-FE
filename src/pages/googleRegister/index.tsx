@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { ReactNode, Fragment, MouseEvent } from 'react';
+import React, { ReactNode, MouseEvent } from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
@@ -8,7 +8,6 @@ import Link from 'next/link';
 import MuiLink from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Box, { BoxProps } from '@mui/material/Box';
@@ -155,15 +154,12 @@ const GoogleRegister = () => {
     birth: '',
     gender: '',
     snsId: snsId,
-    terms: false,
 
-    // snsType: '',
+    // terms: false,
     snsToken: snsToken,
     companyName: '',
     radio: '',
     companyCode: null,
-
-    // division: '',
   };
 
   // ** Hooks
@@ -178,15 +174,16 @@ const GoogleRegister = () => {
   // ** Vars
   const { skin } = settings;
   const schema = yup.object().shape({
-    // name: yup.string().min(1).required(),
-    // phone: yup.string().min(1).required(),
-    // nickname: yup.string().min(1).required(),
-    // birth: yup.string().min(1).required(),
-    // snsId: yup.string().min(1).required(),
-    // snsType: yup.string().min(1).required(),
-    // snsToken: yup.string().min(1).required(),
+    name: yup.string().min(1).required(),
+    phone: yup.string().min(1).required(),
+    nickname: yup.string().min(1).required(),
+    birth: yup.string().min(1).required(),
+    gender: yup.number().min(1).required(),
+    snsId: yup.string().min(1).required(),
+    companyName: yup.string().min(1).required(),
     companyCode: yup.number().min(1).required(),
-    terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
+
+    // terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
   const {
@@ -425,7 +422,6 @@ const GoogleRegister = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="전화번호"
@@ -524,7 +520,7 @@ const GoogleRegister = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.birth)}
-                      placeholder="ex) 971113"
+                      placeholder="ex) 19971113 형식으로 작성해주세요"
                     />
                   )}
                 />
@@ -616,7 +612,6 @@ const GoogleRegister = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="snsType"
@@ -639,7 +634,6 @@ const GoogleRegister = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="SnsToken"
@@ -662,7 +656,6 @@ const GoogleRegister = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label="division"
@@ -678,7 +671,7 @@ const GoogleRegister = () => {
                   </FormHelperText>
                 )}
               </FormControl> */}
-              <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
+              {/* <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
                 <Controller
                   name="terms"
                   control={control}
@@ -727,7 +720,7 @@ const GoogleRegister = () => {
                     {errors.terms.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
               <Button fullWidth size="large" type="submit" variant="contained" sx={{ mb: 7 }}>
                 Sign up
               </Button>
@@ -739,13 +732,11 @@ const GoogleRegister = () => {
                   justifyContent: 'center',
                 }}
               >
-                <Typography sx={{ mr: 2, color: 'text.secondary' }}>
-                  Already have an account?
-                </Typography>
+                <Typography sx={{ mr: 2, color: 'text.secondary' }}>이미 가입하셨나요?</Typography>
                 <Typography>
                   <Link passHref href="/login">
                     <Typography component={MuiLink} sx={{ color: 'primary.main' }}>
-                      Sign in instead
+                      로그인으로
                     </Typography>
                   </Link>
                 </Typography>
