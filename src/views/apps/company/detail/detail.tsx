@@ -20,6 +20,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
+import { styled } from '@mui/material/styles';
 
 // ** Icons Imports
 import { Account, AccountKey } from 'mdi-material-ui';
@@ -39,18 +40,24 @@ import apiConfig from 'src/configs/api';
 // ** moment
 import moment from 'moment';
 
-// 회원사 정보 상세 페이지
-const CompanyView = ({ company_id }: CompanyLayoutProps) => {
-  console.log('viewpage:', company_id);
+// ** Styled component for the link in the dataTable
+const StyledLink = styled('a')(({ theme }) => ({
+  textDecoration: 'none',
+  color: theme.palette.common.white,
+}));
 
+// 회원사 정보 상세 페이지
+const CompanyDetail = ({ id }: CompanyLayoutProps) => {
   // ** States
   const [openEdit, setOpenEdit] = useState<boolean>(false),
     [error, setError] = useState<boolean>(false),
-    [data, setData] = useState<null | CompanyType>(null);
+    [data, setData] = useState<null | CompanyType>(null),
+    [value, setValue] = useState<string>('');
 
+  // 회원사 상세 정보 API 호출
   useEffect(() => {
     axios
-      .get(`${apiConfig.apiEndpoint}/company/1`)
+      .get(`${apiConfig.apiEndpoint}/company/${id}`, { params: { id } })
       .then((res) => {
         res.data.forEach((company: CompanyType) => {
           const companyData: CompanyType = {
@@ -71,11 +78,29 @@ const CompanyView = ({ company_id }: CompanyLayoutProps) => {
         setData(null);
         setError(true);
       });
-  }, [company_id]);
+  }, [id]);
+
+  // 회원사 정보 수정 API호출
+  const updateCompany = async () => {
+    if (confirm('수정 하시겠습니까?')) {
+      try {
+        /* eslint-disable */
+        const req = await axios.patch(`${apiConfig.apiEndpoint}/company/${id}`, {
+          companyName: value,
+        });
+        alert('수정이 완료 되었습니다.');
+        location.reload();
+      } catch (err: any) {
+        console.log('err', err.response.data);
+        alert('수정에 실패 하였습니다.');
+      }
+    }
+  };
 
   // Handle Edit dialog
   const handleEditClickOpen = () => setOpenEdit(true);
   const handleEditClose = () => setOpenEdit(false);
+
   if (data) {
     return (
       <Grid container spacing={6}>
@@ -163,7 +188,9 @@ const CompanyView = ({ company_id }: CompanyLayoutProps) => {
 
             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button variant="contained" sx={{ mr: 2 }} onClick={handleEditClose}>
-                확인
+                <Link href={`/company/list`} passHref>
+                  <StyledLink>확인</StyledLink>
+                </Link>
               </Button>
             </CardActions>
 
@@ -186,18 +213,23 @@ const CompanyView = ({ company_id }: CompanyLayoutProps) => {
                   id="user-view-edit-description"
                   sx={{ textAlign: 'center', mb: 7 }}
                 >
-                  회원사 이름을 수정하시려면 아래 내용을 입력해주세요.
+                  회원사 이름을 수정하시려면 내용을 입력해주세요.
                 </DialogContentText>
                 <form>
                   <Grid container spacing={6}>
                     <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label="회원사 이름" defaultValue={'ABC EDU'} />
+                      <TextField
+                        fullWidth
+                        label="회원사 이름"
+                        defaultValue={data.company_name}
+                        onChange={(e) => setValue(e.target.value)}
+                      />
                     </Grid>
                   </Grid>
                 </form>
               </DialogContent>
               <DialogActions sx={{ justifyContent: 'center' }}>
-                <Button variant="contained" sx={{ mr: 1 }} onClick={handleEditClose}>
+                <Button variant="contained" sx={{ mr: 1 }} onClick={updateCompany}>
                   수정
                 </Button>
                 <Button variant="outlined" color="secondary" onClick={handleEditClose}>
@@ -214,7 +246,7 @@ const CompanyView = ({ company_id }: CompanyLayoutProps) => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Alert severity="error">
-            Invoice with the id: {company_id} does not exist. Please check the list of invoices:{' '}
+            회원사 정보가 존재하지 않습니다.
             <Link href="/company/list">목록으로</Link>
           </Alert>
         </Grid>
@@ -225,4 +257,4 @@ const CompanyView = ({ company_id }: CompanyLayoutProps) => {
   }
 };
 
-export default CompanyView;
+export default CompanyDetail;

@@ -10,5 +10,5 @@ export type CompanyType = {
 };
 
 export type CompanyLayoutProps = {
-  company_id: number | undefined;
+  id: number | undefined;
 };
