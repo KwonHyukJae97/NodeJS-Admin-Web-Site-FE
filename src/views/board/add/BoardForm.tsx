@@ -1,44 +1,26 @@
-// ** React Imports
 import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-
-// ** Next Import
-import Link from 'next/link';
+import * as yup from 'yup';
 import { useRouter } from 'next/router';
-
-// ** MUI Imports
-import Card from '@mui/material/Card';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
+import apiConfig from '../../../configs/api';
 import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import FormControl from '@mui/material/FormControl';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
+import { EditorWrapper } from '../../../@core/styles/libs/react-draft-wysiwyg';
+import DropzoneWrapper from '../../../@core/styles/libs/react-dropzone';
+import FileUploaderMultiple from '../../forms/form-elements/file-uploader/FileUploaderMultiple';
 import Button from '@mui/material/Button';
-
-// ** Custom Components Imports
-// ** Styled Component Import
-// ** Demo Components Imports
-import FileUploaderMultiple from '../../../../views/forms/form-elements/file-uploader/FileUploaderMultiple';
-import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
-import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
-
-// ** Styles
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
-// ** Types Imports
-import apiConfig from '../../../../configs/api';
-
-// ** axios
-import axios from 'axios';
-
-// ** Third Party Imports
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
@@ -61,8 +43,7 @@ const defaultValues = {
   isTop: false,
 };
 
-// 공지사항 등록 페이지
-const NoticeAdd = () => {
+const BoardForm = () => {
   // ** State
   const [files, setFiles] = useState<File[]>([]);
   const [htmlStr, setHtmlStr] = useState<string>('');
@@ -247,4 +228,4 @@ const NoticeAdd = () => {
   );
 };
 
-export default NoticeAdd;
+export default BoardForm;

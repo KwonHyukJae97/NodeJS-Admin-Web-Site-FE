@@ -1,13 +1,12 @@
 // ** React Imports
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
-import Typography, { TypographyProps } from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
 
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close';
@@ -23,30 +22,16 @@ interface FileProp {
   size: number;
 }
 
-// Styled component for the upload image inside the dropzone area
-const Img = styled('img')(({ theme }) => ({
-  [theme.breakpoints.up('md')]: {
-    marginRight: theme.spacing(10),
-  },
-  [theme.breakpoints.down('md')]: {
-    marginBottom: theme.spacing(4),
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: 250,
-  },
-}));
+interface Prop {
+  files: File[];
+  setFiles: (value: File[]) => void;
+}
 
-// Styled component for the heading inside the dropzone area
-const HeadingTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
-  marginBottom: theme.spacing(5),
-  [theme.breakpoints.down('sm')]: {
-    marginBottom: theme.spacing(4),
-  },
-}));
+const FileUploaderMultiple = (prop: Prop) => {
+  // ** Props
+  const { files, setFiles } = prop;
 
-const FileUploaderMultiple = () => {
-  // ** State
-  const [files, setFiles] = useState<File[]>([]);
+  console.log('fff', files);
 
   // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
@@ -56,7 +41,7 @@ const FileUploaderMultiple = () => {
   });
 
   const renderFilePreview = (file: FileProp) => {
-    if (file.type.startsWith('image')) {
+    if (file.type.startsWith('')) {
       return <img width={38} height={38} alt={file.name} src={URL.createObjectURL(file as any)} />;
     } else {
       return <FileDocumentOutline />;
@@ -88,21 +73,12 @@ const FileUploaderMultiple = () => {
     </ListItem>
   ));
 
-  // const handleLinkClick = (event: SyntheticEvent) => {
-  //   event.preventDefault();
-  // };
-  //
-  // const handleRemoveAllFiles = () => {
-  //   setFiles([]);
-  // };
-
   return (
     <Fragment>
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
 
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {/*<Img width={300} alt='Upload img' src='/images/misc/upload.png' />*/}
           <Box
             sx={{
               display: 'flex',
@@ -113,25 +89,12 @@ const FileUploaderMultiple = () => {
             <Typography variant="subtitle1" sx={{ ml: 1.5 }}>
               원하는 첨부파일을 선택하거나 파일에서 드래그하여 추가해주세요.
             </Typography>
-            {/*<Typography color="textSecondary">*/}
-            {/*  Drop files here or click{' '}*/}
-            {/*  <Link href="/" onClick={handleLinkClick}>*/}
-            {/*    browse*/}
-            {/*  </Link>{' '}*/}
-            {/*  thorough your machine*/}
-            {/*</Typography>*/}
           </Box>
         </Box>
       </div>
       {files.length ? (
         <Fragment>
           <List>{fileList}</List>
-          {/*<div className="buttons">*/}
-          {/*  <Button color="error" variant="outlined" onClick={handleRemoveAllFiles}>*/}
-          {/*    Remove All*/}
-          {/*  </Button>*/}
-          {/*  <Button variant="contained">Upload Files</Button>*/}
-          {/*</div>*/}
         </Fragment>
       ) : null}
     </Fragment>

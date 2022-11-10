@@ -76,8 +76,8 @@ const navigation = (): VerticalNavItemsType => {
           path: '/board/notice/list',
         },
         {
-          title: '등록',
-          path: '/board/notice/add',
+          title: '자주 묻는 질문',
+          path: '/board/faq/list',
         },
         {
           title: '목록(A안)',

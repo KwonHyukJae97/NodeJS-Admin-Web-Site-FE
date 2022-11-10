@@ -3,12 +3,14 @@ import { styled } from '@mui/material/styles';
 
 export const EditorWrapper = styled('div')(({ theme }) => ({
   '& .rdw-editor-wrapper': {
-    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: '10px',
+    border: `1.95px solid ${theme.palette.divider}`,
     '& .rdw-editor-toolbar': {
       border: 0,
       marginBottom: 0,
-      background: theme.palette.background.paper,
+      background: 'theme.palette.background.paper',
       borderBottom: `1px solid ${theme.palette.divider}`,
+      borderRadius: '10px 10px 0 0',
       '& .rdw-fontsize-dropdown': {
         minWidth: 50,
       },

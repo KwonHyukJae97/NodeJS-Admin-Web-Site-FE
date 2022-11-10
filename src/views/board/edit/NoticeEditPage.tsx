@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 // ** Next Import
@@ -23,7 +23,7 @@ import Button from '@mui/material/Button';
 // ** Custom Components Imports
 // ** Styled Component Import
 // ** Demo Components Imports
-import FileUploaderMultiple from '../../../../views/forms/form-elements/file-uploader/FileUploaderMultiple';
+import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 
@@ -31,7 +31,7 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import apiConfig from '../../../../configs/api';
+import apiConfig from 'src/configs/api';
 
 // ** axios
 import axios from 'axios';
@@ -40,6 +40,8 @@ import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import dynamic from 'next/dynamic';
+import { getDateTime, role } from '../../../pages/board/notice/list';
+import { BoardType } from '../../../types/apps/userTypes';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -47,6 +49,12 @@ const EditorControlled = dynamic(
   () => import('src/views/forms/form-elements/editor/EditorControlled'),
   { ssr: false },
 );
+
+type dataProps = {
+  id: number;
+  title: string;
+  isTop: boolean;
+};
 
 // 공지사항 입력값 타입 정의
 interface FormData {
@@ -56,14 +64,20 @@ interface FormData {
   noticeGrant: string;
 }
 
-const defaultValues = {
-  title: '',
-  isTop: false,
-};
-
-// 공지사항 등록 페이지
-const NoticeAdd = () => {
+// 공지사항 수정 페이지
+const NoticeEdit = ({ id, title, isTop }: dataProps) => {
   // ** State
+  const [data, setData] = useState<BoardType>({
+    boardId: 0,
+    content: '',
+    fileList: [],
+    id: 0,
+    isTop: false,
+    regDate: '',
+    title: '',
+    viewCnt: 0,
+    writer: '',
+  });
   const [files, setFiles] = useState<File[]>([]);
   const [htmlStr, setHtmlStr] = useState<string>('');
 
@@ -71,6 +85,11 @@ const NoticeAdd = () => {
   const schema = yup.object().shape({
     title: yup.string().required(),
   });
+
+  const defaultValues = {
+    title: title,
+    isTop: isTop,
+  };
 
   // ** Hooks
   const router = useRouter();
@@ -84,7 +103,40 @@ const NoticeAdd = () => {
     resolver: yupResolver(schema),
   });
 
-  // 등록 버튼 클릭 시, api 요청
+  useEffect(() => {
+    getNoticeDetail(id);
+  }, []);
+
+  // 공지사항 상세조회 API 호출
+  const getNoticeDetail = async (id: number) => {
+    try {
+      const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
+        data: { role },
+      });
+
+      const noticeData = {
+        boardId: res.data.notice.boardId,
+        title: res.data.notice.board.title,
+        content: res.data.notice.board.content,
+        isTop: res.data.notice.isTop,
+        regDate: getDateTime(res.data.notice.board.regDate),
+        writer: res.data.writer,
+        fileList: res.data.fileList,
+      };
+      console.log(noticeData);
+      setData(noticeData);
+
+      // @ts-ignore
+      setHtmlStr(data.content);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  console.log('data', htmlStr);
+  console.log('data', htmlStr);
+
+  // 수정 버튼 클릭 시, api 요청
   const onSubmit = async (data: FormData) => {
     const formData = new FormData();
 
@@ -103,20 +155,20 @@ const NoticeAdd = () => {
     await registerNotice(formData);
   };
 
-  // 공지사항 등록 API 호출
+  // 공지사항 수정 API 호출
   const registerNotice = async (formData: any) => {
-    if (confirm('등록 하시겠습니까?')) {
+    if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.post(`${apiConfig.apiEndpoint}/notice`, formData, {
+        const req = await axios.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        console.log('등록 성공', req);
-        alert('등록이 완료되었습니다.');
+        console.log('수정 성공', req);
+        alert('수정이 완료되었습니다.');
 
         router.replace('/board/notice/list');
       } catch (err) {
         console.log(err);
-        alert('등록에 실패하였습니다.');
+        alert('수정에 실패하였습니다.');
       }
     }
   };
@@ -127,7 +179,7 @@ const NoticeAdd = () => {
         <Card>
           <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              본사용 공지사항 등록
+              본사용 공지사항 수정
             </Typography>
           </Box>
 
@@ -232,7 +284,7 @@ const NoticeAdd = () => {
               }}
             >
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
-                등록
+                수정
               </Button>
               <Link href="/board/notice/list" passHref>
                 <Button variant="outlined" color="secondary">
@@ -247,4 +299,4 @@ const NoticeAdd = () => {
   );
 };
 
-export default NoticeAdd;
+export default NoticeEdit;
