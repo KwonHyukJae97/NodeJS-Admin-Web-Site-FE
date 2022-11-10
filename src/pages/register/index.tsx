@@ -43,7 +43,7 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import { useAuth } from 'src/hooks/useAuth';
-import { FormLabel, Grid, Radio, RadioGroup } from '@mui/material';
+import { FormLabel, Radio, RadioGroup } from '@mui/material';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
@@ -109,6 +109,7 @@ const defaultValues = {
   gender: '',
   companyName: '',
   companyCode: null,
+
   // terms: false,
   radio: '',
 };
@@ -812,6 +813,7 @@ const Register = () => {
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
                   src="/images/avatars/kakao.png"
+
                   // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                   width="190"
                 />

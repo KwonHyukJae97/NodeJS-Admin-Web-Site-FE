@@ -149,8 +149,12 @@ const LoginPage = () => {
     auth.login({ id, password }, () => {
       setError('id', {
         type: 'manual',
-        message: '아이디와 비밀번호를 확인해주세요.',
-      });
+        message: '아이디를 확인해주세요.',
+      }),
+        setError('password', {
+          type: 'manual',
+          message: '비밀번호를 확인해주세요.',
+        });
     });
   };
 
@@ -404,6 +408,11 @@ const LoginPage = () => {
                   control={<Checkbox />}
                   sx={{ '& .MuiFormControlLabel-label': { color: 'text.primary' } }}
                 /> */}
+                <Link passHref href="/forgot-id">
+                  <Typography component={MuiLink} variant="body2" sx={{ color: 'primary.main' }}>
+                    아이디를 잊으셨나요?
+                  </Typography>
+                </Link>
                 <Link passHref href="/forgot-password">
                   <Typography component={MuiLink} variant="body2" sx={{ color: 'primary.main' }}>
                     비밀번호를 잊으셨나요?
@@ -483,7 +492,6 @@ const LoginPage = () => {
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
                   src="/images/avatars/kakao.png"
-
                   // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                   width="190"
                 />
