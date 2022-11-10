@@ -42,6 +42,7 @@ import * as yup from 'yup';
 import dynamic from 'next/dynamic';
 import { getDateTime, role } from '../../../pages/board/notice/list';
 import { BoardType } from '../../../types/apps/userTypes';
+import {FileDownloadOutline} from "mdi-material-ui";
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -125,6 +126,25 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
       };
       console.log(noticeData);
       setData(noticeData);
+
+      // 파일 정보 조회하여 Blob 형으로 재정의 처리
+      const tempFiles = [];
+      for (let index = 0; index < res.data.fileList.length; index++) {
+
+        const file: {
+          boardFileId: number,
+          originalFileName: string,
+          filePath: string,
+        } = res.data.fileList[index];
+
+        const fileResult = await axios.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
+            responseType: 'blob',
+          });
+
+        tempFiles.push(new File([fileResult.data], file.originalFileName));
+      }
+
+      setFiles(tempFiles);
 
       // @ts-ignore
       setHtmlStr(data.content);
@@ -271,6 +291,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
               </Typography>
               <DropzoneWrapper>
                 <FileUploaderMultiple files={files} setFiles={setFiles} />
+                {/*<FileUploaderMultiple files={data.fileList} setFiles={setFiles} />*/}
               </DropzoneWrapper>
             </Box>
 
