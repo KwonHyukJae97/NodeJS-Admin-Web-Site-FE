@@ -1,43 +1,55 @@
 // ** Next Import
-import { GetStaticPaths, GetStaticProps, GetStaticPropsContext, InferGetStaticPropsType } from 'next/types'
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from 'next/types';
 
 // ** Third Party Imports
-import axios from 'axios'
+import axios from 'axios';
 
 // ** Types
-import { InvoiceType } from 'src/types/apps/invoiceTypes'
+import { InvoiceType } from 'src/types/apps/invoiceTypes';
 
 // ** Demo Components Imports
-import UserViewPage from 'src/views/apps/user/view/UserViewPage'
+import UserViewPage from 'src/views/apps/user/view/UserViewPage';
+import { useRouter } from 'next/router';
 
-const UserView = ({ id, invoiceData }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  return <UserViewPage id={id} invoiceData={invoiceData} />
-}
+const UserView = () => {
+  const router = useRouter();
+  const { accountId } = router.query;
+  console.log('accountId????', accountId);
+  const invoiceData: InvoiceType[] = [];
+  return <UserViewPage accountId={accountId} invoiceData={invoiceData} />;
+};
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await axios.get('/apps/users/list')
-  const userDate: InvoiceType[] = await res.data.allData
+//유저드롭박스에서 어카운트아이디 107번 을 UserViewPage에 id 값을 넘김
 
-  const paths = userDate.map((item: InvoiceType) => ({
-    params: { id: `${item.id}` }
-  }))
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const res = await axios.get('/apps/users/list');
+//   const userDate: InvoiceType[] = await res.data.allData;
 
-  return {
-    paths,
-    fallback: false
-  }
-}
+//   const paths = userDate.map((item: InvoiceType) => ({
+//     params: { id: `${item.id}` },
+//   }));
 
-export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const res = await axios.get('/apps/invoice/invoices')
-  const invoiceData: InvoiceType[] = res.data.allData
+//   return {
+//     paths,
+//     fallback: false,
+//   };
+// };
 
-  return {
-    props: {
-      invoiceData,
-      id: params?.id
-    }
-  }
-}
+// export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+//   const res = await axios.get('/apps/invoice/invoices');
+//   const invoiceData: InvoiceType[] = res.data.allData;
 
-export default UserView
+//   return {
+//     props: {
+//       invoiceData,
+//       id: params?.id,
+//     },
+//   };
+// };
+
+export default UserView;

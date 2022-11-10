@@ -2,10 +2,12 @@
 import { ThemeColor } from 'src/@core/layouts/types';
 
 export type UserLayoutType = {
-  id: string | undefined;
+  // id: string | undefined;
+  accountId: number | undefined;
 };
 
 export type UsersType = {
+  accountId: number;
   id: number;
   role: string;
   email: string;
@@ -16,7 +18,9 @@ export type UsersType = {
   contact: string;
   nickname: string;
   username: string;
-
+  phone: string;
+  birth: string;
+  snsId: string;
   // Table 컴포넌트에서 발생하는 에러 처리를 위해 임시로 name 필드 추가
   name: string;
   currentPlan: string;

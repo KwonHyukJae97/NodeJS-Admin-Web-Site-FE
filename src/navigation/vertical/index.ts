@@ -6,6 +6,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline';
 import ArchiveOutline from 'mdi-material-ui/ArchiveOutline';
 import FileDocumentOutline from 'mdi-material-ui/FileDocumentOutline';
 import CalendarBlankOutline from 'mdi-material-ui/CalendarBlankOutline';
+import { AccountGroupOutline } from 'mdi-material-ui';
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types';
@@ -25,6 +26,20 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: '회원관리',
       icon: AccountOutline,
+    },
+    {
+      title: '회원사관리',
+      icon: AccountGroupOutline,
+      children: [
+        {
+          title: '회원사목록',
+          path: '/company/list',
+        },
+        {
+          title: '회원사 상세정보',
+          path: '/company/detail',
+        },
+      ],
     },
     {
       title: '수업관리',
