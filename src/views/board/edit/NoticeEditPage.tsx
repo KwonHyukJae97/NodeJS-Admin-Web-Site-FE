@@ -53,6 +53,7 @@ const EditorControlled = dynamic(
 type dataProps = {
   id: number;
   title: string;
+  content: string;
   isTop: boolean;
 };
 
@@ -65,7 +66,7 @@ interface FormData {
 }
 
 // 공지사항 수정 페이지
-const NoticeEdit = ({ id, title, isTop }: dataProps) => {
+const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
   // ** State
   const [data, setData] = useState<BoardType>({
     boardId: 0,
@@ -79,7 +80,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     writer: '',
   });
   const [files, setFiles] = useState<File[]>([]);
-  const [htmlStr, setHtmlStr] = useState<string>('');
+  const [htmlStr, setHtmlStr] = useState<string>(content);
 
   // ** Vars
   const schema = yup.object().shape({
@@ -127,14 +128,14 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
       setData(noticeData);
 
       // @ts-ignore
-      setHtmlStr(data.content);
+      // setHtmlStr(res.data.notice.board.content);
+      // console.log('htmlStr2', htmlStr);
+      // console.log('data2', data.content);
+      // console.log('data content2', res.data.notice.board.content);
     } catch (err) {
       console.log(err);
     }
   };
-
-  console.log('data', htmlStr);
-  console.log('data', htmlStr);
 
   // 수정 버튼 클릭 시, api 요청
   const onSubmit = async (data: FormData) => {
@@ -152,11 +153,11 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     formData.append('content', htmlStr);
     formData.append('isTop', data.isTop);
 
-    await registerNotice(formData);
+    await editNotice(formData);
   };
 
   // 공지사항 수정 API 호출
-  const registerNotice = async (formData: any) => {
+  const editNotice = async (formData: any) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
         const req = await axios.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
