@@ -50,14 +50,10 @@ const NoticeView = ({ id }: dataProps) => {
   // ** Ref
   const viewContentRef = useRef<HTMLDivElement>(null);
 
-  console.log('html', htmlStr);
-  console.log('html', htmlStr);
-
   // ** Hooks
   const router = useRouter();
   useEffect(() => {
     getNoticeDetail(id);
-    console.log('데이터', data);
   }, []);
 
   // 공지사항 상세조회 API 호출
@@ -79,6 +75,8 @@ const NoticeView = ({ id }: dataProps) => {
 
       console.log(noticeData);
       setData(noticeData);
+
+      console.log('data2222', data.content);
 
       if (viewContentRef.current) {
         setHtmlStr((viewContentRef.current.innerHTML += res.data.notice.board.content));

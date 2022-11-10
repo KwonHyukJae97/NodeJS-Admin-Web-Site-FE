@@ -31,8 +31,6 @@ const FileUploaderMultiple = (prop: Prop) => {
   // ** Props
   const { files, setFiles } = prop;
 
-  console.log('fff', files);
-
   // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles: File[]) => {
