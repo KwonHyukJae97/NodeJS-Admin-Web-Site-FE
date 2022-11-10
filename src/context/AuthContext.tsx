@@ -141,6 +141,7 @@ const AuthProvider = ({ children }: Props) => {
         await router.replace(redirectURL as string);
       }
     } catch (err) {
+      alert('아이디 또는 비밀번호를 확인해주세요.');
       console.log(errorCallback);
       console.log(err);
     }
@@ -373,6 +374,7 @@ const AuthProvider = ({ children }: Props) => {
     setIsInitialized(false);
     window.localStorage.removeItem('userData');
     window.localStorage.removeItem(authConfig.storageTokenKeyName);
+
     // window.localStorage.clear();
     router.push('/login');
   };
