@@ -80,6 +80,7 @@ const AuthProvider = ({ children }: Props) => {
             const user: UserDataType = {
               accountId: response.data.accountId,
               id: response.data.id,
+              snsId: response.data.snsId,
               name: response.data.name,
               email: response.data.email,
               nickname: response.data.nickname,
@@ -107,46 +108,84 @@ const AuthProvider = ({ children }: Props) => {
   // } []);
 
   // 로그인 요청 시, 실행
-  const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.loginEndpoint, params, { withCredentials: true })
-      .then(async (response) => {
-        console.log('로그인 성공 시 응답', response);
-      })
-      .then(() => {
-        axios
-          .get(authConfig.meEndpoint, {
-            withCredentials: true,
-          })
-          .then(async (response) => {
-            const returnUrl = router.query.returnUrl;
-            console.log('returnUrl', returnUrl);
-
-            console.log('사용자 정보 조회 성공 시, 응답', response);
-
-            const user: UserDataType = {
-              accountId: response.data.accountId,
-              id: response.data.id,
-              name: response.data.name,
-              email: response.data.email,
-              nickname: response.data.nickname,
-              avatar: null,
-            };
-
-            setUser(user);
-            await window.localStorage.setItem(
-              authConfig.storageUserDataKeyName,
-              JSON.stringify(user),
-            );
-
-            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
-
-            await router.replace(redirectURL as string);
-          });
-      })
-      .catch((err) => {
-        if (errorCallback) errorCallback(err);
+  const handleLogin = async (params: LoginParams, errorCallback?: ErrCallbackType) => {
+    try {
+      const responseData = await axios.post(authConfig.loginEndpoint, params, {
+        withCredentials: true,
       });
+
+      if (responseData) {
+        const response = await axios.get(authConfig.meEndpoint, {
+          withCredentials: true,
+        });
+        const returnUrl = router.query.returnUrl;
+        console.log('returnUrl', returnUrl);
+
+        console.log('사용자 정보 조회 성공 시, 응답', response);
+
+        const user: UserDataType = {
+          accountId: response.data.accountId,
+          id: response.data.id,
+          snsId: response.data.snsId,
+          name: response.data.name,
+          email: response.data.email,
+          nickname: response.data.nickname,
+          avatar: null,
+        };
+
+        setUser(user);
+        await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+        await router.replace(redirectURL as string);
+      }
+    } catch (err) {
+      alert('아이디 또는 비밀번호를 확인해주세요.');
+      console.log(errorCallback);
+      console.log(err);
+    }
+
+    // axios
+    //   .post(authConfig.loginEndpoint, params, { withCredentials: true })
+    //   .then(async (response) => {
+    //     console.log('로그인 성공 시 응답', response);
+    //   })
+    //   .then(() => {
+    //     axios
+    //       .get(authConfig.meEndpoint, {
+    //         withCredentials: true,
+    //       })
+    //       .then(async (response) => {
+    //         const returnUrl = router.query.returnUrl;
+    //         console.log('returnUrl', returnUrl);
+
+    //         console.log('사용자 정보 조회 성공 시, 응답', response);
+
+    //         const user: UserDataType = {
+    //           accountId: response.data.accountId,
+    //           id: response.data.id,
+    //           snsId: response.data.snsId,
+    //           name: response.data.name,
+    //           email: response.data.email,
+    //           nickname: response.data.nickname,
+    //           avatar: null,
+    //         };
+
+    //         setUser(user);
+    //         await window.localStorage.setItem(
+    //           authConfig.storageUserDataKeyName,
+    //           JSON.stringify(user),
+    //         );
+
+    //         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+    //         await router.replace(redirectURL as string);
+    //       });
+    //   })
+    //   .catch((err) => {
+    //     if (errorCallback) errorCallback(err);
+    //   });
   };
 
   //카카오 로그인 요청 시 실행
@@ -176,6 +215,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -233,6 +273,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -289,6 +330,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -332,6 +374,8 @@ const AuthProvider = ({ children }: Props) => {
     setIsInitialized(false);
     window.localStorage.removeItem('userData');
     window.localStorage.removeItem(authConfig.storageTokenKeyName);
+
+    // window.localStorage.clear();
     router.push('/login');
   };
 
@@ -397,6 +441,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -475,6 +520,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
@@ -522,6 +568,7 @@ const AuthProvider = ({ children }: Props) => {
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
+          snsId: res.data.snsId,
           name: res.data.name,
           email: res.data.email,
           nickname: res.data.nickname,
