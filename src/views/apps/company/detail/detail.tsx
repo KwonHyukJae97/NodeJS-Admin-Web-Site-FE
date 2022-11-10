@@ -61,13 +61,13 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
       .then((res) => {
         res.data.forEach((company: CompanyType) => {
           const companyData: CompanyType = {
-            company_id: company.company_id,
-            company_code: company.company_code,
-            company_name: company.company_name,
-            user_count: company.user_count,
-            admin_count: company.admin_count,
-            business_number: company.business_number,
-            reg_date: moment(company.reg_date).format('YYYY-MM-DD'),
+            companyId: company.companyId,
+            companyCode: company.companyCode,
+            companyName: company.companyName,
+            userCount: company.userCount,
+            adminCount: company.adminCount,
+            businessNumber: company.businessNumber,
+            regDate: moment(company.regDate).format('YYYY-MM-DD'),
           };
           setData(companyData);
         });
@@ -111,7 +111,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
             >
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Typography variant="h3" sx={{ mb: 4, mr: 3 }}>
-                  {data.company_name}
+                  {data.companyName}
                 </Typography>
                 <Box>
                   <Button
@@ -139,7 +139,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
                   <Box>
                     <Typography variant="body2">사용자 수</Typography>
                     <Typography variant="h5" sx={{ lineHeight: 1.3 }}>
-                      {data.user_count} 명
+                      {data.userCount} 명
                     </Typography>
                   </Box>
                 </Box>
@@ -154,7 +154,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
                   <Box>
                     <Typography variant="body2">관리자 수</Typography>
                     <Typography variant="h5" sx={{ lineHeight: 1.3 }}>
-                      {data.admin_count} 명
+                      {data.adminCount} 명
                     </Typography>
                   </Box>
                 </Box>
@@ -169,19 +169,19 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
                     회원사 코드:
                   </Typography>
-                  <Typography variant="body2">{data.company_code}</Typography>
+                  <Typography variant="body2">{data.companyCode}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
                     사업자번호:
                   </Typography>
-                  <Typography variant="body2">{data.business_number}</Typography>
+                  <Typography variant="body2">{data.businessNumber}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
                     등록일:
                   </Typography>
-                  <Typography variant="body2">{data.reg_date}</Typography>
+                  <Typography variant="body2">{data.regDate}</Typography>
                 </Box>
               </Box>
             </CardContent>
@@ -221,7 +221,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
                       <TextField
                         fullWidth
                         label="회원사 이름"
-                        defaultValue={data.company_name}
+                        defaultValue={data.companyName}
                         onChange={(e) => setValue(e.target.value)}
                       />
                     </Grid>

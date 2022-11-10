@@ -25,7 +25,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const res = await axios.get(`${apiConfig.apiEndpoint}/company/`);
   const data: CompanyType[] = await res.data;
   const paths = data.map((item: CompanyType) => ({
-    params: { id: `${item.company_id}` },
+    params: { id: `${item.companyId}` },
   }));
 
   return {
