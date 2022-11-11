@@ -8,12 +8,14 @@ interface Props {
   pageNo: number;
   setPageNo: (value: number) => void;
   searchWord: string;
+  boardType: string;
+  searchKey: string;
 }
 
 // 페이징 UI 컴포넌트
 const PaginationSimple = (props: Props) => {
   // ** Props
-  const { totalPage, pageNo, setPageNo, searchWord } = props;
+  const { totalPage, pageNo, setPageNo, searchWord, boardType, searchKey } = props;
 
   // ** Hooks
   const router = useRouter();
@@ -21,9 +23,11 @@ const PaginationSimple = (props: Props) => {
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNo(value);
     if (searchWord !== '') {
-      router.push(`/board/notice/list/?pageNo=${value}&searchWord=${searchWord}`);
+      router.push(
+        `/board/${boardType}/list/?pageNo=${value}&searchWord=${searchWord}&searchKey=${searchKey}`,
+      );
     } else {
-      router.push(`/board/notice/list/?pageNo=${value}`);
+      router.push(`/board/${boardType}/list/?pageNo=${value}&searchKey=${searchKey}`);
     }
   };
 

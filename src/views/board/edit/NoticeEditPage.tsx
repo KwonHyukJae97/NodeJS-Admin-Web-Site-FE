@@ -80,7 +80,7 @@ const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
     writer: '',
   });
   const [files, setFiles] = useState<File[]>([]);
-  const [htmlStr, setHtmlStr] = useState<string>(content);
+  const [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Vars
   const schema = yup.object().shape({
@@ -107,6 +107,11 @@ const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
   useEffect(() => {
     getNoticeDetail(id);
   }, []);
+
+  useEffect(() => {
+    // @ts-ignore
+    setHtmlStr(data.content);
+  }, [data]);
 
   // 공지사항 상세조회 API 호출
   const getNoticeDetail = async (id: number) => {

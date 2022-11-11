@@ -19,12 +19,14 @@ interface TableSearchHeaderProps {
   setSearchWord: (value: string) => void;
   pageNo: number;
   setPageNo: (value: number) => void;
+  searchKey: string | null;
+  boardType: string;
 }
 
 // Notice 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
   // ** Props
-  const { searchWord, setSearchWord, pageNo, setPageNo } = props;
+  const { searchWord, setSearchWord, pageNo, setPageNo, boardType, searchKey } = props;
 
   // ** Hooks
   const router = useRouter();
@@ -34,12 +36,17 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
     setSearchWord(e.target.value);
   };
 
-  // 검색 버튼 클릭 시, searchAction 상태 변경하는 함수
-  // 해당 함수를 탈 때마다 notice/list의 useEffect 실행됨
   const handleSearchKeyword = () => {
-    setPageNo(1);
-    console.log('검색버튼 누르면 pageNo값 1로 고정', pageNo);
-    router.push(`/board/notice/list/?pageNo=${pageNo}&searchWord=${searchWord}`);
+    if (pageNo !== 1) {
+      setPageNo(1);
+      router.push(
+        `/board/${boardType}/list/?pageNo=1&searchWord=${searchWord}&searchKey=${searchKey}`,
+      );
+    } else {
+      router.push(
+        `/board/${boardType}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
+      );
+    }
   };
 
   return (
@@ -47,7 +54,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
       sx={{
         p: 5,
         pb: 3,
-        mt: 4,
+        mt: 2,
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
