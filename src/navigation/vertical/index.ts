@@ -90,34 +90,6 @@ const navigation = (): VerticalNavItemsType => {
           title: '본사용',
           path: '/board/notice/list',
         },
-        {
-          title: '자주 묻는 질문',
-          path: '/board/faq/list',
-        },
-        {
-          title: '목록(A안)',
-          path: '/board/notice/list/a',
-        },
-        {
-          title: '상세(A안)',
-          path: '/board/notice/detail/a',
-        },
-        {
-          title: '목록(B안)',
-          path: '/board/notice/list/b',
-        },
-        {
-          title: '상세(B안)',
-          path: '/board/notice/detail/b',
-        },
-        {
-          title: '목록(B-1안)',
-          path: '/board/notice/list/b-1',
-        },
-        {
-          title: '상세(B-1안)',
-          path: '/board/notice/detail/b-1',
-        },
       ],
     },
     {
@@ -126,6 +98,7 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: '자주 묻는 질문',
+          path: '/board/faq/list',
         },
         {
           title: '나의 1:1 문의',
