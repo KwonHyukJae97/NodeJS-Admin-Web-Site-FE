@@ -37,7 +37,7 @@ import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import dynamic from 'next/dynamic';
-import { getDateTime, role } from '../../../pages/board/notice/list';
+import { getDateTime, role } from '../../../pages/notice/list';
 import { CategoryType, FaqType } from '../../../types/apps/boardTypes';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -329,7 +329,7 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
                 수정
               </Button>
-              <Link href="/board/faq/list" passHref>
+              <Link href="/faq/list" passHref>
                 <Button variant="outlined" color="secondary">
                   취소
                 </Button>

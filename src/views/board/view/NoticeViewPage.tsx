@@ -17,7 +17,7 @@ import { FileDownloadOutline } from 'mdi-material-ui';
 import CustomChip from 'src/@core/components/mui/chip';
 
 // ** Types Imports
-import { getDateTime, role } from 'src/pages/board/notice/list';
+import { getDateTime, role } from 'src/pages/notice/list';
 import apiConfig from 'src/configs/api';
 
 // @ts-ignore
@@ -143,7 +143,7 @@ const NoticeView = ({ id }: dataProps) => {
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');
 
-        router.replace('/board/notice/list');
+        router.replace('/notice/list');
       } catch (err) {
         console.log(err);
         alert('삭제에 실패하였습니다.');
@@ -246,7 +246,7 @@ const NoticeView = ({ id }: dataProps) => {
           ) : null}
 
           <Box sx={{ ml: 14, mr: 14, mb: 10, display: 'flex', justifyContent: 'flex-end' }}>
-            <Link href={`/board/notice/edit/${id}`} passHref>
+            <Link href={`/notice/edit/${id}`} passHref>
               <Button variant="contained" sx={{ mr: 3 }}>
                 수정
               </Button>
@@ -259,7 +259,7 @@ const NoticeView = ({ id }: dataProps) => {
             >
               삭제
             </Button>
-            <Link href={'/board/notice/list'} passHref>
+            <Link href={'/notice/list'} passHref>
               <Button variant="outlined" color="secondary">
                 취소
               </Button>

@@ -251,7 +251,7 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
                 등록
               </Button>
-              <Link href="/board/faq/list" passHref>
+              <Link href="/faq/list" passHref>
                 <Button variant="outlined" color="secondary">
                   취소
                 </Button>

@@ -40,7 +40,7 @@ import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import dynamic from 'next/dynamic';
-import { getDateTime, role } from '../../../pages/board/notice/list';
+import { getDateTime, role } from '../../../pages/notice/list';
 import { BoardType } from '../../../types/apps/userTypes';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
@@ -307,7 +307,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
                 수정
               </Button>
-              <Link href="/board/notice/list" passHref>
+              <Link href="/notice/list" passHref>
                 <Button variant="outlined" color="secondary">
                   취소
                 </Button>

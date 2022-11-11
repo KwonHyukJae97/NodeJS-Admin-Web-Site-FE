@@ -20,13 +20,13 @@ interface TableSearchHeaderProps {
   pageNo: number;
   setPageNo: (value: number) => void;
   searchKey: string | null;
-  boardType: string;
+  pageName: string;
 }
 
 // 공지사항 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
   // ** Props
-  const { searchWord, setSearchWord, pageNo, setPageNo, boardType, searchKey } = props;
+  const { searchWord, setSearchWord, pageNo, setPageNo, pageName, searchKey } = props;
 
   // ** Hooks
   const router = useRouter();
@@ -41,12 +41,10 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
 
     if (pageNo !== 1) {
       setPageNo(1);
-      router.push(
-        `/board/${boardType}/list/?pageNo=1&searchWord=${searchWord}&searchKey=${searchKey}`,
-      );
+      router.push(`/${pageName}/list/?pageNo=1&searchWord=${searchWord}&searchKey=${searchKey}`);
     } else {
       router.push(
-        `/board/${boardType}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
+        `/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
       );
     }
   };
@@ -91,7 +89,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
           onClick={handleSearchKeyword}
         />
       </Box>
-      <Link href="/board/faq/add" passHref>
+      <Link href="/faq/add" passHref>
         <Button
           sx={{ mr: 10, mb: 2, padding: '10px 18px' }}
           variant="contained"

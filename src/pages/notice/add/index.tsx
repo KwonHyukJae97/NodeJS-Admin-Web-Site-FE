@@ -230,7 +230,7 @@ const NoticeAdd = () => {
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
                 등록
               </Button>
-              <Link href="/board/notice/list" passHref>
+              <Link href="/notice/list" passHref>
                 <Button variant="outlined" color="secondary">
                   취소
                 </Button>

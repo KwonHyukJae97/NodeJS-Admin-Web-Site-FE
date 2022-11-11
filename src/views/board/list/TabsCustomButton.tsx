@@ -46,9 +46,7 @@ const TabsCustomButton = (props: Props) => {
 
   // state 동기 처리
   useEffect(() => {
-    searchKey !== ''
-      ? router.push(`/board/faq/list/?searchKey=${searchKey}`)
-      : router.push('/board/faq/list');
+    searchKey !== '' ? router.push(`/faq/list/?searchKey=${searchKey}`) : router.push('/faq/list');
   }, [searchKey]);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {

@@ -16,14 +16,14 @@ import { FileDownloadOutline } from 'mdi-material-ui';
 // ** Custom Components Imports
 
 // ** Types Imports
-import { getDateTime, role } from '../../../pages/board/notice/list';
+import { getDateTime, role } from '../../../pages/notice/list';
 import apiConfig from '../../../configs/api';
 
 // ** axios
 import axios from 'axios';
 
 import { useRouter } from 'next/router';
-import { FaqType } from '../../../types/apps/boardTypes';
+import { FaqType } from 'src/types/apps/boardTypes';
 
 type dataProps = {
   id: number;
@@ -143,7 +143,7 @@ const FaqView = ({ id }: dataProps) => {
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');
 
-        router.replace('/board/faq/list');
+        router.replace('/faq/list');
       } catch (err) {
         console.log(err);
         alert('삭제에 실패하였습니다.');
@@ -241,7 +241,7 @@ const FaqView = ({ id }: dataProps) => {
           ) : null}
 
           <Box sx={{ ml: 14, mr: 14, mb: 10, display: 'flex', justifyContent: 'flex-end' }}>
-            <Link href={`/board/faq/edit/${id}`} passHref>
+            <Link href={`/faq/edit/${id}`} passHref>
               <Button variant="contained" sx={{ mr: 3 }}>
                 수정
               </Button>
@@ -254,7 +254,7 @@ const FaqView = ({ id }: dataProps) => {
             >
               삭제
             </Button>
-            <Link href={'/board/faq/list'} passHref>
+            <Link href={'/faq/list'} passHref>
               <Button variant="outlined" color="secondary">
                 취소
               </Button>

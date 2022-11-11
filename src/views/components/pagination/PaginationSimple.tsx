@@ -8,14 +8,14 @@ interface Props {
   pageNo: number;
   setPageNo: (value: number) => void;
   searchWord: string;
-  boardType: string;
   searchKey: string;
+  pageName: string;
 }
 
 // 페이징 UI 컴포넌트
 const PaginationSimple = (props: Props) => {
   // ** Props
-  const { totalPage, pageNo, setPageNo, searchWord, boardType, searchKey } = props;
+  const { totalPage, pageNo, setPageNo, searchWord, searchKey, pageName } = props;
 
   // ** Hooks
   const router = useRouter();
@@ -24,10 +24,10 @@ const PaginationSimple = (props: Props) => {
     setPageNo(value);
     if (searchWord !== '') {
       router.push(
-        `/board/${boardType}/list/?pageNo=${value}&searchWord=${searchWord}&searchKey=${searchKey}`,
+        `/${pageName}/list/?pageNo=${value}&searchWord=${searchWord}&searchKey=${searchKey}`,
       );
     } else {
-      router.push(`/board/${boardType}/list/?pageNo=${value}&searchKey=${searchKey}`);
+      router.push(`/${pageName}/list/?pageNo=${value}&searchKey=${searchKey}`);
     }
   };
 

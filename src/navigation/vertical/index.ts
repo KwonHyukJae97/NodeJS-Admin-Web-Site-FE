@@ -88,7 +88,7 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: '본사용',
-          path: '/board/notice/list',
+          path: '/notice/list',
         },
       ],
     },
@@ -98,7 +98,7 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: '자주 묻는 질문',
-          path: '/board/faq/list',
+          path: '/faq/list',
         },
         {
           title: '나의 1:1 문의',
