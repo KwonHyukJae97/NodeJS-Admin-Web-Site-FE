@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 // ** Next Import
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 
 // ** MUI Imports
 import Card from '@mui/material/Card';
@@ -20,26 +21,21 @@ import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 
-// ** Custom Components Imports
-// ** Styled Component Import
 // ** Demo Components Imports
-import FileUploaderMultiple from '../../../../views/forms/form-elements/file-uploader/FileUploaderMultiple';
+import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 
 // ** Styles
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
-// ** Types Imports
-import apiConfig from '../../../../configs/api';
-
 // ** axios
 import axios from 'axios';
+import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import dynamic from 'next/dynamic';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 

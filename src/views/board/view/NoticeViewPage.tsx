@@ -14,14 +14,14 @@ import Divider from '@mui/material/Divider';
 import { FileDownloadOutline } from 'mdi-material-ui';
 
 // ** Custom Components Imports
-import CustomChip from '../../../@core/components/mui/chip';
+import CustomChip from 'src/@core/components/mui/chip';
 
 // ** Types Imports
-import { getDateTime, role } from '../../../pages/board/notice/list';
-import apiConfig from '../../../configs/api';
+import { getDateTime, role } from 'src/pages/board/notice/list';
+import apiConfig from 'src/configs/api';
 
 // @ts-ignore
-import { BoardType } from '../../../types/apps/userTypes';
+import { BoardType } from 'src/types/apps/userTypes';
 
 // ** axios
 import axios from 'axios';
@@ -75,8 +75,6 @@ const NoticeView = ({ id }: dataProps) => {
 
       console.log(noticeData);
       setData(noticeData);
-
-      console.log('data2222', data.content);
 
       if (viewContentRef.current) {
         setHtmlStr((viewContentRef.current.innerHTML += res.data.notice.board.content));

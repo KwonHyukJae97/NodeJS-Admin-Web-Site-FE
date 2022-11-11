@@ -8,17 +8,18 @@ import {
 
 // ** Third Party Imports
 import axios from 'axios';
+import { getCategory } from '../list';
 
 // ** Types
-import apiConfig from '../../../../configs/api';
+import apiConfig from 'src/configs/api';
 import { role } from '../../notice/list';
+import { BoardType } from 'src/types/apps/userTypes';
+import { CategoryType } from 'src/types/apps/boardTypes';
 
 // ** Demo Components Imports
 import FaqEditPage from 'src/views/board/edit/FaqEditPage';
-import { BoardType } from '../../../../types/apps/userTypes';
-import { getCategory } from '../list';
-import { CategoryType } from '../../../../types/apps/boardTypes';
 
+// FAQ 수정 페이지
 const FaqEdit = ({
   id,
   title,

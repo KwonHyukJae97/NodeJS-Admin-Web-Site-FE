@@ -8,20 +8,21 @@ import {
 
 // ** Third Party Imports
 import axios from 'axios';
+import apiConfig from 'src/configs/api';
 
 // ** Types
-import { BoardType } from '../../../../types/apps/userTypes';
-import apiConfig from '../../../../configs/api';
+import { BoardType } from 'src/types/apps/userTypes';
+import { role } from '../../notice/list';
 
 // ** Demo Components Imports
 import FaqViewPage from 'src/views/board/view/FaqViewPage';
-import { role } from '../../notice/list';
 
+// FAQ 상세 페이지
 const FaqView = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return <FaqViewPage id={id} />;
 };
 
-// FAQ 조회 API 요청 함수
+// FAQ 조회 API 호출
 export const getFaq = async () => {
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/faq`, {

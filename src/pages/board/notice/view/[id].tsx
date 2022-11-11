@@ -10,18 +10,19 @@ import {
 import axios from 'axios';
 
 // ** Types
-import { BoardType } from '../../../../types/apps/userTypes';
-import apiConfig from '../../../../configs/api';
+import { BoardType } from 'src/types/apps/userTypes';
+import apiConfig from 'src/configs/api';
 import { noticeGrant, role } from '../list';
 
 // ** Demo Components Imports
 import NoticeViewPage from 'src/views/board/view/NoticeViewPage';
 
+// 공지사항 상세 페이지
 const NoticeView = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return <NoticeViewPage id={id} />;
 };
 
-// Notice 조회 API 요청 함수
+// 공지사항 조회 API 호출
 export const getNotice = async () => {
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {

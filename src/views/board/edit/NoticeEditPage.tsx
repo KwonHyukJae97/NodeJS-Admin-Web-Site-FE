@@ -42,7 +42,6 @@ import * as yup from 'yup';
 import dynamic from 'next/dynamic';
 import { getDateTime, role } from '../../../pages/board/notice/list';
 import { BoardType } from '../../../types/apps/userTypes';
-import { FileDownloadOutline } from 'mdi-material-ui';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -83,9 +82,6 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
   const [htmlStr, setHtmlStr] = useState<string>('');
   const [initStr, setInitStr] = useState<string>('');
 
-  // const [title, setTitle] = useState<string>('');
-  // const [isTop, setIsTop] = useState<boolean>(false);
-
   // ** Vars
   const schema = yup.object().shape({
     title: yup.string().required(),
@@ -112,21 +108,12 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     getNoticeDetail(id);
   }, []);
 
-  // useEffect(() => {
-  //   console.log('title:' + data.title);
-  //   setTitle(data.title);
-  //   setIsTop(data.isTop);
-  // }, [data]);
-
   useEffect(() => {
-    // console.log('sethtml');
     setInitStr(data.content!);
     setHtmlStr(data.content!);
   }, [data]);
 
-  useEffect(() => {
-    // console.log('html');
-  }, [htmlStr]);
+  useEffect(() => {}, [htmlStr]);
 
   // 공지사항 상세조회 API 호출
   const getNoticeDetail = async (id: number) => {

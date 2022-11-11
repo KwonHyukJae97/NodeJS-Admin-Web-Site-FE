@@ -23,7 +23,7 @@ interface TableSearchHeaderProps {
   boardType: string;
 }
 
-// Notice 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
+// 공지사항 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
   // ** Props
   const { searchWord, setSearchWord, pageNo, setPageNo, boardType, searchKey } = props;
@@ -80,11 +80,6 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
           sx={{
             mb: 2,
             padding: '0.55rem 0.2rem 0.55rem 0.8rem',
-
-            // pt: 2.5,
-            // pb: 2,
-            // pl: 4,
-            // pr: 1,
             border: '1px solid lightGrey',
             borderRadius: 1,
             borderTopLeftRadius: 0,

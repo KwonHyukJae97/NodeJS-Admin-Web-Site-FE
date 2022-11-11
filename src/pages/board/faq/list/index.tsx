@@ -20,15 +20,15 @@ import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 import TabsCustomButton from 'src/views/board/list/TabsCustomButton';
 
 // ** Types Imports
-import apiConfig from 'src/configs/api';
 import { CategoryType, FaqType } from 'src/types/apps/boardTypes';
+import { role } from '../../notice/list';
 
 // ** axios
 import axios from 'axios';
+import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
 import moment from 'moment';
-import { role } from '../../notice/list';
 
 // 페이지 타입 정의
 interface PageType {
@@ -165,8 +165,6 @@ const FaqList = ({
     return category;
   });
 
-  // ** Hooks
-
   // 게시글이 없을 경우 처리하는 컴포넌트
   const renderNoResult = (
     <Box
@@ -199,7 +197,6 @@ const FaqList = ({
             boardType="faq"
             setSearchKey={setSearchKey}
           />
-          {/*<TabsCustomButton categoryList={categoryData} />*/}
           <TabsCustomButton
             categoryList={categoryData}
             searchKey={searchKey}

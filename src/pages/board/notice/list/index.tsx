@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // ** Next Import
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
@@ -15,16 +15,16 @@ import { AlertCircleOutline } from 'mdi-material-ui';
 
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip';
-import PageLeftInHeader from '../../../../@core/components/page-left-in-header';
-import TableSearchHeader from '../../../../views/board/list/TableSearchHeader';
-import PaginationSimple from '../../../../views/components/pagination/PaginationSimple';
+import PageLeftInHeader from 'src/@core/components/page-left-in-header';
+import TableSearchHeader from 'src/views/board/list/TableSearchHeader';
+import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
 // ** Types Imports
-import apiConfig from '../../../../configs/api';
-import { BoardType } from '../../../../types/apps/userTypes';
+import { BoardType } from 'src/types/apps/userTypes';
 
 // ** axios
 import axios from 'axios';
+import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
 import moment from 'moment';
@@ -149,8 +149,6 @@ const NoticeList = ({
         })
       : null;
 
-  // ** Hooks
-
   // 게시글이 없을 경우 처리하는 컴포넌트
   const renderNoResult = (
     <Box
@@ -239,8 +237,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
   const result = await getNotice(Number(pageNo), searchWord as string);
 
-  // console.log('result', result);
-
   const apiData: BoardType = result === undefined ? null : result.items;
   const pageData: PageType =
     result === undefined
@@ -264,30 +260,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
-
-// Notice 조회 API 요청(InitialData)
-// export const getStaticProps: GetStaticProps = async () => {
-//   /* 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정 */
-//   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-//   const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
-//     // withCredentials: true,
-//     data: { role, noticeGrant, pageNo: 1, pageSize: 10, totalData: false },
-//   });
-//
-//   const apiData: BoardType = res.data.items;
-//   const pageData: PageType = {
-//     currentPage: res.data.currentPage,
-//     pageSize: res.data.pageSize,
-//     totalCount: res.data.totalCount,
-//     totalPage: res.data.totalPage,
-//   };
-//
-//   return {
-//     props: {
-//       apiData,
-//       pageData,
-//     },
-//   };
-// };
 
 export default NoticeList;

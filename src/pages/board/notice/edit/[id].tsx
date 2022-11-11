@@ -8,20 +8,21 @@ import {
 
 // ** Third Party Imports
 import axios from 'axios';
+import apiConfig from 'src/configs/api';
 
 // ** Types
-import apiConfig from '../../../../configs/api';
 import { noticeGrant, role } from '../list';
-import { BoardType } from '../../../../types/apps/userTypes';
+import { BoardType } from 'src/types/apps/userTypes';
 
 // ** Demo Components Imports
 import NoticeEditPage from 'src/views/board/edit/NoticeEditPage';
 
+// 공지사항 수정 페이지
 const NoticeEdit = ({ id, title, isTop }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return <NoticeEditPage id={id} title={title} isTop={isTop} />;
 };
 
-// Notice 조회 API 요청 함수
+// 공지사항 조회 API 호출
 export const getNotice = async () => {
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
@@ -34,7 +35,7 @@ export const getNotice = async () => {
   }
 };
 
-// Notice 상세조회 API 요청 함수
+// 공지사항 상세조회 API 호출
 export const getNoticeDetail = async (id: number) => {
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
@@ -64,11 +65,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  // @ts-ignore
-  const { id } = params;
-  const result = await getNoticeDetail(id);
+  const id = params?.id;
+  const result = await getNoticeDetail(Number(id));
 
   // NoticeEditPage에서 defaultValues로 설정하기 위해 Props로 전달
+  // TODO : CSR로 수정 예정
   const title = result.notice.board.title;
   const isTop = result.notice.isTop;
 

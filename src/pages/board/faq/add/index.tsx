@@ -5,6 +5,8 @@ import { Controller, useForm } from 'react-hook-form';
 // ** Next Import
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
+import dynamic from 'next/dynamic';
 
 // ** MUI Imports
 import Card from '@mui/material/Card';
@@ -16,11 +18,11 @@ import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
-// ** Custom Components Imports
-// ** Styled Component Import
 // ** Demo Components Imports
-import FileUploaderMultiple from '../../../../views/forms/form-elements/file-uploader/FileUploaderMultiple';
+import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 
@@ -28,20 +30,16 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import apiConfig from '../../../../configs/api';
+import { CategoryType } from 'src/types/apps/boardTypes';
 
 // ** axios
 import axios from 'axios';
+import apiConfig from 'src/configs/api';
+import { getCategory } from '../list';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import dynamic from 'next/dynamic';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
-import { CategoryType } from '../../../../types/apps/boardTypes';
-import { getCategory } from '../list';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -266,9 +264,7 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  // console.log('ctx', context.query);
-
+export const getServerSideProps: GetServerSideProps = async () => {
   // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
   const categoryResult = await getCategory();
