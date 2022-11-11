@@ -11,7 +11,16 @@ import { useRouter } from 'next/router';
 // 목록 페이지 헤더 컴포넌트 (왼쪽 정렬 + 카드 영역 내부에서 사용시)
 const PageLeftInHeader = (props: PageLeftHeaderProps) => {
   // ** Props
-  const { title, subtitle, maincategory, subcategory, setPageNo, setSearchWord, boardType } = props;
+  const {
+    title,
+    subtitle,
+    maincategory,
+    subcategory,
+    setPageNo,
+    setSearchWord,
+    boardType,
+    setSearchKey,
+  } = props;
 
   // ** Hooks
   const router = useRouter();
@@ -23,6 +32,7 @@ const PageLeftInHeader = (props: PageLeftHeaderProps) => {
           onClick={() => {
             setPageNo(1);
             setSearchWord('');
+            setSearchKey ? setSearchKey('') : null;
             router.push(`/board/${boardType}/list`);
           }}
         >

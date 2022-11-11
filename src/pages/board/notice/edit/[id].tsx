@@ -17,13 +17,8 @@ import { BoardType } from '../../../../types/apps/userTypes';
 // ** Demo Components Imports
 import NoticeEditPage from 'src/views/board/edit/NoticeEditPage';
 
-const NoticeEdit = ({
-  id,
-  title,
-  isTop,
-  content,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
-  return <NoticeEditPage id={id} title={title} content={content} isTop={isTop} />;
+const NoticeEdit = ({ id, title, isTop }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  return <NoticeEditPage id={id} title={title} isTop={isTop} />;
 };
 
 // Notice 조회 API 요청 함수
@@ -76,13 +71,11 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
   // NoticeEditPage에서 defaultValues로 설정하기 위해 Props로 전달
   const title = result.notice.board.title;
   const isTop = result.notice.isTop;
-  const content = result.notice.board.content;
 
   return {
     props: {
       id: params?.id,
       title: title,
-      content: content,
       isTop: isTop,
     },
   };

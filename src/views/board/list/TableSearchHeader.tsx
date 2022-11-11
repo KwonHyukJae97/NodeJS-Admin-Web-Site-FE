@@ -37,6 +37,8 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
   };
 
   const handleSearchKeyword = () => {
+    setSearchWord('');
+
     if (pageNo !== 1) {
       setPageNo(1);
       router.push(

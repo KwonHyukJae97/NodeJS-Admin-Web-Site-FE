@@ -53,7 +53,6 @@ const EditorControlled = dynamic(
 type dataProps = {
   id: number;
   title: string;
-  content: string;
   isTop: boolean;
 };
 
@@ -66,7 +65,7 @@ interface FormData {
 }
 
 // 공지사항 수정 페이지
-const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
+const NoticeEdit = ({ id, title, isTop }: dataProps) => {
   // ** State
   const [data, setData] = useState<BoardType>({
     boardId: 0,
@@ -81,6 +80,10 @@ const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
   });
   const [files, setFiles] = useState<File[]>([]);
   const [htmlStr, setHtmlStr] = useState<string>('');
+  const [initStr, setInitStr] = useState<string>('');
+
+  // const [title, setTitle] = useState<string>('');
+  // const [isTop, setIsTop] = useState<boolean>(false);
 
   // ** Vars
   const schema = yup.object().shape({
@@ -105,13 +108,25 @@ const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
   });
 
   useEffect(() => {
+    console.log('data');
     getNoticeDetail(id);
   }, []);
 
+  // useEffect(() => {
+  //   console.log('title:' + data.title);
+  //   setTitle(data.title);
+  //   setIsTop(data.isTop);
+  // }, [data]);
+
   useEffect(() => {
-    // @ts-ignore
-    setHtmlStr(data.content);
+    // console.log('sethtml');
+    setInitStr(data.content!);
+    setHtmlStr(data.content!);
   }, [data]);
+
+  useEffect(() => {
+    // console.log('html');
+  }, [htmlStr]);
 
   // 공지사항 상세조회 API 호출
   const getNoticeDetail = async (id: number) => {
@@ -131,12 +146,6 @@ const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
       };
       console.log(noticeData);
       setData(noticeData);
-
-      // @ts-ignore
-      // setHtmlStr(res.data.notice.board.content);
-      // console.log('htmlStr2', htmlStr);
-      // console.log('data2', data.content);
-      // console.log('data content2', res.data.notice.board.content);
     } catch (err) {
       console.log(err);
     }
@@ -265,7 +274,7 @@ const NoticeEdit = ({ id, title, content, isTop }: dataProps) => {
               <EditorWrapper>
                 <Grid container spacing={6} className="match-height">
                   <Grid item xs={12} sx={{ mt: 2 }}>
-                    <EditorControlled htmlStr={htmlStr} setHtmlStr={setHtmlStr} />
+                    <EditorControlled initStr={initStr} htmlStr={htmlStr} setHtmlStr={setHtmlStr} />
                   </Grid>
                 </Grid>
               </EditorWrapper>

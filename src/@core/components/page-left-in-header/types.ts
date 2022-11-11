@@ -8,4 +8,5 @@ export type PageLeftHeaderProps = {
   setPageNo: (value: number) => void;
   setSearchWord: (value: string) => void;
   boardType: string;
+  setSearchKey?: (value: string) => void;
 };

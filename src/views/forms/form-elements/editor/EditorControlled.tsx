@@ -10,6 +10,7 @@ import htmlToDraft from 'html-to-draftjs';
 import ReactDraftWysiwyg from 'src/@core/components/react-draft-wysiwyg';
 
 interface IEditor {
+  initStr: string;
   htmlStr: string;
   setHtmlStr: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -17,7 +18,7 @@ interface IEditor {
 // 에디터 컴포넌트
 const EditorControlled = (props: IEditor) => {
   // ** Props
-  const { htmlStr, setHtmlStr } = props;
+  const { initStr, htmlStr, setHtmlStr } = props;
 
   // ** State
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -31,7 +32,7 @@ const EditorControlled = (props: IEditor) => {
       const editorState = EditorState.createWithContent(contentState);
       setEditorState(editorState);
     }
-  }, []);
+  }, [initStr]);
 
   // editor 수정 이벤트
   const onEditorStateChange = (editorState: EditorState) => {

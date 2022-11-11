@@ -1,5 +1,5 @@
 // ** React Imports
-import { SyntheticEvent, useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect } from 'react';
 
 // ** MUI Imports
 import Tab from '@mui/material/Tab';

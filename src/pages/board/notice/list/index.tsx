@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // ** Next Import
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';

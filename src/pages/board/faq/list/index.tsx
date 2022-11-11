@@ -197,6 +197,7 @@ const FaqList = ({
             setPageNo={setPageNo}
             setSearchWord={setSearchWord}
             boardType="faq"
+            setSearchKey={setSearchKey}
           />
           {/*<TabsCustomButton categoryList={categoryData} />*/}
           <TabsCustomizedFaq
