@@ -1,4 +1,4 @@
-// company list type
+// 회원사 리스트 type 정의
 export type CompanyType = {
   id?: number;
   companyId: number;
@@ -10,6 +10,7 @@ export type CompanyType = {
   regDate: string;
 };
 
+// 회원사 props type 정의
 export type CompanyLayoutProps = {
   id: number | undefined;
 };

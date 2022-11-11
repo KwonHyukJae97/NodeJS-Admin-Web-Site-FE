@@ -1,33 +1,41 @@
+// ** Next Import
+
 // ** MUI Imports
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
 // ** Icons Imports
-import Magnify from 'mdi-material-ui/Magnify';
 import { auto } from '@popperjs/core';
+import Magnify from 'mdi-material-ui/Magnify';
+import { useRouter } from 'next/router';
 import { ChangeEvent } from 'react';
 
 interface TableSearchHeaderProps {
-  searchKeyword: string;
-  setSearchKeyword: (value: string) => void;
-  setSearchAction: (value: string) => void;
+  searchWord: string;
+  setSearchWord: (value: string) => void;
+  pageNo: number;
+  setPageNo: (value: number) => void;
 }
 
-// Notice 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
+// company 테이블 헤더 컴포넌트 (검색창)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
   // ** Props
-  const { searchKeyword, setSearchKeyword, setSearchAction } = props;
+  const { searchWord, setSearchWord, pageNo, setPageNo } = props;
+
+  // ** Hooks
+  const router = useRouter();
 
   // 입력창에 데이터 입력 시, searchKeyword 상태 변경하는 함수
   const handleChangeKeyword = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    setSearchKeyword(e.target.value);
+    setSearchWord(e.target.value);
   };
 
   // 검색 버튼 클릭 시, searchAction 상태 변경하는 함수
-  // 해당 함수를 탈 때마다 notice/list의 useEffect 실행됨
+  // 해당 함수를 탈 때마다 company/list의 useEffect 실행됨
   const handleSearchKeyword = () => {
-    setSearchAction(searchKeyword);
+    setPageNo(1);
+    router.push(`/company/list/?pageNo=${pageNo}&searchWord=${searchWord}`);
   };
 
   return (
@@ -45,7 +53,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
           size="small"
-          value={searchKeyword}
+          value={searchWord}
           sx={{
             mb: 2,
             ml: 10,

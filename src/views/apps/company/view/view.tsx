@@ -39,6 +39,7 @@ import apiConfig from 'src/configs/api';
 
 // ** moment
 import moment from 'moment';
+import router from 'next/router';
 
 // ** Styled component for the link in the dataTable
 const StyledLink = styled('a')(({ theme }) => ({
@@ -97,6 +98,27 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
     }
   };
 
+  // 회원사 정보 삭제 API호출
+  const deleteCompany = async () => {
+    if (confirm('삭제 하시겠습니까?')) {
+      try {
+        /* eslint-disable */
+        const req = await axios.delete(`${apiConfig.apiEndpoint}/company/${id}`, {
+          data: {
+            // TODO: 삭제 권한자 체크 적용해야함.
+            roleId: 13,
+          },
+          withCredentials: true,
+        });
+        alert('삭제 되었습니다.');
+        router.push('/company/list');
+      } catch (err: any) {
+        console.log('err', err.response.data);
+        alert('삭제에 실패 하였습니다.');
+      }
+    }
+  };
+
   // Handle Edit dialog
   const handleEditClickOpen = () => setOpenEdit(true);
   const handleEditClose = () => setOpenEdit(false);
@@ -106,6 +128,23 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
+            <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  회원사 정보
+                </Typography>
+              </Box>
+              <Divider sx={{ ml: 3, mr: 3, borderLeftWidth: 'unset', height: 16 }} />
+              <Box sx={{ display: 'flex' }}>
+                <Typography variant="body2">회원사 관리</Typography>
+                <Box sx={{ ml: 1.2, mr: 1.2 }}>
+                  <Typography variant="body2">{'>'}</Typography>
+                </Box>
+                <Typography variant="body2">회원사 정보</Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={{ ml: 12, mr: 12, borderBottomWidth: 'unset' }} />
             <CardContent
               sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}
             >
@@ -116,7 +155,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
                 <Box>
                   <Button
                     variant="contained"
-                    sx={{ mr: 1, mb: 4 }}
+                    sx={{ mr: 1 }}
                     size="small"
                     onClick={handleEditClickOpen}
                   >
@@ -191,6 +230,9 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
                 <Link href={`/company/list`} passHref>
                   <StyledLink>확인</StyledLink>
                 </Link>
+              </Button>
+              <Button variant="contained" sx={{ mr: 2 }} onClick={deleteCompany}>
+                삭제
               </Button>
             </CardActions>
 

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // ** Next Import
 import Link from 'next/link';
@@ -27,14 +27,24 @@ import apiConfig from 'src/configs/api';
 
 // ** moment
 import moment from 'moment';
-import { GetStaticProps, InferGetStaticPropsType } from 'next/types';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
+import { AlertCircleOutline } from 'mdi-material-ui';
+import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
-// table row data type
+// 테이블 행 데이터 타입 정의
 interface CellType {
   row: CompanyType;
 }
 
-// ** Styled component for the link in the dataTable
+// 페이지 타입 정의
+interface PageType {
+  currentPage: number;
+  pageSize: number;
+  totalCount: number;
+  totalPage: number;
+}
+
+// 링크 스타일 적용
 const StyledLink = styled('a')(({ theme }) => ({
   textDecoration: 'none',
   color: theme.palette.text.primary,
@@ -63,7 +73,7 @@ const columns = [
     renderCell: ({ row }: CellType) => {
       return (
         <Box sx={{ margin: '0 auto' }}>
-          <Link href={`/company/detail/${row.companyId}`} passHref>
+          <Link href={`/company/view/${row.companyId}`} passHref>
             <StyledLink>{row.companyName}</StyledLink>
           </Link>
         </Box>
@@ -114,75 +124,34 @@ const columns = [
 ];
 
 // 회원사 목록 페이지
-const CompanyList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const CompanyList = ({
+  apiData,
+  pageData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** State
-  const [data, setData] = useState<CompanyType[] | null>(null),
-    [searchData, setSearchData] = useState<CompanyType[] | null>(null),
-    [pageSize, setPageSize] = useState<number>(10),
-    [searchKeyword, setSearchKeyword] = useState<string>(''),
-    [searchAction, setSearchAction] = useState<string>('');
+  const [pageNo, setPageNo] = useState<number>(1),
+    [searchWord, setSearchWord] = useState<string>('');
+
+  const pageName = 'company';
 
   // API로 조회한 데이터 리스트를 타입에 맞게 할당(SSR)
-  const companyData: CompanyType[] = apiData.map((data: any, idx: number) => {
-    const company: CompanyType = {
-      id: idx + 1,
-      companyId: data.companyId,
-      companyName: data.companyName,
-      userCount: data.userCount,
-      adminCount: data.adminCount,
-      regDate: data.regDate,
-    };
+  const companyData: CompanyType[] =
+    apiData !== null
+      ? apiData.map((data: any, idx: number) => {
+          const company: CompanyType = {
+            id: pageData.totalCount - pageData.pageSize * (pageData.currentPage - 1) - idx,
+            companyId: data.companyId,
+            companyName: data.companyName,
+            userCount: data.userCount,
+            adminCount: data.adminCount,
+            regDate: data.regDate,
+          };
 
-    return company;
-  });
+          return company;
+        })
+      : null;
 
   // ** Hooks
-  // 검색어가 있는 상태에서 검색 버튼을 클릭할 때마다 화면 그려주도록 작성
-  useEffect(() => {
-    // 검색 결과에 대한 데이터 가져오는 함수
-    const getSearchKeyword = async () => {
-      setData(null);
-      try {
-        const res = await axios.post(`${apiConfig.apiEndpoint}/company`, {
-          searchWord: searchKeyword,
-        });
-
-        if (res.data && res.data.length) {
-          setSearchData(
-            res.data.map((d: any, idx: number) => {
-              const company: CompanyType = {
-                id: idx + 1,
-                companyId: d.companyId,
-                companyName: d.companyName,
-                userCount: d.userCount,
-                adminCount: d.adminCount,
-                regDate: d.regDate,
-              };
-              console.log(company);
-
-              return company;
-            }),
-          );
-        } else {
-          setData(null);
-        }
-      } catch (err) {
-        console.log(err);
-        setData(null);
-      }
-    };
-
-    // 검색어가 있을 경우
-    if (searchKeyword !== '') {
-      getSearchKeyword();
-
-      // 검색 결과 조회 후, 입력값 리셋
-      setSearchKeyword('');
-    } else {
-      setData(companyData);
-    }
-  }, [searchAction]);
-
   // 게시글이 없을 경우 처리하는 컴포넌트
   const renderNoResult = (
     <Box
@@ -194,6 +163,7 @@ const CompanyList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>
         alignItems: 'center',
       }}
     >
+      <AlertCircleOutline sx={{ mr: 2 }} />
       <Typography variant="h6">해당 검색에 대한 정보가 없습니다.</Typography>
     </Box>
   );
@@ -206,13 +176,16 @@ const CompanyList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>
             title={'회원사 관리'}
             maincategory={'회원사관리'}
             subcategory={'회원사관리'}
+            setPageNo={setPageNo}
+            setSearchWord={setSearchWord}
           />
           <TableSearchHeader
-            searchKeyword={searchKeyword}
-            setSearchKeyword={setSearchKeyword}
-            setSearchAction={setSearchAction}
+            searchWord={searchWord}
+            setSearchWord={setSearchWord}
+            pageNo={pageNo}
+            setPageNo={setPageNo}
           />
-          {data !== null ? (
+          {companyData !== null ? (
             <DataGrid
               autoHeight
               pagination
@@ -220,23 +193,17 @@ const CompanyList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>
               columns={columns}
               getRowId={(row: any) => row.companyId}
               disableSelectionOnClick
-              pageSize={Number(pageSize)}
-              rowsPerPageOptions={[10, 25, 50]}
+              components={{ Pagination: PaginationSimple }}
+              componentsProps={{
+                pagination: {
+                  totalPage: pageData.totalPage,
+                  pageNo: pageNo,
+                  setPageNo: setPageNo,
+                  searchWord: searchWord,
+                  pageName: pageName,
+                },
+              }}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-            />
-          ) : searchData !== null ? (
-            <DataGrid
-              autoHeight
-              pagination
-              rows={searchData}
-              columns={columns}
-              getRowId={(row: any) => row.companyId}
-              disableSelectionOnClick
-              pageSize={Number(pageSize)}
-              rowsPerPageOptions={[10, 25, 50]}
-              sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
             />
           ) : (
             renderNoResult
@@ -248,15 +215,44 @@ const CompanyList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>
 };
 
 // 회원사 조회 API 요청
-export const getStaticProps: GetStaticProps = async () => {
-  const res = await axios.get(`${apiConfig.apiEndpoint}/company`, {
-    withCredentials: true,
-  });
-  const apiData: CompanyType = res.data;
+export const getCompany = async (pageNo: number, searchWord: string) => {
+  const page = pageNo == null ? 1 : pageNo;
+  try {
+    const res = await axios.get(`${apiConfig.apiEndpoint}/company`, {
+      data: { searchWord, pageNo: page, pageSize: 10, totalData: false },
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { pageNo, searchWord } = context.query;
+
+  const result = await getCompany(Number(pageNo), searchWord as string);
+
+  const apiData: CompanyType = result === undefined ? null : result.items;
+  const pageData: PageType =
+    result === undefined
+      ? {
+          currentPage: 1,
+          pageSize: 1,
+          totalCount: 0,
+          totalPage: 1,
+        }
+      : {
+          currentPage: result.currentPage,
+          pageSize: result.pageSize,
+          totalCount: result.totalCount,
+          totalPage: result.totalPage,
+        };
 
   return {
     props: {
       apiData,
+      pageData,
     },
   };
 };
