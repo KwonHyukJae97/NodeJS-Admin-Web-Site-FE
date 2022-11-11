@@ -17,7 +17,7 @@ import { AlertCircleOutline } from 'mdi-material-ui';
 import PageLeftInHeader from 'src/@core/components/page-left-in-header';
 import TableSearchHeader from 'src/views/board/list/TableSearchHeader';
 import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
-import TabsCustomizedFaq from 'src/views/board/list/TabsCustomizedFaq';
+import TabsCustomButton from 'src/views/board/list/TabsCustomButton';
 
 // ** Types Imports
 import apiConfig from 'src/configs/api';
@@ -200,7 +200,7 @@ const FaqList = ({
             setSearchKey={setSearchKey}
           />
           {/*<TabsCustomButton categoryList={categoryData} />*/}
-          <TabsCustomizedFaq
+          <TabsCustomButton
             categoryList={categoryData}
             searchKey={searchKey}
             setSearchKey={setSearchKey}

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 // ** Next Import
@@ -12,9 +12,6 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -23,7 +20,7 @@ import Button from '@mui/material/Button';
 // ** Custom Components Imports
 // ** Styled Component Import
 // ** Demo Components Imports
-import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
+import FileUploaderMultiple from '../../../../views/forms/form-elements/file-uploader/FileUploaderMultiple';
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 
@@ -31,7 +28,7 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import apiConfig from 'src/configs/api';
+import apiConfig from '../../../../configs/api';
 
 // ** axios
 import axios from 'axios';
@@ -40,9 +37,11 @@ import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import dynamic from 'next/dynamic';
-import { getDateTime, role } from '../../../pages/board/notice/list';
-import { BoardType } from '../../../types/apps/userTypes';
-import { FileDownloadOutline } from 'mdi-material-ui';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
+import { CategoryType } from '../../../../types/apps/boardTypes';
+import { getCategory } from '../list';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -51,50 +50,39 @@ const EditorControlled = dynamic(
   { ssr: false },
 );
 
-type dataProps = {
-  id: number;
-  title: string;
-  isTop: boolean;
-};
-
-// 공지사항 입력값 타입 정의
+// FAQ 입력값 타입 정의
 interface FormData {
   title: string;
-  isTop: string;
+  categoryName: string;
   role: string;
-  noticeGrant: string;
 }
 
-// 공지사항 수정 페이지
-const NoticeEdit = ({ id, title, isTop }: dataProps) => {
+const defaultValues = {
+  title: '',
+  categoryName: '',
+};
+
+// FAQ 등록 페이지
+const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** State
-  const [data, setData] = useState<BoardType>({
-    boardId: 0,
-    content: '',
-    fileList: [],
-    id: 0,
-    isTop: false,
-    regDate: '',
-    title: '',
-    viewCnt: 0,
-    writer: '',
-  });
   const [files, setFiles] = useState<File[]>([]);
   const [htmlStr, setHtmlStr] = useState<string>('');
-  const [initStr, setInitStr] = useState<string>('');
-
-  // const [title, setTitle] = useState<string>('');
-  // const [isTop, setIsTop] = useState<boolean>(false);
 
   // ** Vars
   const schema = yup.object().shape({
     title: yup.string().required(),
+    categoryName: yup.string().required(),
   });
 
-  const defaultValues = {
-    title: title,
-    isTop: isTop,
-  };
+  const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
+    const category: CategoryType = {
+      categoryId: data.categoryId,
+      categoryName: data.categoryName,
+      isUse: data.isUse,
+    };
+
+    return category;
+  });
 
   // ** Hooks
   const router = useRouter();
@@ -108,69 +96,9 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    getNoticeDetail(id);
-  }, []);
-
-  // useEffect(() => {
-  //   console.log('title:' + data.title);
-  //   setTitle(data.title);
-  //   setIsTop(data.isTop);
-  // }, [data]);
-
-  useEffect(() => {
-    // console.log('sethtml');
-    setInitStr(data.content!);
-    setHtmlStr(data.content!);
-  }, [data]);
-
-  useEffect(() => {
-    // console.log('html');
-  }, [htmlStr]);
-
-  // 공지사항 상세조회 API 호출
-  const getNoticeDetail = async (id: number) => {
-    try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
-        data: { role },
-      });
-
-      const noticeData = {
-        boardId: res.data.notice.boardId,
-        title: res.data.notice.board.title,
-        content: res.data.notice.board.content,
-        isTop: res.data.notice.isTop,
-        regDate: getDateTime(res.data.notice.board.regDate),
-        writer: res.data.writer,
-        fileList: res.data.fileList,
-      };
-      console.log(noticeData);
-      setData(noticeData);
-
-      // 파일 정보 조회하여 Blob 형으로 재정의 처리
-      const tempFiles = [];
-      for (let index = 0; index < res.data.fileList.length; index++) {
-        const file: {
-          boardFileId: number;
-          originalFileName: string;
-          filePath: string;
-        } = res.data.fileList[index];
-
-        const fileResult = await axios.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
-          responseType: 'blob',
-        });
-
-        tempFiles.push(new File([fileResult.data], file.originalFileName));
-      }
-
-      setFiles(tempFiles);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // 수정 버튼 클릭 시, api 요청
+  // 등록 버튼 클릭 시, api 요청
   const onSubmit = async (data: FormData) => {
+    console.log('category 선택', data.categoryName);
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -180,28 +108,27 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     }
 
     formData.append('role', '본사 관리자');
-    formData.append('noticeGrant', '0|1|2');
     formData.append('title', data.title);
     formData.append('content', htmlStr);
-    formData.append('isTop', data.isTop);
+    formData.append('categoryName', data.categoryName);
 
-    await editNotice(formData);
+    await registerFaq(formData);
   };
 
-  // 공지사항 수정 API 호출
-  const editNotice = async (formData: any) => {
-    if (confirm('수정 하시겠습니까?')) {
+  // FAQ 등록 API 호출
+  const registerFaq = async (formData: any) => {
+    if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
+        const req = await axios.post(`${apiConfig.apiEndpoint}/faq`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        console.log('수정 성공', req);
-        alert('수정이 완료되었습니다.');
+        console.log('등록 성공', req);
+        alert('등록이 완료되었습니다.');
 
-        router.replace('/board/notice/list');
+        router.replace('/board/faq/list');
       } catch (err) {
         console.log(err);
-        alert('수정에 실패하였습니다.');
+        alert('등록에 실패하였습니다.');
       }
     }
   };
@@ -212,7 +139,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
         <Card>
           <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              본사용 공지사항 수정
+              자주 묻는 질문 등록
             </Typography>
           </Box>
 
@@ -221,38 +148,45 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>
               <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
-                상단 고정 여부
+                분류
               </Typography>
               <FormControl sx={{ flexWrap: 'wrap', flexDirection: 'row' }}>
                 <Controller
-                  name="isTop"
+                  name="categoryName"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
-                    <RadioGroup
-                      row
+                    <Select
                       value={value}
-                      name="sizes"
-                      defaultValue="small"
+                      label=""
                       onChange={onChange}
-                      aria-label="simple-radio"
-                      sx={{
-                        '& .MuiFormControlLabel-label': { fontSize: '0.95rem', fontWeight: 500 },
-                      }}
+                      size="small"
+                      error={Boolean(errors.categoryName)}
+                      inputProps={{ 'aria-label': 'Without label' }}
+                      displayEmpty
+                      sx={{ mt: 2, mb: 1 }}
+
+                      // labelId="validation-basic-select"
+                      // aria-describedby="validation-basic-select"
                     >
-                      <FormControlLabel
-                        value={true}
-                        control={<Radio size="small" />}
-                        label="사용"
-                      />
-                      <FormControlLabel
-                        value={false}
-                        control={<Radio size="small" />}
-                        label="미사용"
-                      />
-                    </RadioGroup>
+                      <MenuItem disabled value="">
+                        분류 선택
+                      </MenuItem>
+                      {categoryData.map((category) => {
+                        return (
+                          <MenuItem value={category.categoryName} key={category.categoryId}>
+                            {category.categoryName}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
                   )}
                 />
+                {errors.categoryName && (
+                  <FormHelperText sx={{ color: 'error.main' }} id="validation-basic-select">
+                    This field is required
+                  </FormHelperText>
+                )}
               </FormControl>
             </Box>
 
@@ -292,7 +226,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
               <EditorWrapper>
                 <Grid container spacing={6} className="match-height">
                   <Grid item xs={12} sx={{ mt: 2 }}>
-                    <EditorControlled initStr={initStr} htmlStr={htmlStr} setHtmlStr={setHtmlStr} />
+                    <EditorControlled initStr={''} htmlStr={htmlStr} setHtmlStr={setHtmlStr} />
                   </Grid>
                 </Grid>
               </EditorWrapper>
@@ -304,7 +238,6 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
               </Typography>
               <DropzoneWrapper>
                 <FileUploaderMultiple files={files} setFiles={setFiles} />
-                {/*<FileUploaderMultiple files={data.fileList} setFiles={setFiles} />*/}
               </DropzoneWrapper>
             </Box>
 
@@ -318,9 +251,9 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
               }}
             >
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
-                수정
+                등록
               </Button>
-              <Link href="/board/notice/list" passHref>
+              <Link href="/board/faq/list" passHref>
                 <Button variant="outlined" color="secondary">
                   취소
                 </Button>
@@ -333,4 +266,20 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
   );
 };
 
-export default NoticeEdit;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // console.log('ctx', context.query);
+
+  // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
+  // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
+  const categoryResult = await getCategory();
+
+  const categoryApiData: CategoryType[] = categoryResult;
+
+  return {
+    props: {
+      categoryApiData,
+    },
+  };
+};
+
+export default FaqAdd;

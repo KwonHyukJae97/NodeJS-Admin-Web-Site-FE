@@ -2,9 +2,9 @@
 export type FaqType = {
   id?: number;
   boardId: number;
-  categoryId: number;
+  categoryId?: number;
   categoryName: string;
-  isUse: boolean;
+  isUse?: boolean;
   title: string;
   content?: string;
   viewCnt?: number;

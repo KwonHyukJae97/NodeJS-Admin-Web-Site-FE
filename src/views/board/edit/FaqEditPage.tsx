@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 // ** Next Import
@@ -12,9 +12,6 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -41,8 +38,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import dynamic from 'next/dynamic';
 import { getDateTime, role } from '../../../pages/board/notice/list';
-import { BoardType } from '../../../types/apps/userTypes';
-import { FileDownloadOutline } from 'mdi-material-ui';
+import { CategoryType, FaqType } from '../../../types/apps/boardTypes';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -54,26 +52,26 @@ const EditorControlled = dynamic(
 type dataProps = {
   id: number;
   title: string;
-  isTop: boolean;
+  categoryName: boolean;
+  categoryApiData: CategoryType[];
 };
 
 // 공지사항 입력값 타입 정의
 interface FormData {
   title: string;
-  isTop: string;
+  categoryName: string;
   role: string;
-  noticeGrant: string;
 }
 
-// 공지사항 수정 페이지
-const NoticeEdit = ({ id, title, isTop }: dataProps) => {
+// FAQ 수정 페이지
+const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
   // ** State
-  const [data, setData] = useState<BoardType>({
+  const [data, setData] = useState<FaqType>({
     boardId: 0,
     content: '',
     fileList: [],
     id: 0,
-    isTop: false,
+    categoryName: '',
     regDate: '',
     title: '',
     viewCnt: 0,
@@ -89,11 +87,22 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
   // ** Vars
   const schema = yup.object().shape({
     title: yup.string().required(),
+    categoryName: yup.string().required(),
+  });
+
+  const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
+    const category: CategoryType = {
+      categoryId: data.categoryId,
+      categoryName: data.categoryName,
+      isUse: data.isUse,
+    };
+
+    return category;
   });
 
   const defaultValues = {
     title: title,
-    isTop: isTop,
+    categoryName: categoryName,
   };
 
   // ** Hooks
@@ -109,14 +118,8 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
   });
 
   useEffect(() => {
-    getNoticeDetail(id);
+    getFaqDetail(id);
   }, []);
-
-  // useEffect(() => {
-  //   console.log('title:' + data.title);
-  //   setTitle(data.title);
-  //   setIsTop(data.isTop);
-  // }, [data]);
 
   useEffect(() => {
     // console.log('sethtml');
@@ -128,24 +131,24 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     // console.log('html');
   }, [htmlStr]);
 
-  // 공지사항 상세조회 API 호출
-  const getNoticeDetail = async (id: number) => {
+  // FAQ 상세조회 API 호출
+  const getFaqDetail = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
+      const res = await axios.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
         data: { role },
       });
 
-      const noticeData = {
-        boardId: res.data.notice.boardId,
-        title: res.data.notice.board.title,
-        content: res.data.notice.board.content,
-        isTop: res.data.notice.isTop,
-        regDate: getDateTime(res.data.notice.board.regDate),
+      const faqData = {
+        boardId: res.data.faqId,
+        title: res.data.faq.board.title,
+        content: res.data.faq.board.content,
+        categoryName: res.data.category.categoryName,
+        regDate: getDateTime(res.data.faq.board.regDate),
         writer: res.data.writer,
         fileList: res.data.fileList,
       };
-      console.log(noticeData);
-      setData(noticeData);
+      console.log(faqData);
+      setData(faqData);
 
       // 파일 정보 조회하여 Blob 형으로 재정의 처리
       const tempFiles = [];
@@ -180,25 +183,24 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     }
 
     formData.append('role', '본사 관리자');
-    formData.append('noticeGrant', '0|1|2');
     formData.append('title', data.title);
     formData.append('content', htmlStr);
-    formData.append('isTop', data.isTop);
+    formData.append('categoryName', data.categoryName);
 
-    await editNotice(formData);
+    await editFaq(formData);
   };
 
-  // 공지사항 수정 API 호출
-  const editNotice = async (formData: any) => {
+  // FAQ 수정 API 호출
+  const editFaq = async (formData: any) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
+        const req = await axios.patch(`${apiConfig.apiEndpoint}/faq/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');
 
-        router.replace('/board/notice/list');
+        router.replace('/board/faq/list');
       } catch (err) {
         console.log(err);
         alert('수정에 실패하였습니다.');
@@ -212,7 +214,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
         <Card>
           <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              본사용 공지사항 수정
+              자주 묻는 질문 수정
             </Typography>
           </Box>
 
@@ -221,38 +223,45 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>
               <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
-                상단 고정 여부
+                분류
               </Typography>
               <FormControl sx={{ flexWrap: 'wrap', flexDirection: 'row' }}>
                 <Controller
-                  name="isTop"
+                  name="categoryName"
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
-                    <RadioGroup
-                      row
+                    <Select
                       value={value}
-                      name="sizes"
-                      defaultValue="small"
+                      label=""
                       onChange={onChange}
-                      aria-label="simple-radio"
-                      sx={{
-                        '& .MuiFormControlLabel-label': { fontSize: '0.95rem', fontWeight: 500 },
-                      }}
+                      size="small"
+                      error={Boolean(errors.categoryName)}
+                      inputProps={{ 'aria-label': 'Without label' }}
+                      displayEmpty
+                      sx={{ mt: 2, mb: 1 }}
+
+                      // labelId="validation-basic-select"
+                      // aria-describedby="validation-basic-select"
                     >
-                      <FormControlLabel
-                        value={true}
-                        control={<Radio size="small" />}
-                        label="사용"
-                      />
-                      <FormControlLabel
-                        value={false}
-                        control={<Radio size="small" />}
-                        label="미사용"
-                      />
-                    </RadioGroup>
+                      <MenuItem disabled value="">
+                        분류 선택
+                      </MenuItem>
+                      {categoryData.map((category) => {
+                        return (
+                          <MenuItem value={category.categoryName} key={category.categoryId}>
+                            {category.categoryName}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
                   )}
                 />
+                {errors.categoryName && (
+                  <FormHelperText sx={{ color: 'error.main' }} id="validation-basic-select">
+                    This field is required
+                  </FormHelperText>
+                )}
               </FormControl>
             </Box>
 
@@ -320,7 +329,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
                 수정
               </Button>
-              <Link href="/board/notice/list" passHref>
+              <Link href="/board/faq/list" passHref>
                 <Button variant="outlined" color="secondary">
                   취소
                 </Button>
@@ -333,4 +342,4 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
   );
 };
 
-export default NoticeEdit;
+export default FaqEdit;
