@@ -393,10 +393,11 @@ const Register = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.id)}
-                      placeholder="tenpick123"
+                      placeholder="ex) tenpick123"
                     />
                   )}
                 />
+
                 {errors.id && (
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>
                 )}
@@ -449,7 +450,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
-                      placeholder="johndoe"
+                      placeholder="ex) 클라이"
                       error={Boolean(errors.name)}
                     />
                   )}
@@ -471,7 +472,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="이메일"
                       onChange={onChange}
-                      placeholder="johndoe"
+                      placeholder="ex) klaiEdu@doubledlab.co.kr"
                       error={Boolean(errors.email)}
                     />
                   )}
@@ -494,7 +495,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="전화번호"
                       onChange={onChange}
-                      placeholder="01011112222"
+                      placeholder="ex) 01012345678"
                       error={Boolean(errors.phone)}
                     />
                   )}
@@ -517,7 +518,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="닉네임"
                       onChange={onChange}
-                      placeholder="johndoe123"
+                      placeholder="ex) klai123"
                       error={Boolean(errors.nickname)}
                     />
                   )}
@@ -540,7 +541,7 @@ const Register = () => {
                         onBlur={onBlur}
                         label="생년월일"
                         onChange={onChange}
-                        placeholder="1997/11/13"
+                        placeholder="ex) 1997-11-13"
                         error={Boolean(errors.birth)}
                       />
                     )}
@@ -666,7 +667,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="회원사명"
                       onChange={onChange}
-                      placeholder="companyName"
+                      placeholder="ex) 클라이교육"
                       error={Boolean(errors.companyName)}
                     />
                   )}

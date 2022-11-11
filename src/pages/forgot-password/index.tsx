@@ -257,7 +257,7 @@ const ForgotPassword = () => {
                 onClick={() => {
                   if (confirm('회원님의 메일로 임시 비밀번호를 보낼까요?')) {
                     axios
-                      .post(`${apiConfig.apiEndpoint}/auth/find_password/`, {
+                      .post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
                         email: email,
                       })
                       .then((res) => {

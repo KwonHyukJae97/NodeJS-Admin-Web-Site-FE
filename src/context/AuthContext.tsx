@@ -392,9 +392,18 @@ const AuthProvider = ({ children }: Props) => {
       } else {
         router.push('/login');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+      console.log(err.response.data.message);
+      if (err.response.data.message === '이미 존재하는 아이디입니다.') {
+        return alert('이미 존재하는 아이디입니다.');
+      } else if (err.response.data.message === '이미 존재하는 이메일입니다.') {
+        return alert('이미 존재하는 이메일입니다.');
+      } else if (err.response.data.message === '이미 존재하는 연락처입니다.') {
+        return alert('이미 존재하는 연락처입니다.');
+      } else if (err.response.data.message === '이미 존재하는 닉네임입니다.') {
+        return alert('이미 존재하는 닉네임입니다.');
+      }
     }
 
     // axios

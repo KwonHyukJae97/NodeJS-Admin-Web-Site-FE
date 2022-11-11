@@ -532,7 +532,7 @@ const KakaoRegister = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.birth)}
-                      placeholder="ex) 19971113 형식으로 작성해주세요."
+                      placeholder="ex) 1997-11-13 형식으로 작성해주세요."
                     />
                   )}
                 />

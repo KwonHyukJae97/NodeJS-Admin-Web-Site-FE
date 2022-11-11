@@ -492,7 +492,7 @@ const UserViewLeft = ({ data }: Props) => {
                               })
                               .then((res) => {
                                 console.log('resresres', res);
-                                alert('수정완료');
+                                alert('수정이 완료되었습니다.');
                               })
                               .catch((err) => {
                                 console.log('errerrerr', err);
