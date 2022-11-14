@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, Fragment, MouseEvent } from 'react';
+import { ReactNode } from 'react';
 
 // ** Next Imports
 import Link from 'next/link';
@@ -7,10 +7,7 @@ import Link from 'next/link';
 // ** MUI Components
 import MuiLink from '@mui/material/Link';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import Box, { BoxProps } from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -20,10 +17,6 @@ import Typography, { TypographyProps } from '@mui/material/Typography';
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
 
 // ** Icons Imports
-import Google from 'mdi-material-ui/Google';
-import Github from 'mdi-material-ui/Github';
-import Twitter from 'mdi-material-ui/Twitter';
-import Facebook from 'mdi-material-ui/Facebook';
 
 // ** Third Party Imports
 import * as yup from 'yup';
@@ -44,30 +37,6 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import { useRouter } from 'next/router';
 import { FormLabel, Radio, RadioGroup } from '@mui/material';
-
-// const defaultValues = {
-//   //카카오에서 가져옴
-//   name: '',
-//   phone: '',
-//   //카카오에서 가져옴
-//   nickname: '',
-//   birth: '',
-//   //카카오에서 가져옴
-//   gender: '',
-//   //카카오에서 가져옴
-//   snsId: '',
-//   terms: false,
-//   snsType: '',
-//   snsToken: '',
-//   division: '',
-// };
-
-// interface FormData {
-//   id: string
-//   terms: boolean
-//   username: string
-//   password: string
-// }
 
 // ** Styled Components
 const RegisterIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -134,8 +103,20 @@ interface FormData {
   radio: string;
   companyCode: number;
 
-  // division: boolean;
+  // birth: DateType;
 }
+
+//생년월일 달력 선택
+// interface CustomInputProps {
+//   value: DateType;
+//   label: string;
+//   error: boolean;
+//   onChange: (event: ChangeEvent) => void;
+// }
+
+// const CustomInput = forwardRef(({ ...props }: CustomInputProps, ref) => {
+//   return <TextField inputRef={ref} {...props} sx={{ width: '100%' }} />;
+// });
 
 const KakaoRegister = () => {
   // ** States
@@ -151,46 +132,22 @@ const KakaoRegister = () => {
   console.log('zkzkdh token?!?@#', snsToken);
 
   const defaultValues = {
-    //카카오에서 가져옴
     name: name,
     phone: '',
-
-    //카카오에서 가져옴
     nickname: nickname,
     birth: '',
 
-    //카카오에서 가져옴
+    // birth: null,
     gender: gender,
-
-    //카카오에서 가져옴
     snsId: snsId,
-    terms: false,
 
-    // snsType: '',
+    // terms: false,
     snsToken: snsToken,
     companyName: '',
     radio: '',
     companyCode: null,
-
-    // division: '',
+    dob: null,
   };
-
-  //   const defaultValues = {
-  //     //카카오에서 가져옴
-  //     name: name,
-  //     phone: '',
-  //     //카카오에서 가져옴
-  //     nickname: '',
-  //     birth: '',
-  //     //카카오에서 가져옴
-  //     gender: '',
-  //     //카카오에서 가져옴
-  //     snsId: snsId,
-  //     terms: false,
-  //     snsType: '',
-  //     snsToken: '',
-  //     division: '',
-  //   };
 
   // ** Hooks
   const theme = useTheme();
@@ -204,15 +161,16 @@ const KakaoRegister = () => {
   // ** Vars
   const { skin } = settings;
   const schema = yup.object().shape({
-    // name: yup.string().min(1).required(),
-    // phone: yup.string().min(1).required(),
-    // nickname: yup.string().min(1).required(),
-    // birth: yup.string().min(1).required(),
-    // snsId: yup.string().min(1).required(),
-    // snsType: yup.string().min(1).required(),
-    // snsToken: yup.string().min(1).required(),
+    name: yup.string().min(1).required(),
+    phone: yup.string().min(1).required(),
+    nickname: yup.string().min(1).required(),
+    birth: yup.string().min(1).required(),
+    gender: yup.number().min(1).required(),
+    snsId: yup.string().min(1).required(),
+    companyName: yup.string().min(1).required(),
     companyCode: yup.number().min(1).required(),
-    terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
+
+    // terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
   const {
@@ -225,24 +183,6 @@ const KakaoRegister = () => {
     mode: 'onBlur',
     resolver: yupResolver(schema),
   });
-
-  //   const onSubmit = (data: FormData) => {
-  //     const { name, phone, nickname, birth, snsId, gender } = data
-  //     kakaoRegister({ id, username, password }, err => {
-  //       if (err.id) {
-  //         setError('id', {
-  //           type: 'manual',
-  //           message: err.id
-  //         })
-  //       }
-  //       if (err.username) {
-  //         setError('username', {
-  //           type: 'manual',
-  //           message: err.username
-  //         })
-  //       }
-  //     })
-  //   }
 
   //화면 넘기기까지 완료 -> 데이터 입력후 가입 버튼 누르면 동작을 안하는데 동작하게끔 해야함. 동작만 하면 처리 과정 콘솔찍고 확인하기
   const onSubmit = (data: FormData) => {
@@ -547,6 +487,39 @@ const KakaoRegister = () => {
                   </FormHelperText>
                 )}
               </FormControl> */}
+
+              {/* <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name="birth"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <DatePickerWrapper>
+                      <DatePicker
+                        selected={value}
+                        showYearDropdown
+                        showMonthDropdown
+                        onChange={(e) => onChange(e)}
+                        placeholderText="MM/DD/YYYY"
+                        customInput={
+                          <CustomInput
+                            value={value}
+                            onChange={onChange}
+                            label="Date of Birth"
+                            error={Boolean(errors.birth)}
+                          />
+                        }
+                      />
+                    </DatePickerWrapper>
+                  )}
+                />
+                {errors.birth && (
+                  <FormHelperText sx={{ mx: 3.5, color: 'error.main' }} id="validation-basic-dob">
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl> */}
+
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="birth"
@@ -559,7 +532,7 @@ const KakaoRegister = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.birth)}
-                      placeholder="ex) 971113"
+                      placeholder="ex) 19971113 형식으로 작성해주세요."
                     />
                   )}
                 />
@@ -712,7 +685,7 @@ const KakaoRegister = () => {
                   </FormHelperText>
                 )}
               </FormControl> */}
-              <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
+              {/* <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
                 <Controller
                   name="terms"
                   control={control}
@@ -761,7 +734,7 @@ const KakaoRegister = () => {
                     {errors.terms.message}
                   </FormHelperText>
                 )}
-              </FormControl>
+              </FormControl> */}
               <Button fullWidth size="large" type="submit" variant="contained" sx={{ mb: 7 }}>
                 Sign up
               </Button>
@@ -773,56 +746,14 @@ const KakaoRegister = () => {
                   justifyContent: 'center',
                 }}
               >
-                <Typography sx={{ mr: 2, color: 'text.secondary' }}>
-                  Already have an account?
-                </Typography>
+                <Typography sx={{ mr: 2, color: 'text.secondary' }}>이미 가입하셨나요?</Typography>
                 <Typography>
                   <Link passHref href="/login">
                     <Typography component={MuiLink} sx={{ color: 'primary.main' }}>
-                      Sign in instead
+                      로그인으로
                     </Typography>
                   </Link>
                 </Typography>
-              </Box>
-              <Divider sx={{ mt: 5, mb: 7.5, '& .MuiDivider-wrapper': { px: 4 } }}>or</Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Facebook sx={{ color: '#497ce2' }} />
-                  </IconButton>
-                </Link>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Twitter sx={{ color: '#1da1f2' }} />
-                  </IconButton>
-                </Link>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Github
-                      sx={{
-                        color: (theme) =>
-                          theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300],
-                      }}
-                    />
-                  </IconButton>
-                </Link>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Google sx={{ color: '#db4437' }} />
-                  </IconButton>
-                </Link>
               </Box>
             </form>
           </BoxWrapper>
