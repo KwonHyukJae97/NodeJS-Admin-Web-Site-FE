@@ -35,10 +35,6 @@ const navigation = (): VerticalNavItemsType => {
           title: '회원사목록',
           path: '/company/list',
         },
-        {
-          title: '회원사 상세정보',
-          path: '/company/detail',
-        },
       ],
     },
     {
