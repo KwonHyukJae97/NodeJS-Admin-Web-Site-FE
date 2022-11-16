@@ -41,6 +41,7 @@ import { getDateTime, role } from '../../../pages/notice/list';
 import { CategoryType, FaqType } from '../../../types/apps/boardTypes';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import BoardLeftInHeader from '../BoardLeftInHeader';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -200,7 +201,7 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');
 
-        router.replace('/board/faq/list');
+        router.replace(`/faq/view/${id}`);
       } catch (err) {
         console.log(err);
         alert('수정에 실패하였습니다.');
@@ -212,13 +213,7 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              자주 묻는 질문 수정
-            </Typography>
-          </Box>
-
-          <Divider sx={{ ml: 12, mr: 12, borderBottomWidth: 'unset' }} />
+          <BoardLeftInHeader title={'자주 묻는 질문 수정'} />
 
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>

@@ -42,6 +42,7 @@ import * as yup from 'yup';
 import dynamic from 'next/dynamic';
 import { getDateTime, role } from '../../../pages/notice/list';
 import { BoardType } from '../../../types/apps/userTypes';
+import BoardLeftInHeader from '../BoardLeftInHeader';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -185,7 +186,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');
 
-        router.replace('/board/notice/list');
+        router.replace(`/notice/view/${id}`);
       } catch (err) {
         console.log(err);
         alert('수정에 실패하였습니다.');
@@ -197,13 +198,7 @@ const NoticeEdit = ({ id, title, isTop }: dataProps) => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              본사용 공지사항 수정
-            </Typography>
-          </Box>
-
-          <Divider sx={{ ml: 12, mr: 12, borderBottomWidth: 'unset' }} />
+          <BoardLeftInHeader title={'본사용 공지사항 수정'} />
 
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>

@@ -172,8 +172,8 @@ const NoticeList = ({
           <PageLeftInHeader
             title={'본사용 공지사항'}
             subtitle={'TenPick의 이벤트 및 업데이트 정보 등 다양한 소식을 알려드립니다.'}
-            maincategory={'공지사항'}
-            subcategory={'본사용'}
+            maincategory={'게시판'}
+            subcategory={'공지사항'}
             setPageNo={setPageNo}
             setSearchWord={setSearchWord}
             boardType="notice"

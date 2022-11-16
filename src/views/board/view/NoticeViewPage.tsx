@@ -26,6 +26,7 @@ import { BoardType } from 'src/types/apps/userTypes';
 // ** axios
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import BoardLeftInHeader from '../BoardLeftInHeader';
 
 type dataProps = {
   id: number;
@@ -163,23 +164,11 @@ const NoticeView = ({ id }: dataProps) => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                본사용 공지사항
-              </Typography>
-            </Box>
-            <Divider sx={{ ml: 3, mr: 3, borderLeftWidth: 'unset', height: 16 }} />
-            <Box sx={{ display: 'flex' }}>
-              <Typography variant="body2">공지사항</Typography>
-              <Box sx={{ ml: 1.2, mr: 1.2 }}>
-                <Typography variant="body2">{'>'}</Typography>
-              </Box>
-              <Typography variant="body2">본사용</Typography>
-            </Box>
-          </Box>
-
-          <Divider sx={{ ml: 12, mr: 12, borderBottomWidth: 'unset' }} />
+          <BoardLeftInHeader
+            title={'본사용 공지사항'}
+            maincategory={'게시판'}
+            subcategory={'공지사항'}
+          />
 
           <Box sx={{ ml: 13, mt: 7, display: 'flex' }}>
             {data.isTop ? (
@@ -212,7 +201,7 @@ const NoticeView = ({ id }: dataProps) => {
 
           <Divider sx={{ ml: 12, mr: 12, mt: 6, borderBottomWidth: 'unset' }} />
 
-          <Box sx={{ ml: 14, mr: 14, mt: 8, mb: 10 }} ref={viewContentRef}>
+          <Box sx={{ ml: 14, mr: 14, mt: 8, mb: 8 }} ref={viewContentRef}>
             <Typography variant="subtitle2" style={{ color: 'black', fontWeight: 300 }}>
               {htmlStr}
             </Typography>

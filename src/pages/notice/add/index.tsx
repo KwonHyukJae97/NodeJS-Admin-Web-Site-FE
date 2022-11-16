@@ -36,6 +36,7 @@ import apiConfig from 'src/configs/api';
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import BoardLeftInHeader from '../../../views/board/BoardLeftInHeader';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -109,7 +110,7 @@ const NoticeAdd = () => {
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');
 
-        router.replace('/board/notice/list');
+        router.replace('/notice/list');
       } catch (err) {
         console.log(err);
         alert('등록에 실패하였습니다.');
@@ -121,13 +122,7 @@ const NoticeAdd = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              본사용 공지사항 등록
-            </Typography>
-          </Box>
-
-          <Divider sx={{ ml: 12, mr: 12, borderBottomWidth: 'unset' }} />
+          <BoardLeftInHeader title={'본사용 공지사항 등록'} />
 
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>

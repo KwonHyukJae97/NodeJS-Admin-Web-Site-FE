@@ -89,7 +89,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
           onClick={handleSearchKeyword}
         />
       </Box>
-      <Link href="/faq/add" passHref>
+      <Link href={`/${pageName}/add`} passHref>
         <Button
           sx={{ mr: 10, mb: 2, padding: '10px 18px' }}
           variant="contained"
