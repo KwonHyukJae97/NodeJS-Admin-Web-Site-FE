@@ -1,6 +1,9 @@
+// ** React
+import React from 'react';
+
+// ** MUI Imports
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import React from 'react';
 import Divider from '@mui/material/Divider';
 
 type BoardLeftInHeader = {
@@ -12,8 +15,6 @@ type BoardLeftInHeader = {
 // 게시글 헤더 UI
 const BoardLeftInHeader = (props: BoardLeftInHeader) => {
   const { title, maincategory, subcategory } = props;
-
-  console.log('t', maincategory);
 
   return (
     <>

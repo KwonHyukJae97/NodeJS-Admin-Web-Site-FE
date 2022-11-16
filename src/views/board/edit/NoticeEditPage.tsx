@@ -5,13 +5,13 @@ import { Controller, useForm } from 'react-hook-form';
 // ** Next Import
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 
 // ** MUI Imports
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
@@ -21,6 +21,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 
 // ** Custom Components Imports
+import BoardLeftInHeader from '../BoardLeftInHeader';
+
 // ** Styled Component Import
 // ** Demo Components Imports
 import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
@@ -31,18 +33,16 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import apiConfig from 'src/configs/api';
+import { BoardType } from '../../../types/apps/userTypes';
+import { getDateTime, role } from 'src/pages/notice/list';
 
 // ** axios
 import axios from 'axios';
+import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import dynamic from 'next/dynamic';
-import { getDateTime, role } from '../../../pages/notice/list';
-import { BoardType } from '../../../types/apps/userTypes';
-import BoardLeftInHeader from '../BoardLeftInHeader';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 

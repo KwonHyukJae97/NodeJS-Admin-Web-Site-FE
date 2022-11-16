@@ -13,13 +13,15 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+
+// ** Custom Components Imports
+import BoardLeftInHeader from 'src/views/board/BoardLeftInHeader';
 
 // ** Demo Components Imports
 import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
@@ -40,7 +42,6 @@ import { getCategory } from '../list';
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import BoardLeftInHeader from '../../../views/board/BoardLeftInHeader';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 

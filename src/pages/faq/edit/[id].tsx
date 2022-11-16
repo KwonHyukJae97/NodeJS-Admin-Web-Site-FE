@@ -9,9 +9,9 @@ import {
 // ** Third Party Imports
 import axios from 'axios';
 import { getCategory } from '../list';
+import apiConfig from 'src/configs/api';
 
 // ** Types
-import apiConfig from 'src/configs/api';
 import { role } from '../../notice/list';
 import { BoardType } from 'src/types/apps/userTypes';
 import { CategoryType } from 'src/types/apps/boardTypes';

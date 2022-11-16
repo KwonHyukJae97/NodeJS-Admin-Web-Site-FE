@@ -12,7 +12,6 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
@@ -26,6 +25,9 @@ import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/Fi
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 
+// ** Custom Components Imports
+import BoardLeftInHeader from '../../../views/board/BoardLeftInHeader';
+
 // ** Styles
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
@@ -36,7 +38,6 @@ import apiConfig from 'src/configs/api';
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import BoardLeftInHeader from '../../../views/board/BoardLeftInHeader';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
