@@ -12,22 +12,20 @@ import Alert from '@mui/material/Alert';
 import axios from 'axios';
 
 // ** Config
-import authConfig from 'src/configs/auth';
-
-// ** Config
 import apiConfig from 'src/configs/api';
 
 // ** Types
-import { InvoiceType } from 'src/types/apps/invoiceTypes';
-import { UserLayoutType, UsersType } from 'src/types/apps/userTypes';
+// import { InvoiceType } from 'src/types/apps/invoiceTypes';
+import { UsersType } from 'src/types/apps/userTypes';
 
 // ** Demo Components Imports
 import UserViewLeft from 'src/views/apps/user/view/UserViewLeft';
 import UserViewRight from 'src/views/apps/user/view/UserViewRight';
 
-type Props = UserLayoutType & {
-  invoiceData: InvoiceType[];
-};
+// type Props = UserLayoutType & {
+//   invoiceData: InvoiceType[];
+// };
+
 //그럼 여기서 그아이디값을 받아 아이디값으로 axios를 통해 상새정보를 요청
 //요청받은 데이터를 UserViewLeft로 data로 넘겨서
 //accountId 까지는 넘어오는데 벡엔드 axios호출이 안됨

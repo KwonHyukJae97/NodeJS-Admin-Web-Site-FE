@@ -5,32 +5,38 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
+
 // import Button from '@mui/material/Button';
-import { Button } from 'reactstrap';
+// import { Button } from 'reactstrap';
 import Dialog from '@mui/material/Dialog';
-import Select from '@mui/material/Select';
-import Switch from '@mui/material/Switch';
+
+// import Select from '@mui/material/Select';
+// import Switch from '@mui/material/Switch';
 import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import { styled } from '@mui/material/styles';
+
+// import MenuItem from '@mui/material/MenuItem';
+// import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import InputLabel from '@mui/material/InputLabel';
+
+// import InputLabel from '@mui/material/InputLabel';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
+
+// import FormControl from '@mui/material/FormControl';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import InputAdornment from '@mui/material/InputAdornment';
-import LinearProgress from '@mui/material/LinearProgress';
-import FormControlLabel from '@mui/material/FormControlLabel';
+
+// import InputAdornment from '@mui/material/InputAdornment';
+// import LinearProgress from '@mui/material/LinearProgress';
+// import FormControlLabel from '@mui/material/FormControlLabel';
 import DialogContentText from '@mui/material/DialogContentText';
 
 // ** Icons Imports
-import Check from 'mdi-material-ui/Check';
-import Circle from 'mdi-material-ui/Circle';
-import StarOutline from 'mdi-material-ui/StarOutline';
+// import Check from 'mdi-material-ui/Check';
+// import Circle from 'mdi-material-ui/Circle';
+// import StarOutline from 'mdi-material-ui/StarOutline';
 
 // ** Custom Components
 import CustomChip from 'src/@core/components/mui/chip';
@@ -45,6 +51,7 @@ import { getInitials } from 'src/@core/utils/get-initials';
 import axios from 'axios';
 
 import apiConfig from 'src/configs/api';
+import Button from '@mui/material/Button';
 
 interface Props {
   data: UsersType;
@@ -55,20 +62,20 @@ interface ColorsType {
 }
 
 // ** Styled <sup> component
-const Sup = styled('sup')(({ theme }) => ({
-  top: '0.2rem',
-  left: '-0.6rem',
-  position: 'absolute',
-  color: theme.palette.primary.main,
-}));
+// const Sup = styled('sup')(({ theme }) => ({
+//   top: '0.2rem',
+//   left: '-0.6rem',
+//   position: 'absolute',
+//   color: theme.palette.primary.main,
+// }));
 
 // ** Styled <sub> component
-const Sub = styled('sub')({
-  fontWeight: 400,
-  fontSize: '.875rem',
-  lineHeight: '1.25rem',
-  alignSelf: 'flex-end',
-});
+// const Sub = styled('sub')({
+//   fontWeight: 400,
+//   fontSize: '.875rem',
+//   lineHeight: '1.25rem',
+//   alignSelf: 'flex-end',
+// });
 
 const roleColors: ColorsType = {
   admin: 'error',
@@ -78,39 +85,56 @@ const roleColors: ColorsType = {
   subscriber: 'primary',
 };
 
-const statusColors: ColorsType = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary',
-};
+// const statusColors: ColorsType = {
+//   active: 'success',
+//   pending: 'warning',
+//   inactive: 'secondary',
+// };
+
 //우리형식에 맞게 수정하여 나타내기
 
 const UserViewLeft = ({ data }: Props) => {
-  console.log(' 데이터 나오나??', data);
+  const [email, setEmail] = useState<string>(data.email);
+  const [phone, setPhone] = useState<string>(data.phone);
+  const [nickname, setNickname] = useState<string>(data.nickname);
+
   // ** States
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [openPlans, setOpenPlans] = useState<boolean>(false);
+
+  // const [openPlans, setOpenPlans] = useState<boolean>(false);
 
   // Handle Edit dialog
   const handleEditClickOpen = () => setOpenEdit(true);
   const handleEditClose = () => setOpenEdit(false);
 
-  const onSubmit = async (accountId: number) => {
-    if (confirm('수정?')) {
-      try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/auth/${accountId}`);
-        alert('수정완료');
-        location.reload();
-      } catch (err) {
-        console.log('err', err);
-        alert('수정실패');
-      }
-    }
+  const inputChangeEmail = (e: any) => {
+    setEmail(e.target.value);
+    data.email = e.target.value;
+
+    // console.log(email);
+  };
+  const inputChangePhone = (e: any) => {
+    setPhone(e.target.value);
+    data.phone = e.target.value;
+
+    // console.log(email);
+  };
+  const inputChangeNickname = (e: any) => {
+    setNickname(e.target.value);
+    data.nickname = e.target.value;
+
+    // console.log(email);
   };
 
+  // const inputChange = (e) => {
+  //   // setEmail(e.target.value);
+  //   data.email = e.target.value;
+  //   // console.log(email);
+  // };
+
   // Handle Upgrade Plan dialog
-  const handlePlansClickOpen = () => setOpenPlans(true);
-  const handlePlansClose = () => setOpenPlans(false);
+  // const handlePlansClickOpen = () => setOpenPlans(true);
+  // const handlePlansClose = () => setOpenPlans(false);
 
   const renderUserAvatar = () => {
     if (data) {
@@ -118,6 +142,7 @@ const UserViewLeft = ({ data }: Props) => {
         return (
           <CustomAvatar
             alt="User Image"
+
             // src={data.avatar}
             variant="rounded"
             sx={{ width: 120, height: 120, mb: 4 }}
@@ -128,6 +153,7 @@ const UserViewLeft = ({ data }: Props) => {
           <CustomAvatar
             skin="light"
             variant="rounded"
+
             // color={data.avatarColor as ThemeColor}
             sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
           >
@@ -349,17 +375,36 @@ const UserViewLeft = ({ data }: Props) => {
                       />
                     </Grid> */}
                     <Grid item xs={12} sm={12}>
-                      <TextField fullWidth type="email" label="이메일" defaultValue={data.email} />
+                      <TextField
+                        fullWidth
+                        type="email"
+                        label="이메일"
+                        value={email}
+
+                        // defaultValue={data.email}
+                        onChange={inputChangeEmail}
+                      />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextField fullWidth type="phone" label="연락처" defaultValue={data.phone} />
+                      <TextField
+                        fullWidth
+                        type="phone"
+                        label="연락처"
+                        value={phone}
+                        onChange={inputChangePhone}
+
+                        // defaultValue={data.phone}
+                      />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
                         type="nickname"
                         label="닉네임"
-                        defaultValue={data.nickname}
+                        value={nickname}
+                        onChange={inputChangeNickname}
+
+                        // defaultValue={data.nickname}
                       />
                     </Grid>
                     {/* <Grid item xs={12} sm={6}>
@@ -437,7 +482,8 @@ const UserViewLeft = ({ data }: Props) => {
                         variant="contained"
                         sx={{ mr: 1 }}
                         onClick={() => {
-                          if (confirm('수정?')) {
+                          if (confirm('수정하시겠습니까?')) {
+                            console.log(data);
                             axios
                               .patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
                                 email: data.email,
@@ -446,6 +492,7 @@ const UserViewLeft = ({ data }: Props) => {
                               })
                               .then((res) => {
                                 console.log('resresres', res);
+                                alert('수정완료');
                               })
                               .catch((err) => {
                                 console.log('errerrerr', err);

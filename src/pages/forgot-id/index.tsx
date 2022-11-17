@@ -28,7 +28,6 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import axios from 'axios';
-
 import apiConfig from 'src/configs/api';
 
 // Styled Components
@@ -74,26 +73,28 @@ const TypographyStyled = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: { marginTop: theme.spacing(8) },
 }));
 
-const ForgotPassword = () => {
+const ForgotId = () => {
   // ** Hooks
   const theme = useTheme();
   const { settings } = useSettings();
 
-  const [email, setEmail] = useState<string>('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
 
-  const inputChangeEmail = (e: any) => {
-    setEmail(e.target.value);
-
-    // console.log(email);
+  const inputChangeName = (e: any) => {
+    setName(e.target.value);
+  };
+  const inputChangePhone = (e: any) => {
+    setPhone(e.target.value);
   };
 
   // ** Vars
   const { skin } = settings;
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
 
-  // const handleSubmit = (e: SyntheticEvent) => {
-  //   e.preventDefault();
-  // };
+  //   const handleSubmit = (e: SyntheticEvent) => {
+  //     e.preventDefault();
+  //   };
 
   const imageSource =
     skin === 'bordered'
@@ -233,47 +234,57 @@ const ForgotPassword = () => {
               </Typography>
             </Box>
             <Box sx={{ mb: 6 }}>
-              <TypographyStyled variant="h5">비밀번호를 잊으셨나요?🔒</TypographyStyled>
+              <TypographyStyled variant="h5">아이디를 잊으셨나요?</TypographyStyled>
+              <Typography variant="body2">이름과 연락처를 입력하세요</Typography>
               {/* <Typography variant="body2">
                 Enter your email and we&prime;ll send you instructions to reset your password
               </Typography> */}
-              <Typography variant="body2">가입 시 입력한 이메일 주소를 입력해주세요.</Typography>
             </Box>
             {/* <form noValidate autoComplete="off" onSubmit={handleSubmit}> */}
             <form>
               <TextField
                 autoFocus
-                type="email"
-                value={email}
-                onChange={inputChangeEmail}
-                label="이메일"
+                type="name"
+                value={name}
+                label="이름"
+                onChange={inputChangeName}
                 sx={{ display: 'flex', mb: 4 }}
               />
+              <TextField
+                type="phone"
+                value={phone}
+                label="연락처"
+                onChange={inputChangePhone}
+                sx={{ display: 'flex', mb: 4 }}
+              />
+              {/* <Button fullWidth size="large" type="submit" variant="contained" sx={{ mb: 5.25 }}>
+                찾기
+              </Button> */}
               <Button
                 fullWidth
                 size="large"
                 variant="contained"
                 sx={{ mb: 5.25 }}
+
+                // 아이디 찾기 완료 화면에 얼럿창으로 뿌리기만하면됨.
                 onClick={() => {
-                  if (confirm('회원님의 메일로 임시 비밀번호를 보낼까요?')) {
-                    axios
-                      .post(`${apiConfig.apiEndpoint}/auth/find_password/`, {
-                        email: email,
-                      })
-                      .then((res) => {
-                        console.log('이메일 전송 완료', res);
-                        alert(
-                          '메일 전송 완료했습니다. 임시 비밀번호를 이용하여 로그인 후 비밀번호 수정을 권장 드립니다.',
-                        );
-                      })
-                      .catch((err) => {
-                        alert('입력하신 이메일을 확인해주세요.');
-                        console.log('메일 전송 실패', err);
-                      });
-                  }
+                  axios
+                    .post(`${apiConfig.apiEndpoint}/auth/find_id`, {
+                      name: name,
+                      phone: phone,
+                    })
+                    .then((res) => {
+                      console.log(res.data.id);
+                      const resData = JSON.stringify(res.data.id);
+                      alert(`회원님의 아이디는 ${resData.replace(/\"/gi, '')} 입니다.`);
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      alert('입력하신 정보를 다시 확인해 주세요.');
+                    });
                 }}
               >
-                메일 보내기
+                찾기
               </Button>
               <Typography sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Link passHref href="/login">
@@ -299,7 +310,7 @@ const ForgotPassword = () => {
   );
 };
 
-ForgotPassword.guestGuard = true;
-ForgotPassword.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>;
+ForgotId.guestGuard = true;
+ForgotId.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>;
 
-export default ForgotPassword;
+export default ForgotId;
