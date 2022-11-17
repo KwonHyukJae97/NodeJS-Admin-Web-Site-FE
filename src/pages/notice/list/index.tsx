@@ -184,7 +184,6 @@ const NoticeList = ({
             pageNo={pageNo}
             setPageNo={setPageNo}
             pageName="notice"
-            searchKey=""
           />
           {noticeData !== null ? (
             <DataGrid
@@ -199,9 +198,7 @@ const NoticeList = ({
                   totalPage: pageData.totalPage,
                   pageNo: pageNo,
                   setPageNo: setPageNo,
-                  searchWord: searchWord,
                   pageName: 'notice',
-                  searchKey: '',
                 },
               }}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}

@@ -1,5 +1,5 @@
 // ** React
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 
 // ** Next Import
 import Link from 'next/link';
@@ -16,14 +16,14 @@ import Magnify from 'mdi-material-ui/Magnify';
 import { Plus } from 'mdi-material-ui';
 import Typography from '@mui/material/Typography';
 
-interface TableSearchHeaderProps {
+type TableSearchHeaderProps = {
   searchWord: string;
   setSearchWord: (value: string) => void;
   pageNo: number;
   setPageNo: (value: number) => void;
-  searchKey: string | null;
+  searchKey?: string | null;
   pageName: string;
-}
+};
 
 // 공지사항 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
@@ -38,8 +38,9 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
     setSearchWord(e.target.value);
   };
 
+  // 검색 버튼 클릭 시 실행되는 함수
   const handleSearchKeyword = () => {
-    setSearchWord('');
+    // setSearchWord('');
 
     if (pageNo !== 1) {
       setPageNo(1);
@@ -50,6 +51,13 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
       );
     }
   };
+
+  // 검색 후 페이지 번호 상태가 바뀔 때마다 요청
+  useEffect(() => {
+    router.push(
+      `/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
+    );
+  }, [pageNo]);
 
   return (
     <Box

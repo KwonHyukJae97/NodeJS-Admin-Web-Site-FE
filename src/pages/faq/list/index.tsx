@@ -233,9 +233,7 @@ const FaqList = ({
                   totalPage: pageData.totalPage,
                   pageNo: pageNo,
                   setPageNo: setPageNo,
-                  searchWord: searchWord,
                   pageName: 'faq',
-                  searchKey: searchKey,
                 },
               }}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
