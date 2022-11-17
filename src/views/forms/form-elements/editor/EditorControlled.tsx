@@ -10,21 +10,21 @@ import htmlToDraft from 'html-to-draftjs';
 import ReactDraftWysiwyg from 'src/@core/components/react-draft-wysiwyg';
 
 interface IEditor {
-  initStr: string;
   htmlStr: string;
   setHtmlStr: React.Dispatch<React.SetStateAction<string>>;
 }
 
-// 에디터 컴포넌트
+// 에디터 UI 컴포넌트
 const EditorControlled = (props: IEditor) => {
   // ** Props
-  const { initStr, htmlStr, setHtmlStr } = props;
+  const { htmlStr, setHtmlStr } = props;
 
   // ** State
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   // ** Hooks
   useEffect(() => {
+    // 문자열을 html 코드로 변환
     const blocksFromHtml = htmlToDraft(htmlStr);
     if (blocksFromHtml) {
       const { contentBlocks, entityMap } = blocksFromHtml;
@@ -32,7 +32,7 @@ const EditorControlled = (props: IEditor) => {
       const editorState = EditorState.createWithContent(contentState);
       setEditorState(editorState);
     }
-  }, [initStr]);
+  }, [htmlStr]);
 
   // editor 수정 이벤트
   const onEditorStateChange = (editorState: EditorState) => {

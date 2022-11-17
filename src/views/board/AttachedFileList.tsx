@@ -13,9 +13,7 @@ type AttachedFileListProps = {
 };
 
 // 첨부파일 목록 UI
-const AttachedFileList = (props: AttachedFileListProps) => {
-  const { fileList } = props;
-
+const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
   // 다운로드 파일 이름을 추출하는 함수
   const extractDownloadFilename = (res: any) => {
     const disposition = res.headers['content-disposition'];

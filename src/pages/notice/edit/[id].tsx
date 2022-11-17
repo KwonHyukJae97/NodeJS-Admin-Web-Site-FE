@@ -18,8 +18,8 @@ import { BoardType } from 'src/types/apps/userTypes';
 import NoticeEditPage from 'src/views/board/edit/NoticeEditPage';
 
 // 공지사항 수정 페이지
-const NoticeEdit = ({ id, title, isTop }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  return <NoticeEditPage id={id} title={title} isTop={isTop} />;
+const NoticeEdit = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  return <NoticeEditPage id={id} />;
 };
 
 // 공지사항 조회 API 호출
@@ -65,19 +65,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const id = params?.id;
-  const result = await getNoticeDetail(Number(id));
-
-  // NoticeEditPage에서 defaultValues로 설정하기 위해 Props로 전달
-  // TODO : CSR로 수정 예정
-  const title = result.notice.board.title;
-  const isTop = result.notice.isTop;
-
   return {
     props: {
       id: params?.id,
-      title: title,
-      isTop: isTop,
     },
   };
 };

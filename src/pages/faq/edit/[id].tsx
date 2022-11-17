@@ -20,20 +20,8 @@ import { CategoryType } from 'src/types/apps/boardTypes';
 import FaqEditPage from 'src/views/board/edit/FaqEditPage';
 
 // FAQ 수정 페이지
-const FaqEdit = ({
-  id,
-  title,
-  categoryName,
-  categoryApiData,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
-  return (
-    <FaqEditPage
-      id={id}
-      title={title}
-      categoryName={categoryName}
-      categoryApiData={categoryApiData}
-    />
-  );
+const FaqEdit = ({ id, categoryApiData }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  return <FaqEditPage id={id} categoryApiData={categoryApiData} />;
 };
 
 // FAQ 조회 API 호출
@@ -79,22 +67,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  // @ts-ignore
-  const { id } = params;
-  const result = await getFaqDetail(id);
   const categoryResult = await getCategory();
-
-  // FaqEditPage에서 defaultValues로 설정하기 위해 Props로 전달
-  const title = result.faq.board.title;
-  const categoryName = result.category.categoryName;
 
   const categoryApiData: CategoryType[] = categoryResult;
 
   return {
     props: {
       id: params?.id,
-      title: title,
-      categoryName: categoryName,
       categoryApiData: categoryApiData,
     },
   };

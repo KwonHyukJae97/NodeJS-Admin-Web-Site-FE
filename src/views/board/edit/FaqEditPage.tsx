@@ -11,7 +11,7 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
+
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -52,8 +52,6 @@ const EditorControlled = dynamic(
 
 type dataProps = {
   id: number;
-  title: string;
-  categoryName: boolean;
   categoryApiData: CategoryType[];
 };
 
@@ -65,7 +63,7 @@ interface FormData {
 }
 
 // FAQ 수정 페이지
-const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
+const FaqEdit = ({ id, categoryApiData }: dataProps) => {
   // ** State
   const [data, setData] = useState<FaqType>({
     boardId: 0,
@@ -80,10 +78,6 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
   });
   const [files, setFiles] = useState<File[]>([]);
   const [htmlStr, setHtmlStr] = useState<string>('');
-  const [initStr, setInitStr] = useState<string>('');
-
-  // const [title, setTitle] = useState<string>('');
-  // const [isTop, setIsTop] = useState<boolean>(false);
 
   // ** Vars
   const schema = yup.object().shape({
@@ -102,8 +96,8 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
   });
 
   const defaultValues = {
-    title: title,
-    categoryName: categoryName,
+    title: '',
+    categoryName: '',
   };
 
   // ** Hooks
@@ -111,6 +105,7 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues,
@@ -123,14 +118,11 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
   }, []);
 
   useEffect(() => {
-    // console.log('sethtml');
-    setInitStr(data.content!);
-    setHtmlStr(data.content!);
+    if (data.title !== '') {
+      setValue('title', data.title);
+      setValue('categoryName', data.categoryName);
+    }
   }, [data]);
-
-  useEffect(() => {
-    // console.log('html');
-  }, [htmlStr]);
 
   // FAQ 상세조회 API 호출
   const getFaqDetail = async (id: number) => {
@@ -296,7 +288,7 @@ const FaqEdit = ({ id, title, categoryName, categoryApiData }: dataProps) => {
               <EditorWrapper>
                 <Grid container spacing={6} className="match-height">
                   <Grid item xs={12} sx={{ mt: 2 }}>
-                    <EditorControlled initStr={initStr} htmlStr={htmlStr} setHtmlStr={setHtmlStr} />
+                    <EditorControlled htmlStr={data.content!} setHtmlStr={setHtmlStr} />
                   </Grid>
                 </Grid>
               </EditorWrapper>

@@ -7,6 +7,6 @@ export type PageLeftHeaderProps = {
   subcategory?: ReactNode;
   setPageNo: (value: number) => void;
   setSearchWord: (value: string) => void;
-  boardType: string;
+  pageName: string;
   setSearchKey?: (value: string) => void;
 };

@@ -10,8 +10,6 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 
 // ** Custom Components Imports
 import BoardLeftInHeader from '../BoardLeftInHeader';
@@ -24,6 +22,7 @@ import { FaqType } from 'src/types/apps/boardTypes';
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
+import BoardViewInfo from '../BoardViewInfo';
 
 type dataProps = {
   id: number;
@@ -116,37 +115,14 @@ const FaqView = ({ id }: dataProps) => {
             subcategory={'자주 묻는 질문'}
           />
 
-          <Box sx={{ ml: 13, mt: 7, display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex' }}>
-              <Divider sx={{ borderLeftWidth: 'medium', mt: 1, mb: 1 }} />
-              <Box sx={{ mr: 3.5, ml: 3.5 }}>
-                <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
-                  {data.categoryName}
-                </Typography>
-              </Box>
-              <Divider sx={{ borderRightWidth: 'medium', mr: 2.5, mt: 1, mb: 1 }} />
-            </Box>
-            <Typography variant="h5" sx={{ fontWeight: 700, ml: 1 }}>
-              {data.title}
-            </Typography>
-          </Box>
-
-          <Box sx={{ ml: 14, mr: 14, mt: 3, display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              {data.regDate}
-            </Typography>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              작성자ㅣ{data.writer}
-            </Typography>
-          </Box>
-
-          <Divider sx={{ ml: 12, mr: 12, mt: 6, borderBottomWidth: 'unset' }} />
-
-          <Box sx={{ ml: 14, mr: 14, mt: 8, mb: 8 }} ref={viewContentRef}>
-            <Typography variant="subtitle2" style={{ color: 'black', fontWeight: 300 }}>
-              {htmlStr}
-            </Typography>
-          </Box>
+          <BoardViewInfo
+            categoryName={data.categoryName}
+            title={data.title}
+            regDate={data.regDate}
+            writer={data.writer}
+            htmlStr={htmlStr}
+            viewContentRef={viewContentRef}
+          />
 
           {data.fileList.length !== 0 ? <AttachedFileList fileList={data.fileList} /> : null}
 

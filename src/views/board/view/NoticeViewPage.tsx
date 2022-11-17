@@ -9,11 +9,8 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 
 // ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip';
 import BoardLeftInHeader from '../BoardLeftInHeader';
 import AttachedFileList from '../AttachedFileList';
 
@@ -27,6 +24,7 @@ import { BoardType } from 'src/types/apps/userTypes';
 // ** axios
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import BoardViewInfo from '../BoardViewInfo';
 
 type dataProps = {
   id: number;
@@ -117,42 +115,14 @@ const NoticeView = ({ id }: dataProps) => {
             subcategory={'공지사항'}
           />
 
-          <Box sx={{ ml: 13, mt: 7, display: 'flex' }}>
-            {data.isTop ? (
-              <CustomChip
-                skin="light"
-                size="medium"
-                label="중요"
-                color="primary"
-                sx={{
-                  '& .MuiChip-label': { lineHeight: '18px' },
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  mr: 2.5,
-                }}
-              />
-            ) : null}
-            <Typography variant="h5" sx={{ fontWeight: 700, ml: 1 }}>
-              {data.title}
-            </Typography>
-          </Box>
-
-          <Box sx={{ ml: 14, mr: 14, mt: 3, display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              {data.regDate}
-            </Typography>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              작성자ㅣ{data.writer}
-            </Typography>
-          </Box>
-
-          <Divider sx={{ ml: 12, mr: 12, mt: 6, borderBottomWidth: 'unset' }} />
-
-          <Box sx={{ ml: 14, mr: 14, mt: 8, mb: 8 }} ref={viewContentRef}>
-            <Typography variant="subtitle2" style={{ color: 'black', fontWeight: 300 }}>
-              {htmlStr}
-            </Typography>
-          </Box>
+          <BoardViewInfo
+            isTop={data.isTop}
+            title={data.title}
+            regDate={data.regDate}
+            writer={data.writer}
+            htmlStr={htmlStr}
+            viewContentRef={viewContentRef}
+          />
 
           {data.fileList.length !== 0 ? <AttachedFileList fileList={data.fileList} /> : null}
 

@@ -176,7 +176,7 @@ const NoticeList = ({
             subcategory={'공지사항'}
             setPageNo={setPageNo}
             setSearchWord={setSearchWord}
-            boardType="notice"
+            pageName="notice"
           />
           <TableSearchHeader
             searchWord={searchWord}

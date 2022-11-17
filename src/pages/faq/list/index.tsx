@@ -204,7 +204,7 @@ const FaqList = ({
             subcategory={'자주 묻는 질문'}
             setPageNo={setPageNo}
             setSearchWord={setSearchWord}
-            boardType="faq"
+            pageName="faq"
             setSearchKey={setSearchKey}
           />
           <TabsCustomButton
