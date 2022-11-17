@@ -142,7 +142,7 @@ const FaqView = ({ id }: dataProps) => {
             </Button>
             <Link href={'/faq/list'} passHref>
               <Button variant="outlined" color="secondary">
-                취소
+                목록
               </Button>
             </Link>
           </Box>

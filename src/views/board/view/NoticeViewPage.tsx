@@ -142,7 +142,7 @@ const NoticeView = ({ id }: dataProps) => {
             </Button>
             <Link href={'/notice/list'} passHref>
               <Button variant="outlined" color="secondary">
-                취소
+                목록
               </Button>
             </Link>
           </Box>

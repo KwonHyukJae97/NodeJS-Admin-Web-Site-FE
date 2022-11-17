@@ -272,7 +272,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
               <EditorWrapper>
                 <Grid container spacing={6} className="match-height">
                   <Grid item xs={12} sx={{ mt: 2 }}>
-                    <EditorControlled htmlStr={data.content!} setHtmlStr={setHtmlStr} />
+                    <EditorControlled initStr={data.content!} setHtmlStr={setHtmlStr} />
                   </Grid>
                 </Grid>
               </EditorWrapper>

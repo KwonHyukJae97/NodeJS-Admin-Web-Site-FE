@@ -10,31 +10,44 @@ import htmlToDraft from 'html-to-draftjs';
 import ReactDraftWysiwyg from 'src/@core/components/react-draft-wysiwyg';
 
 interface IEditor {
-  htmlStr: string;
+  initStr: string;
   setHtmlStr: React.Dispatch<React.SetStateAction<string>>;
 }
 
 // 에디터 UI 컴포넌트
 const EditorControlled = (props: IEditor) => {
   // ** Props
-  const { htmlStr, setHtmlStr } = props;
+  const { initStr, setHtmlStr } = props;
 
   // ** State
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   // ** Hooks
   useEffect(() => {
-    // 문자열을 html 코드로 변환
-    const blocksFromHtml = htmlToDraft(htmlStr);
-    if (blocksFromHtml) {
-      const { contentBlocks, entityMap } = blocksFromHtml;
-      const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
-      const editorState = EditorState.createWithContent(contentState);
-      setEditorState(editorState);
+    if (initStr !== '') {
+      // 문자열을 html 코드로 변환 (수정)
+      const blocksFromHtml = htmlToDraft(initStr);
+      if (blocksFromHtml) {
+        const { contentBlocks, entityMap } = blocksFromHtml;
+        const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+        const editorState = EditorState.createWithContent(contentState);
+        setEditorState(editorState);
+      }
     }
-  }, [htmlStr]);
+  }, [initStr]);
 
-  // editor 수정 이벤트
+  // useEffect(() => {
+  //   // 문자열을 html 코드로 변환
+  //   const blocksFromHtml = htmlToDraft(htmlStr);
+  //   if (blocksFromHtml) {
+  //     const { contentBlocks, entityMap } = blocksFromHtml;
+  //     const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+  //     const editorState = EditorState.createWithContent(contentState);
+  //     setEditorState(editorState);
+  //   }
+  // }, [initStr]);
+
+  // editor에 입력했을 때, html 코드로 변환 (등록/수정)
   const onEditorStateChange = (editorState: EditorState) => {
     setEditorState(editorState);
     setHtmlStr(draftToHtml(convertToRaw(editorState.getCurrentContent())));
