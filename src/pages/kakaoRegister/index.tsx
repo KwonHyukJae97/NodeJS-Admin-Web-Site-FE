@@ -102,6 +102,7 @@ interface FormData {
   companyName: string;
   radio: string;
   companyCode: number;
+  businessNumber: string;
 
   // birth: DateType;
 }
@@ -144,6 +145,7 @@ const KakaoRegister = () => {
     // terms: false,
     snsToken: snsToken,
     companyName: '',
+    businessNumber: '',
     radio: '',
     companyCode: null,
     dob: null,
@@ -186,10 +188,31 @@ const KakaoRegister = () => {
 
   //화면 넘기기까지 완료 -> 데이터 입력후 가입 버튼 누르면 동작을 안하는데 동작하게끔 해야함. 동작만 하면 처리 과정 콘솔찍고 확인하기
   const onSubmit = (data: FormData) => {
-    const { name, phone, nickname, birth, snsId, snsToken, gender, companyName, companyCode } =
-      data;
+    const {
+      name,
+      phone,
+      nickname,
+      birth,
+      snsId,
+      snsToken,
+      gender,
+      companyName,
+      companyCode,
+      businessNumber,
+    } = data;
     auth.kakaoRegister(
-      { name, phone, nickname, birth, snsId, snsToken, gender, companyName, companyCode },
+      {
+        name,
+        phone,
+        nickname,
+        birth,
+        snsId,
+        snsToken,
+        gender,
+        companyName,
+        companyCode,
+        businessNumber,
+      },
       () => {
         setError('phone', {
           type: 'manual',
@@ -382,7 +405,6 @@ const KakaoRegister = () => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
-
                       // placeholder="01012345678"
                       error={Boolean(errors.name)}
                     />
@@ -562,6 +584,28 @@ const KakaoRegister = () => {
                 {errors.companyName && (
                   <FormHelperText sx={{ color: 'error.main' }}>
                     {errors.companyName.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 7 }}>
+                <Controller
+                  name="businessNumber"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      value={value}
+                      onBlur={onBlur}
+                      label="사업자번호"
+                      onChange={onChange}
+                      placeholder="ex 000-00-00000 형식으로 입력해주세요."
+                      error={Boolean(errors.businessNumber)}
+                    />
+                  )}
+                />
+                {errors.businessNumber && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.businessNumber.message}
                   </FormHelperText>
                 )}
               </FormControl>

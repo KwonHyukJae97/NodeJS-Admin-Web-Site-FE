@@ -165,9 +165,8 @@ const UserViewSecurity = () => {
         <CardContent>
           <Alert icon={false} severity="warning" sx={{ mb: 4 }}>
             <AlertTitle sx={{ mb: (theme) => `${theme.spacing(1)} !important` }}>
-              Ensure that these requirements are met
+              영문, 대소문자, 숫자, 특수문자 조합으로 8~16자 이내로 작성하세요.
             </AlertTitle>
-            Minimum 8 characters long, uppercase & symbol
           </Alert>
 
           {/* <form onSubmit={(e) => e.preventDefault()}> */}
@@ -179,7 +178,6 @@ const UserViewSecurity = () => {
                   <OutlinedInput
                     autoFocus
                     type={values.showNewPassword ? 'text' : 'password'}
-
                     // type="password"
                     value={password}
                     onChange={inputChangePassword}
@@ -210,7 +208,6 @@ const UserViewSecurity = () => {
                   <OutlinedInput
                     label="Confirm New Password"
                     value={confirmPassword}
-
                     // value={values.confirmNewPassword}
                     id="user-view-security-confirm-new-password"
                     type={values.showConfirmNewPassword ? 'text' : 'password'}
@@ -249,6 +246,7 @@ const UserViewSecurity = () => {
                         )
                         .then((res) => {
                           console.log('변경 완료', res);
+                          location.reload();
                           alert('비밀번호를 수정하였습니다.');
                         })
                         .catch((err) => {

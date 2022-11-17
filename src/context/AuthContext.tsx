@@ -385,11 +385,16 @@ const AuthProvider = ({ children }: Props) => {
     console.log('companyName 추가', params);
 
     try {
+      if (params.password !== params.confirmPassword) {
+        return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
+      }
+
       const res = await axios.post(authConfig.registerEndpoint, params);
 
       if (res.data.error) {
         if (errorCallback) errorCallback(res.data.error);
       } else {
+        alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
         router.push('/login');
       }
     } catch (err: any) {
@@ -403,6 +408,8 @@ const AuthProvider = ({ children }: Props) => {
         return alert('이미 존재하는 연락처입니다.');
       } else if (err.response.data.message === '이미 존재하는 닉네임입니다.') {
         return alert('이미 존재하는 닉네임입니다.');
+      } else if (err.response.data.message === '이미 존재하는 사업자번호입니다.') {
+        return alert('이미 존재하는 사업자번호입니다.');
       }
     }
 
@@ -464,9 +471,21 @@ const AuthProvider = ({ children }: Props) => {
 
         await router.replace(redirectURL as string);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+      // console.log(err);
+      console.log(err.response.data.message);
+      if (err.response.data.message === '이미 존재하는 아이디입니다.') {
+        return alert('이미 존재하는 아이디입니다.');
+      } else if (err.response.data.message === '이미 존재하는 이메일입니다.') {
+        return alert('이미 존재하는 이메일입니다.');
+      } else if (err.response.data.message === '이미 존재하는 연락처입니다.') {
+        return alert('이미 존재하는 연락처입니다.');
+      } else if (err.response.data.message === '이미 존재하는 닉네임입니다.') {
+        return alert('이미 존재하는 닉네임입니다.');
+      } else if (err.response.data.message === '이미 존재하는 사업자번호입니다.') {
+        return alert('이미 존재하는 사업자번호입니다.');
+      }
     }
 
     // axios
@@ -543,9 +562,21 @@ const AuthProvider = ({ children }: Props) => {
 
         await router.replace(redirectURL as string);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+      // console.log(err);
+      console.log(err.response.data.message);
+      if (err.response.data.message === '이미 존재하는 아이디입니다.') {
+        return alert('이미 존재하는 아이디입니다.');
+      } else if (err.response.data.message === '이미 존재하는 이메일입니다.') {
+        return alert('이미 존재하는 이메일입니다.');
+      } else if (err.response.data.message === '이미 존재하는 연락처입니다.') {
+        return alert('이미 존재하는 연락처입니다.');
+      } else if (err.response.data.message === '이미 존재하는 닉네임입니다.') {
+        return alert('이미 존재하는 닉네임입니다.');
+      } else if (err.response.data.message === '이미 존재하는 사업자번호입니다.') {
+        return alert('이미 존재하는 사업자번호입니다.');
+      }
     }
   };
 
@@ -591,9 +622,21 @@ const AuthProvider = ({ children }: Props) => {
 
         await router.replace(redirectURL as string);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+      // console.log(err);
+      console.log(err.response.data.message);
+      if (err.response.data.message === '이미 존재하는 아이디입니다.') {
+        return alert('이미 존재하는 아이디입니다.');
+      } else if (err.response.data.message === '이미 존재하는 이메일입니다.') {
+        return alert('이미 존재하는 이메일입니다.');
+      } else if (err.response.data.message === '이미 존재하는 연락처입니다.') {
+        return alert('이미 존재하는 연락처입니다.');
+      } else if (err.response.data.message === '이미 존재하는 닉네임입니다.') {
+        return alert('이미 존재하는 닉네임입니다.');
+      } else if (err.response.data.message === '이미 존재하는 사업자번호입니다.') {
+        return alert('이미 존재하는 사업자번호입니다.');
+      }
     }
   };
 
