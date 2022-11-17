@@ -1,19 +1,24 @@
 // ** React Imports
 import { SyntheticEvent, useEffect } from 'react';
 
+// ** Next Imports
+import { useRouter } from 'next/router';
+
 // ** MUI Imports
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import { styled } from '@mui/material/styles';
 import MuiTabList, { TabListProps } from '@mui/lab/TabList';
 import Box from '@mui/material/Box';
-import { CategoryType } from '../../../types/apps/boardTypes';
-import { useRouter } from 'next/router';
+
+// ** Types
+import { CategoryType } from 'src/types/apps/boardTypes';
 
 interface Props {
   categoryList: CategoryType[];
   searchKey: string;
   setSearchKey: (value: string) => void;
+  setSearchWord: (value: string) => void;
 }
 
 // Styled TabList component
@@ -36,7 +41,7 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 }));
 
 const TabsCustomButton = (props: Props) => {
-  const { categoryList, searchKey, setSearchKey } = props;
+  const { categoryList, searchKey, setSearchKey, setSearchWord } = props;
 
   // ** State
   // const [value, setValue] = useState<string>('전체');
@@ -47,6 +52,7 @@ const TabsCustomButton = (props: Props) => {
   // state 동기 처리
   useEffect(() => {
     searchKey !== '' ? router.push(`/faq/list/?searchKey=${searchKey}`) : router.push('/faq/list');
+    setSearchWord('');
   }, [searchKey]);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {

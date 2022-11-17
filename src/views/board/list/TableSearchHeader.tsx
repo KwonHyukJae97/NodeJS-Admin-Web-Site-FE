@@ -25,7 +25,7 @@ type TableSearchHeaderProps = {
   pageName: string;
 };
 
-// 공지사항 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
+// 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
   // ** Props
   const { searchWord, setSearchWord, pageNo, setPageNo, pageName, searchKey } = props;
@@ -42,14 +42,11 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
   const handleSearchKeyword = () => {
     // setSearchWord('');
 
-    if (pageNo !== 1) {
-      setPageNo(1);
-      router.push(`/${pageName}/list/?pageNo=1&searchWord=${searchWord}&searchKey=${searchKey}`);
-    } else {
-      router.push(
-        `/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
-      );
-    }
+    setPageNo(1);
+
+    router.push(
+      `/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
+    );
   };
 
   // 검색 후 페이지 번호 상태가 바뀔 때마다 요청

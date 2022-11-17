@@ -14,7 +14,7 @@ type BoardViewInfoProps = {
   regDate: string;
   writer?: string;
   htmlStr: string;
-  viewContentRef: Ref<HTMLDivElement>;
+  viewContentRef?: Ref<HTMLDivElement>;
 };
 
 // 게시글 정보 UI 컴포넌트
@@ -52,7 +52,7 @@ const BoardViewInfo = ({
         </Box>
       ) : null}
 
-      {/* FAQ일 경우 */}
+      {/* FAQ/QnA일 경우 */}
       {categoryName != null ? (
         <Box sx={{ ml: 13, mt: 7, display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex' }}>
@@ -68,7 +68,13 @@ const BoardViewInfo = ({
             {title}
           </Typography>
         </Box>
-      ) : null}
+      ) : (
+        <Box sx={{ ml: 13, mt: 7 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, ml: 1 }}>
+            {title}
+          </Typography>
+        </Box>
+      )}
 
       <Box sx={{ ml: 14, mr: 14, mt: 3, display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
@@ -82,9 +88,7 @@ const BoardViewInfo = ({
       <Divider sx={{ ml: 12, mr: 12, mt: 6, borderBottomWidth: 'unset' }} />
 
       <Box sx={{ ml: 14, mr: 14, mt: 8, mb: 8 }} ref={viewContentRef}>
-        <Typography variant="subtitle2" style={{ color: 'black', fontWeight: 300 }}>
-          {htmlStr}
-        </Typography>
+        <Typography variant="body1">{htmlStr}</Typography>
       </Box>
     </>
   );

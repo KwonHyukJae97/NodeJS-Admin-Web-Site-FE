@@ -5,7 +5,6 @@ import { Controller, useForm } from 'react-hook-form';
 // ** Next Import
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
 
 // ** MUI Imports
 import Card from '@mui/material/Card';
@@ -16,8 +15,6 @@ import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 
 // ** Custom Components Imports
 import BoardLeftInHeader from '../BoardLeftInHeader';
@@ -25,78 +22,57 @@ import BoardLeftInHeader from '../BoardLeftInHeader';
 // ** Demo Components Imports
 import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
-import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 
 // ** Styles
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import { CategoryType, FaqType } from 'src/types/apps/boardTypes';
+import { QnaType } from '../../../types/apps/boardTypes';
 
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
-import { getDateTime, role } from 'src/pages/notice/list';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-
-// import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
-
-const EditorControlled = dynamic(
-  () => import('src/views/forms/form-elements/editor/EditorControlled'),
-  { ssr: false },
-);
+import { getDateTime, role } from 'src/pages/notice/list';
 
 type dataProps = {
   id: number;
-  categoryApiData: CategoryType[];
 };
 
-// FAQ 입력값 타입 정의
+// QnA 입력값 타입 정의
 interface FormData {
   title: string;
-  categoryName: string;
-  role: string;
+  content: string;
 }
 
-// FAQ 수정 페이지
-const FaqEdit = ({ id, categoryApiData }: dataProps) => {
+// QnA 수정 페이지
+const QnaEdit = ({ id }: dataProps) => {
   // ** State
-  const [data, setData] = useState<FaqType>({
+  const [data, setData] = useState<QnaType>({
     boardId: 0,
     content: '',
     fileList: [],
     id: 0,
-    categoryName: '',
+    isComment: false,
     regDate: '',
     title: '',
     viewCnt: 0,
     writer: '',
   });
   const [files, setFiles] = useState<File[]>([]);
-  const [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Vars
   const schema = yup.object().shape({
     title: yup.string().required(),
-    categoryName: yup.string().required(),
-  });
-
-  const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
-    const category: CategoryType = {
-      categoryId: data.categoryId,
-      categoryName: data.categoryName,
-      isUse: data.isUse,
-    };
-
-    return category;
+    content: yup.string().required(),
   });
 
   const defaultValues = {
     title: '',
-    categoryName: '',
+    content: '',
   };
 
   // ** Hooks
@@ -113,43 +89,43 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
   });
 
   useEffect(() => {
-    getFaqDetail(id);
+    getQnaDetail(id);
   }, []);
 
   useEffect(() => {
     if (data.title !== '') {
       setValue('title', data.title);
-      setValue('categoryName', data.categoryName);
+      setValue('content', data.content!);
     }
   }, [data]);
 
-  // FAQ 상세조회 API 호출
-  const getFaqDetail = async (id: number) => {
+  // QnA 상세조회 API 호출
+  const getQnaDetail = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
+      const res = await axios.get(`${apiConfig.apiEndpoint}/qna/${id}`, {
         data: { role },
       });
 
-      const faqData = {
-        boardId: res.data.faqId,
-        title: res.data.faq.board.title,
-        content: res.data.faq.board.content,
-        categoryName: res.data.category.categoryName,
-        regDate: getDateTime(res.data.faq.board.regDate),
-        writer: res.data.writer,
-        fileList: res.data.fileList,
+      const qnaData = {
+        boardId: res.data.qna.qnaId,
+        title: res.data.qna.title,
+        content: res.data.qna.content,
+        isComment: res.data.qna.isComment,
+        regDate: getDateTime(res.data.qna.regDate),
+        writer: res.data.qna.writer,
+        fileList: res.data.qna.fileList,
       };
-      console.log(faqData);
-      setData(faqData);
+      console.log(qnaData);
+      setData(qnaData);
 
       // 파일 정보 조회하여 Blob 형으로 재정의 처리
       const tempFiles = [];
-      for (let index = 0; index < res.data.fileList.length; index++) {
+      for (let index = 0; index < res.data.qna.fileList.length; index++) {
         const file: {
           boardFileId: number;
           originalFileName: string;
           filePath: string;
-        } = res.data.fileList[index];
+        } = res.data.qna.fileList[index];
 
         const fileResult = await axios.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
           responseType: 'blob',
@@ -174,25 +150,23 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
       });
     }
 
-    formData.append('role', '본사 관리자');
     formData.append('title', data.title);
-    formData.append('content', htmlStr);
-    formData.append('categoryName', data.categoryName);
+    formData.append('content', data.content);
 
     await editFaq(formData);
   };
 
-  // FAQ 수정 API 호출
+  // QnA 수정 API 호출
   const editFaq = async (formData: any) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/faq/${id}`, formData, {
+        const req = await axios.patch(`${apiConfig.apiEndpoint}/qna/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');
 
-        router.replace(`/faq/view/${id}`);
+        router.replace(`/qna/view/${id}`);
       } catch (err) {
         console.log(err);
         alert('수정에 실패하였습니다.');
@@ -204,54 +178,10 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <BoardLeftInHeader title={'자주 묻는 질문 수정'} />
+          <BoardLeftInHeader title={'1:1 문의 수정'} />
 
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>
-              <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
-                분류
-              </Typography>
-              <FormControl sx={{ flexWrap: 'wrap', flexDirection: 'row' }}>
-                <Controller
-                  name="categoryName"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      value={value}
-                      label=""
-                      onChange={onChange}
-                      size="small"
-                      error={Boolean(errors.categoryName)}
-                      inputProps={{ 'aria-label': 'Without label' }}
-                      displayEmpty
-                      sx={{ mt: 2, mb: 1 }}
-
-                      // labelId="validation-basic-select"
-                      // aria-describedby="validation-basic-select"
-                    >
-                      <MenuItem disabled value="">
-                        분류 선택
-                      </MenuItem>
-                      {categoryData.map((category) => {
-                        return (
-                          <MenuItem value={category.categoryName} key={category.categoryId}>
-                            {category.categoryName}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  )}
-                />
-                {errors.categoryName && (
-                  <FormHelperText sx={{ color: 'error.main' }} id="validation-basic-select">
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Box>
-
-            <Box sx={{ ml: 14, mr: 14, mt: 3 }}>
               <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
                 제목
               </Typography>
@@ -284,13 +214,31 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
               <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
                 내용
               </Typography>
-              <EditorWrapper>
-                <Grid container spacing={6} className="match-height">
-                  <Grid item xs={12} sx={{ mt: 2 }}>
-                    <EditorControlled initStr={data.content!} setHtmlStr={setHtmlStr} />
-                  </Grid>
-                </Grid>
-              </EditorWrapper>
+              <FormControl fullWidth>
+                <Controller
+                  name="content"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      size="small"
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      placeholder="문의 내용을 입력해주세요."
+                      multiline={true}
+                      rows={7}
+                      sx={{ mb: 1, mt: 2 }}
+                      error={Boolean(errors.content)}
+                    />
+                  )}
+                />
+                {errors.content && (
+                  <FormHelperText sx={{ color: 'error.main', mt: 0 }}>
+                    {errors.content.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
             </Box>
 
             <Box sx={{ ml: 14, mr: 14, mt: 4, mb: 10 }}>
@@ -315,7 +263,7 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
               <Button variant="contained" sx={{ mr: 3 }} type="submit">
                 수정
               </Button>
-              <Link href="/faq/list" passHref>
+              <Link href="/qna/list" passHref>
                 <Button variant="outlined" color="secondary">
                   취소
                 </Button>
@@ -328,4 +276,4 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
   );
 };
 
-export default FaqEdit;
+export default QnaEdit;

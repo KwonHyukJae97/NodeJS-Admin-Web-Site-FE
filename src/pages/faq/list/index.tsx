@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import { DataGrid } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import { AlertCircleOutline } from 'mdi-material-ui';
+import Divider from '@mui/material/Divider';
 
 // ** Custom Components Imports
 import PageLeftInHeader from 'src/@core/components/page-left-in-header';
@@ -29,7 +30,6 @@ import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
 import moment from 'moment';
-import Divider from '@mui/material/Divider';
 
 // 페이지 타입 정의
 interface PageType {
@@ -211,6 +211,7 @@ const FaqList = ({
             categoryList={categoryData}
             searchKey={searchKey}
             setSearchKey={setSearchKey}
+            setSearchWord={setSearchWord}
           />
           <TableSearchHeader
             searchWord={searchWord}

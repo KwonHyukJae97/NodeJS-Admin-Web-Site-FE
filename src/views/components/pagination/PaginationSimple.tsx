@@ -23,7 +23,11 @@ const PaginationSimple = (props: Props) => {
   // 페이지 번호 클릭 시 실행되는 함수
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNo(value);
-    router.push(`/${pageName}/list/?pageNo=${value}`);
+    if (pageName !== 'notice' && pageName !== 'faq') {
+      router.push(`/${pageName}/list/?pageNo=${value}`);
+    }
+
+    // router.push(`/${pageName}/list/?pageNo=${value}`);
   };
 
   return (

@@ -148,7 +148,7 @@ const columns = [
       return (
         <Box sx={{ margin: '0 auto' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Link href={`/qna/edit/${row.id}`}>
+            <Link href={`/qna/edit/${row.boardId}`}>
               <Button sx={{ minWidth: 0, p: 1.25 }}>
                 <Icon
                   path={mdiSquareEditOutline}
@@ -160,7 +160,10 @@ const columns = [
                 />
               </Button>
             </Link>
-            <Button sx={{ minWidth: 0, p: 1.25 }} onClick={() => handleDeleteQna(Number(row.id))}>
+            <Button
+              sx={{ minWidth: 0, p: 1.25 }}
+              onClick={() => handleDeleteQna(Number(row.boardId))}
+            >
               <Icon
                 path={mdiTrashCanOutline}
                 size={0.95}
