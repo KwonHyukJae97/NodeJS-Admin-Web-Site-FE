@@ -538,6 +538,7 @@ const RolesCards = () => {
                 ) : dialogTitle === '보기' && getAdminInfo === 'Y' ? (
                   <TableHead>
                     <TableRow>
+                      <TableCell> 번호 </TableCell>
                       <TableCell> 사용자 ID </TableCell>
                       <TableCell> 사용자 이름 </TableCell>
                     </TableRow>
@@ -576,6 +577,7 @@ const RolesCards = () => {
                           key={index}
                           sx={{ '& .MuiTableCell-root:first-of-type': { pl: -1 } }}
                         >
+                          <TableCell align="center">{index + 1}</TableCell>
                           <TableCell align="center">{data.id}</TableCell>
                           <TableCell align="center">{data.adminName}</TableCell>
                         </TableRow>
