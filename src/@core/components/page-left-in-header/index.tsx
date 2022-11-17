@@ -35,7 +35,7 @@ const PageLeftInHeader = (props: PageLeftHeaderProps) => {
   // 페이지 헤더 클릭 시, 페이지 번호, 검색어 입력값, 검색 카테고리 초기화
   const handleInitState = () => {
     setPageNo(1);
-    setSearchWord('');
+    setSearchWord ? setSearchWord('') : null;
     setSearchKey ? setSearchKey('') : null;
     router.push(`/${pageName}/list`);
   };

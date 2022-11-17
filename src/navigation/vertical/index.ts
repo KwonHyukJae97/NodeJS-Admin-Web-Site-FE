@@ -98,6 +98,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: '나의 1:1 문의',
+          path: '/qna/list',
         },
         {
           title: '문의내역 관리',

@@ -19,3 +19,16 @@ export type CategoryType = {
   categoryName: string;
   isUse: boolean;
 };
+
+// Qna 타입 정의
+export type QnaType = {
+  id?: number;
+  boardId: number;
+  isComment: boolean;
+  title: string;
+  content?: string;
+  viewCnt?: number;
+  regDate: string;
+  writer?: string;
+  fileList?: any;
+};
