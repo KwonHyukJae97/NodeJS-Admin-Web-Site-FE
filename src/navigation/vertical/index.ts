@@ -102,6 +102,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: '문의내역 관리',
+          path: '/qna/comment/list',
         },
       ],
     },

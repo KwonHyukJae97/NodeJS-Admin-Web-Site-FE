@@ -60,7 +60,7 @@ const QnaView = ({ id }: dataProps) => {
       console.log('상세조회 응답', res.data);
 
       const qnaData = {
-        boardId: res.data.qna.boardId,
+        boardId: res.data.qna.qnaId,
         title: res.data.qna.title,
         content: res.data.qna.content,
         isComment: res.data.qna.isComment,
@@ -160,7 +160,7 @@ const QnaView = ({ id }: dataProps) => {
           <Typography variant="h6">답변 내역</Typography>
         </Box>
 
-        <CommentCard commentData={comment} />
+        <CommentCard qnaId={data.boardId} commentData={comment} />
       </Grid>
     </Grid>
   );
