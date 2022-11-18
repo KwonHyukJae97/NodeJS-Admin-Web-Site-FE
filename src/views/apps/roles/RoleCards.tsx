@@ -87,7 +87,9 @@ const RolesCards = () => {
   // ** States
   const [open, setOpen] = useState<boolean>(false),
     [getData, setGetData] = useState<boolean>(true),
+    [isChecked, setIsChecked] = useState<boolean>(false),
     [getAdminInfo, setGetAdminInfo] = useState<string>(''),
+    [errMessage, setErrMessage] = useState<string>(''),
     [dialogTitle, setDialogTitle] = useState<'등록' | '수정' | '보기'>('등록'),
     [cardData, setCardData] = useState<any[]>([]),
     [viewData, setViewData] = useState<any>([]),
@@ -136,10 +138,14 @@ const RolesCards = () => {
     setValue('roleName', '');
     setGetAdminInfo('');
     setViewData([]);
+    setIsChecked(false);
+    setErrMessage('');
   };
 
   // 권한 타입 checkBox 처리
   const onCheckedType = (isChecked: boolean, value: string, permission: permissionType) => {
+    setIsChecked(true);
+    setErrMessage('');
     if (value == '0') {
       permission.isWrite = isChecked;
     } else if (value == '1') {
@@ -153,10 +159,9 @@ const RolesCards = () => {
 
   const onSubmit = (data: any) => {
     let getRoleName = data.roleName;
+
     if (getRoleName === '') {
       getRoleName = title;
-    } else {
-      getRoleName = data.roleName;
     }
     const roleData: any = {
       roleName: getRoleName,
@@ -190,12 +195,26 @@ const RolesCards = () => {
         pushData();
       }
     });
-    console.log('roleData', roleData);
+    if (isChecked == false) {
+      setErrMessage('역할을 한개 이상 체크해주세요.');
 
-    if (dialogTitle == '등록') {
-      registerRole(roleData);
-    } else if (dialogTitle == '수정') {
-      updateRole(roleData, roleId);
+      return false;
+    }
+    const filterName = cardData.filter((filterData) => {
+      return filterData.title == getRoleName && filterData.roleId != roleId;
+    });
+
+    if (filterName.length > 0) {
+      setErrMessage('이미 중복된 역할이름이 있습니다.');
+
+      return false;
+    } else {
+      if (dialogTitle == '등록') {
+        getRoleName = data.roleName;
+        registerRole(roleData);
+      } else if (dialogTitle == '수정') {
+        updateRole(roleData, roleId);
+      }
     }
     handleClose();
   };
@@ -231,6 +250,7 @@ const RolesCards = () => {
 
   // 역할 등록 API호출
   const registerRole = async (roleData: any) => {
+    setErrMessage('');
     if (confirm('등록 하시겠습니까?')) {
       try {
         const req = await axios.post(`${apiConfig.apiEndpoint}/role`, {
@@ -504,7 +524,9 @@ const RolesCards = () => {
                       />
                     )}
                   />
-                ) : dialogTitle === '보기' || dialogTitle === '수정' ? (
+                ) : (dialogTitle === '보기' && getAdminInfo === 'Y') ||
+                  dialogTitle === '보기' ||
+                  dialogTitle === '수정' ? (
                   <Typography variant="h6">{title}</Typography>
                 ) : null}
                 {dialogTitle === '등록' && errors.roleName && (
@@ -519,11 +541,10 @@ const RolesCards = () => {
               <Table size="small">
                 {dialogTitle === '보기' && getData === true && getAdminInfo === '' ? (
                   <TableHead>
-                    <TableRow>
+                    <TableRow sx={{ pl: '2rem' }}>
                       <TableCell align="center">
                         <Box
                           sx={{
-                            display: 'flex',
                             fontSize: '1.0rem',
                             alignItems: 'center',
                             textTransform: 'capitalize',
@@ -553,10 +574,10 @@ const RolesCards = () => {
                           key={index}
                           sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
                         >
-                          <TableCell>{data.display_name}</TableCell>
+                          <TableCell align="center">{data.display_name}</TableCell>
 
                           {dataList.map((list, dataListIndex) => (
-                            <TableCell key={dataListIndex}>
+                            <TableCell align="center" key={dataListIndex}>
                               <FormGrantLabel
                                 label={list.type}
                                 value={list.value}
@@ -629,6 +650,12 @@ const RolesCards = () => {
                 ) : null}
               </Table>
             </TableContainer>
+            <Box>
+              <Typography variant="body1" pt={3} sx={{ color: 'error.main' }}>
+                {' '}
+                {errMessage}
+              </Typography>
+            </Box>
           </DialogContent>
           <DialogActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
             {dialogTitle != '보기' ? (
