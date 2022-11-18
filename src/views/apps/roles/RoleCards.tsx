@@ -87,6 +87,7 @@ const RolesCards = () => {
   // ** States
   const [open, setOpen] = useState<boolean>(false),
     [getData, setGetData] = useState<boolean>(true),
+    [getAdminInfo, setGetAdminInfo] = useState<string>(''),
     [dialogTitle, setDialogTitle] = useState<'등록' | '수정' | '보기'>('등록'),
     [cardData, setCardData] = useState<any[]>([]),
     [viewData, setViewData] = useState<any>([]),
@@ -115,13 +116,17 @@ const RolesCards = () => {
     setOpen(true);
     if (action === '수정') {
       getPermissionData();
-      getRoleView(roleId);
+      getRoleView(roleId, '');
     }
     if (action === '보기') {
-      getRoleView(roleId);
+      getRoleView(roleId, '');
     }
     if (action === '등록') {
       getPermissionData();
+    }
+    if (action === '사용자보기') {
+      setGetAdminInfo('Y');
+      getRoleView(roleId, 'Y');
     }
   };
 
@@ -129,6 +134,7 @@ const RolesCards = () => {
   const handleClose = () => {
     setOpen(false);
     setValue('roleName', '');
+    setGetAdminInfo('');
     setViewData([]);
   };
 
@@ -272,9 +278,11 @@ const RolesCards = () => {
   };
 
   // 역할 상세 정보 조회 API호출
-  const getRoleView = async (roleId: number) => {
+  const getRoleView = async (roleId: number, getInfo: string) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/role/${roleId}`);
+      const res = await axios.get(`${apiConfig.apiEndpoint}/role/${roleId}`, {
+        params: { getInfo: getInfo },
+      });
       setViewData(res.data);
       setGetData(true);
     } catch (err) {
@@ -300,13 +308,13 @@ const RolesCards = () => {
       .get(`${apiConfig.apiEndpoint}/role`)
       .then((res) => {
         const roleMap = new Map<number, CardDataType>();
-        res.data.forEach((role: { roleName: string; roleId: any }) => {
+        res.data.forEach((role: { roleName: string; adminCount: number; roleId: any }) => {
           if (!roleMap.has(role.roleId)) {
             const card: CardDataType = {
               roleId: role.roleId,
               title: role.roleName,
               avatars: ['3.png'],
-              totalUsers: 1,
+              totalUsers: role.adminCount,
             };
             roleMap.set(role.roleId, card);
             setTitle(role.roleName);
@@ -342,8 +350,18 @@ const RolesCards = () => {
             <Box
               sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <Typography variant="body2">등록된 사용자: {item.totalUsers} 명</Typography>
-              <AvatarGroup
+              <Typography
+                variant="body2"
+                sx={{ cursor: 'pointer' }}
+                onClick={() => {
+                  setGetAdminInfo('Y');
+                  setDialogTitle('보기');
+                  handleClickOpen('사용자보기', item.roleId);
+                }}
+              >
+                등록된 사용자: {item.totalUsers} 명
+              </Typography>
+              {/* <AvatarGroup
                 max={4}
                 sx={{
                   '& .MuiAvatarGroup-avatar': { fontSize: '.875rem' },
@@ -353,7 +371,7 @@ const RolesCards = () => {
                 {item.avatars.map((img: any, index: number) => (
                   <Avatar key={index} alt={item.title} src={`/images/avatars/${img}`} />
                 ))}
-              </AvatarGroup>
+              </AvatarGroup> */}
             </Box>
             <Box>
               <Typography
@@ -444,10 +462,16 @@ const RolesCards = () => {
       </Grid>
       <Dialog fullWidth maxWidth="md" scroll="body" onClose={handleClose} open={open}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle sx={{ textAlign: 'center' }}>
-            <Typography variant="h4" component="span">
-              {`역할 ${dialogTitle}`}
-            </Typography>
+          <DialogTitle sx={{ textAlign: 'center', mt: 5 }}>
+            {getAdminInfo === 'Y' ? (
+              <Typography variant="h4" component="span">
+                {`사용자 ${dialogTitle}`}
+              </Typography>
+            ) : (
+              <Typography variant="h4" component="span">
+                {`역할 ${dialogTitle}`}
+              </Typography>
+            )}
           </DialogTitle>
           <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
             <Box sx={{ my: 4 }}>
@@ -493,14 +517,14 @@ const RolesCards = () => {
 
             <TableContainer>
               <Table size="small">
-                {dialogTitle === '보기' && getData === true ? (
+                {dialogTitle === '보기' && getData === true && getAdminInfo === '' ? (
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ pl: '0 !important' }}>
+                      <TableCell align="center">
                         <Box
                           sx={{
                             display: 'flex',
-                            fontSize: '0.85rem',
+                            fontSize: '1.0rem',
                             alignItems: 'center',
                             textTransform: 'capitalize',
                           }}
@@ -511,9 +535,17 @@ const RolesCards = () => {
                       <TableCell colSpan={4}>권한 종류</TableCell>
                     </TableRow>
                   </TableHead>
+                ) : dialogTitle === '보기' && getAdminInfo === 'Y' ? (
+                  <TableHead>
+                    <TableRow>
+                      <TableCell> 번호 </TableCell>
+                      <TableCell> 사용자 ID </TableCell>
+                      <TableCell> 사용자 이름 </TableCell>
+                    </TableRow>
+                  </TableHead>
                 ) : null}
 
-                {dialogTitle === '보기' && getData === true ? (
+                {dialogTitle === '보기' && getData === true && getAdminInfo === '' ? (
                   <TableBody>
                     {viewData.map((data: any, index: number) => {
                       return (
@@ -533,6 +565,21 @@ const RolesCards = () => {
                               />
                             </TableCell>
                           ))}
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                ) : dialogTitle === '보기' && getAdminInfo === 'Y' ? (
+                  <TableBody>
+                    {viewData.map((data: any, index: number) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: -1 } }}
+                        >
+                          <TableCell align="center">{index + 1}</TableCell>
+                          <TableCell align="center">{data.id}</TableCell>
+                          <TableCell align="center">{data.adminName}</TableCell>
                         </TableRow>
                       );
                     })}
