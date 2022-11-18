@@ -32,3 +32,13 @@ export type QnaType = {
   writer?: string;
   fileList?: any;
 };
+
+// Comment 타입 정의
+export type CommentType = {
+  id?: number;
+  commentId: number;
+  writer: string;
+  comment: string;
+  regDate: string;
+  adminId: number;
+};

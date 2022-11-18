@@ -13,7 +13,7 @@ import Box from '@mui/material/Box';
 
 // ** Custom Components Imports
 import BoardLeftInHeader from '../BoardLeftInHeader';
-import AttachedFileList from '../AttachedFileList';
+import AttachedFileList from './AttachedFileList';
 
 // ** Types Imports
 import { getDateTime, role } from 'src/pages/notice/list';

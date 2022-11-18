@@ -152,7 +152,7 @@ const columns = [
               <Button sx={{ minWidth: 0, p: 1.25 }}>
                 <Icon
                   path={mdiSquareEditOutline}
-                  size={0.85}
+                  size={0.75}
                   horizontal
                   vertical
                   rotate={90}
@@ -166,7 +166,7 @@ const columns = [
             >
               <Icon
                 path={mdiTrashCanOutline}
-                size={0.95}
+                size={0.85}
                 horizontal
                 vertical
                 rotate={180}

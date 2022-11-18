@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // ** Next Import
 import Link from 'next/link';
@@ -13,16 +13,18 @@ import Box from '@mui/material/Box';
 
 // ** Custom Components Imports
 import BoardLeftInHeader from '../BoardLeftInHeader';
-import AttachedFileList from '../AttachedFileList';
+import AttachedFileList from './AttachedFileList';
 import BoardViewInfo from '../BoardViewInfo';
 
 // ** Types Imports
-import { QnaType } from 'src/types/apps/boardTypes';
+import { CommentType, QnaType } from 'src/types/apps/boardTypes';
 
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 import { getDateTime } from 'src/pages/notice/list';
+import CommentCard from './CommentCard';
+import Typography from '@mui/material/Typography';
 
 type dataProps = {
   id: number;
@@ -42,6 +44,7 @@ const QnaView = ({ id }: dataProps) => {
     viewCnt: 0,
     writer: '',
   });
+  const [comment, setComment] = useState<CommentType[]>([]);
 
   // ** Hooks
   const router = useRouter();
@@ -54,6 +57,8 @@ const QnaView = ({ id }: dataProps) => {
     try {
       const res = await axios.get(`${apiConfig.apiEndpoint}/qna/${id}`);
 
+      console.log('상세조회 응답', res.data);
+
       const qnaData = {
         boardId: res.data.qna.boardId,
         title: res.data.qna.title,
@@ -64,8 +69,24 @@ const QnaView = ({ id }: dataProps) => {
         fileList: res.data.qna.fileList,
       };
 
+      const commentData: CommentType[] =
+        res.data.comment !== null
+          ? res.data.comment.map((data: any) => {
+              const comment: CommentType = {
+                commentId: data.commentId,
+                writer: data.writer,
+                comment: data.comment,
+                regDate: getDateTime(data.regDate),
+                adminId: data.adminId,
+              };
+
+              return comment;
+            })
+          : null;
+
       console.log(qnaData);
       setData(qnaData);
+      setComment(commentData);
     } catch (err) {
       console.log(err);
     }
@@ -134,6 +155,12 @@ const QnaView = ({ id }: dataProps) => {
             </Link>
           </Box>
         </Card>
+
+        <Box sx={{ mt: 8, ml: 3, mb: 3 }}>
+          <Typography variant="h6">답변 내역</Typography>
+        </Box>
+
+        <CommentCard commentData={comment} />
       </Grid>
     </Grid>
   );
