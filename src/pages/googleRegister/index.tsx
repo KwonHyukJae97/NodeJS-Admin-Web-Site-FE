@@ -426,6 +426,7 @@ const GoogleRegister = () => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
+
                       // placeholder="01012345678"
                       error={Boolean(errors.name)}
                     />

@@ -265,6 +265,7 @@ const ForgotId = () => {
                 size="large"
                 variant="contained"
                 sx={{ mb: 5.25 }}
+
                 // 아이디 찾기 완료 화면에 얼럿창으로 뿌리기만하면됨.
                 onClick={() => {
                   axios

@@ -21,7 +21,8 @@ import Typography from '@mui/material/Typography';
 
 // import InputLabel from '@mui/material/InputLabel';
 import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
+
+// import CardActions from '@mui/material/CardActions';
 import DialogTitle from '@mui/material/DialogTitle';
 
 // import FormControl from '@mui/material/FormControl';
@@ -39,7 +40,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 // import StarOutline from 'mdi-material-ui/StarOutline';
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip';
+// import CustomChip from 'src/@core/components/mui/chip';
 import CustomAvatar from 'src/@core/components/mui/avatar';
 
 // ** Types
@@ -57,9 +58,9 @@ interface Props {
   data: UsersType;
 }
 
-interface ColorsType {
-  [key: string]: ThemeColor;
-}
+// interface ColorsType {
+//   [key: string]: ThemeColor;
+// }
 
 // ** Styled <sup> component
 // const Sup = styled('sup')(({ theme }) => ({
@@ -77,13 +78,13 @@ interface ColorsType {
 //   alignSelf: 'flex-end',
 // });
 
-const roleColors: ColorsType = {
-  admin: 'error',
-  editor: 'info',
-  author: 'warning',
-  maintainer: 'success',
-  subscriber: 'primary',
-};
+// const roleColors: ColorsType = {
+//   admin: 'error',
+//   editor: 'info',
+//   author: 'warning',
+//   maintainer: 'success',
+//   subscriber: 'primary',
+// };
 
 // const statusColors: ColorsType = {
 //   active: 'success',
@@ -97,6 +98,7 @@ const UserViewLeft = ({ data }: Props) => {
   const [email, setEmail] = useState<string>(data.email);
   const [phone, setPhone] = useState<string>(data.phone);
   const [nickname, setNickname] = useState<string>(data.nickname);
+
   // const [email, setEmail] = useState<string>(data.email);
   // const [phone, setPhone] = useState<string>(data.phone);
   // const [nickname, setNickname] = useState<string>(data.nickname);
@@ -116,24 +118,24 @@ const UserViewLeft = ({ data }: Props) => {
   const handleEditClickClosePhone = () => setOpenEditPhone(false);
   const handleEditClickCloseNickname = () => setOpenEditNickname(false);
 
-  const inputChangeEmail = (e: any) => {
-    setEmail(e.target.value);
-    data.email = e.target.value;
+  // const inputChangeEmail = (e: any) => {
+  //   setEmail(e.target.value);
+  //   data.email = e.target.value;
 
-    // console.log(email);
-  };
-  const inputChangePhone = (e: any) => {
-    setPhone(e.target.value);
-    data.phone = e.target.value;
+  //   // console.log(email);
+  // };
+  // const inputChangePhone = (e: any) => {
+  //   setPhone(e.target.value);
+  //   data.phone = e.target.value;
 
-    // console.log(email);
-  };
-  const inputChangeNickname = (e: any) => {
-    setNickname(e.target.value);
-    data.nickname = e.target.value;
+  //   // console.log(email);
+  // };
+  // const inputChangeNickname = (e: any) => {
+  //   setNickname(e.target.value);
+  //   data.nickname = e.target.value;
 
-    // console.log(email);
-  };
+  //   // console.log(email);
+  // };
 
   // const inputChange = (e) => {
   //   // setEmail(e.target.value);
@@ -457,6 +459,7 @@ const UserViewLeft = ({ data }: Props) => {
                         label="연락처"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
+
                         // onChange={inputChangePhone}
                         // defaultValue={data.phone}
                       />
@@ -533,6 +536,7 @@ const UserViewLeft = ({ data }: Props) => {
                         label="닉네임"
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
+
                         // onChange={inputChangeNickname}
                         // defaultValue={data.nickname}
                       />

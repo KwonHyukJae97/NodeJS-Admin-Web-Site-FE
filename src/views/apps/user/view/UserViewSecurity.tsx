@@ -178,6 +178,7 @@ const UserViewSecurity = () => {
                   <OutlinedInput
                     autoFocus
                     type={values.showNewPassword ? 'text' : 'password'}
+
                     // type="password"
                     value={password}
                     onChange={inputChangePassword}
@@ -208,6 +209,7 @@ const UserViewSecurity = () => {
                   <OutlinedInput
                     label="Confirm New Password"
                     value={confirmPassword}
+
                     // value={values.confirmNewPassword}
                     id="user-view-security-confirm-new-password"
                     type={values.showConfirmNewPassword ? 'text' : 'password'}
