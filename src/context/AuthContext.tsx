@@ -385,16 +385,24 @@ const AuthProvider = ({ children }: Props) => {
     console.log('companyName 추가', params);
 
     try {
+      if (params.password !== params.confirmPassword) {
+        return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
+      }
+
       const res = await axios.post(authConfig.registerEndpoint, params);
 
       if (res.data.error) {
         if (errorCallback) errorCallback(res.data.error);
       } else {
+        alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
         router.push('/login');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+      console.log(err.response.data.message);
+      const message = err.response.data.message;
+
+      return alert(message);
     }
 
     // axios
@@ -455,9 +463,14 @@ const AuthProvider = ({ children }: Props) => {
 
         await router.replace(redirectURL as string);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+
+      // console.log(err);
+      console.log(err.response.data.message);
+      const message = err.response.data.message;
+
+      return alert(message);
     }
 
     // axios
@@ -534,9 +547,14 @@ const AuthProvider = ({ children }: Props) => {
 
         await router.replace(redirectURL as string);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+
+      // console.log(err);
+      console.log(err.response.data.message);
+      const message = err.response.data.message;
+
+      return alert(message);
     }
   };
 
@@ -582,9 +600,14 @@ const AuthProvider = ({ children }: Props) => {
 
         await router.replace(redirectURL as string);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(errorCallback);
-      console.log(err);
+
+      // console.log(err);
+      console.log(err.response.data.message);
+      const message = err.response.data.message;
+
+      return alert(message);
     }
   };
 

@@ -105,12 +105,21 @@ const UserViewSecurity = () => {
   const resData = JSON.parse(userData);
 
   const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const inputChangePassword = (e: any) => {
     setPassword(e.target.value);
 
     // console.log(password);
   };
+
+  const inputChangeConfirmPassword = (e: any) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const hasError = (passwordEntered: any) => (password.length < 8 ? true : false);
+
+  const hasNotSameError = (passwordEntered: any) => (password != confirmPassword ? true : false);
 
   // Handle Password
   // const handleNewPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -128,12 +137,12 @@ const UserViewSecurity = () => {
   //   (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
   //     setValues({ ...values, [prop]: event.target.value });
   //   };
-  // const handleClickShowConfirmNewPassword = () => {
-  //   setValues({ ...values, showConfirmNewPassword: !values.showConfirmNewPassword });
-  // };
-  // const handleMouseDownConfirmNewPassword = (event: MouseEvent<HTMLButtonElement>) => {
-  //   event.preventDefault();
-  // };
+  const handleClickShowConfirmNewPassword = () => {
+    setValues({ ...values, showConfirmNewPassword: !values.showConfirmNewPassword });
+  };
+  const handleMouseDownConfirmNewPassword = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
 
   // // Handle edit mobile number dialog
   // const handleEditMobileNumberClickOpen = () => setOpenEditMobileNumber(true);
@@ -156,9 +165,8 @@ const UserViewSecurity = () => {
         <CardContent>
           <Alert icon={false} severity="warning" sx={{ mb: 4 }}>
             <AlertTitle sx={{ mb: (theme) => `${theme.spacing(1)} !important` }}>
-              Ensure that these requirements are met
+              영문, 대소문자, 숫자, 특수문자 조합으로 8~16자 이내로 작성하세요.
             </AlertTitle>
-            Minimum 8 characters long, uppercase & symbol
           </Alert>
 
           {/* <form onSubmit={(e) => e.preventDefault()}> */}
@@ -169,11 +177,14 @@ const UserViewSecurity = () => {
                   <InputLabel htmlFor="user-view-security-new-password">새 비밀번호</InputLabel>
                   <OutlinedInput
                     autoFocus
-                    type="password"
+                    type={values.showNewPassword ? 'text' : 'password'}
+
+                    // type="password"
                     value={password}
                     onChange={inputChangePassword}
                     label="비밀번호1"
                     sx={{ display: 'flex', mb: 4 }}
+                    error={hasError('password')}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -187,39 +198,23 @@ const UserViewSecurity = () => {
                       </InputAdornment>
                     }
                   />
-                  {/* <OutlinedInput
-                    label="New Password"
-                    value={values.newPassword}
-                    id="user-view-security-new-password"
-                    onChange={handleNewPasswordChange('newPassword')}
-                    type={values.showNewPassword ? 'text' : 'password'}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          edge="end"
-                          onClick={handleClickShowNewPassword}
-                          aria-label="toggle password visibility"
-                          onMouseDown={handleMouseDownNewPassword}
-                        >
-                          {values.showNewPassword ? <EyeOutline /> : <EyeOffOutline />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  /> */}
                 </FormControl>
               </Grid>
 
-              {/* <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth size="small">
                   <InputLabel htmlFor="user-view-security-confirm-new-password">
                     비밀번호 확인
                   </InputLabel>
                   <OutlinedInput
                     label="Confirm New Password"
-                    value={values.confirmNewPassword}
+                    value={confirmPassword}
+
+                    // value={values.confirmNewPassword}
                     id="user-view-security-confirm-new-password"
                     type={values.showConfirmNewPassword ? 'text' : 'password'}
-                    onChange={handleConfirmNewPasswordChange('confirmNewPassword')}
+                    onChange={inputChangeConfirmPassword}
+                    error={hasNotSameError('confirmPassword')}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -234,12 +229,15 @@ const UserViewSecurity = () => {
                     }
                   />
                 </FormControl>
-              </Grid> */}
+              </Grid>
 
               <Grid item xs={12} sx={{ mt: 1.5 }}>
                 <Button
                   variant="contained"
                   onClick={() => {
+                    if (password !== confirmPassword) {
+                      return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
+                    }
                     if (confirm('비밀번호를 수정하시겠습니까?')) {
                       axios
                         .patch(
@@ -250,6 +248,7 @@ const UserViewSecurity = () => {
                         )
                         .then((res) => {
                           console.log('변경 완료', res);
+                          location.reload();
                           alert('비밀번호를 수정하였습니다.');
                         })
                         .catch((err) => {

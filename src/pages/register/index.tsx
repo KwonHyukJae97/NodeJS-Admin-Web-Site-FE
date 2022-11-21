@@ -101,6 +101,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 const defaultValues = {
   id: '',
   password: '',
+  confirmPassword: '',
   name: '',
   email: '',
   phone: '',
@@ -109,6 +110,7 @@ const defaultValues = {
   gender: '',
   companyName: '',
   companyCode: null,
+  businessNumber: '',
 
   // terms: false,
   radio: '',
@@ -117,6 +119,7 @@ const defaultValues = {
 interface FormData {
   id: string;
   password: string;
+  confirmPassword: string;
   name: string;
   email: string;
   phone: string;
@@ -126,11 +129,13 @@ interface FormData {
   companyName: string;
   radio: string;
   companyCode: number;
+  businessNumber: string;
 }
 
 const Register = () => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   // ** Hooks
   const theme = useTheme();
@@ -146,6 +151,7 @@ const Register = () => {
   const schema = yup.object().shape({
     id: yup.string().min(8).required(),
     password: yup.string().min(8).required(),
+    confirmPassword: yup.string().min(8).required(),
     name: yup.string().min(3).required(),
     email: yup.string().email().required(),
     phone: yup.string().min(11).required(),
@@ -170,12 +176,25 @@ const Register = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    const { id, password, name, email, phone, nickname, birth, gender, companyName, companyCode } =
-      data;
+    const {
+      id,
+      password,
+      confirmPassword,
+      name,
+      email,
+      phone,
+      nickname,
+      birth,
+      gender,
+      companyName,
+      companyCode,
+      businessNumber,
+    } = data;
     auth.register(
       {
         id,
         password,
+        confirmPassword,
         name,
         email,
         phone,
@@ -184,6 +203,7 @@ const Register = () => {
         gender,
         companyName,
         companyCode,
+        businessNumber,
       },
       () => {
         setError('id', {
@@ -393,10 +413,11 @@ const Register = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.id)}
-                      placeholder="tenpick123"
+                      placeholder="ex) tenpick123"
                     />
                   )}
                 />
+
                 {errors.id && (
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.id.message}</FormHelperText>
                 )}
@@ -439,6 +460,49 @@ const Register = () => {
                 )}
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
+                <InputLabel
+                  htmlFor="auth-login-v2-password"
+                  error={Boolean(errors.confirmPassword)}
+                >
+                  비밀번호 확인
+                </InputLabel>
+                <Controller
+                  name="confirmPassword"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <OutlinedInput
+                      value={value}
+                      label="비밀번호확인"
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      id="auth-login-v2-password"
+                      error={Boolean(errors.confirmPassword)}
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onMouseDown={(e) => e.preventDefault()}
+
+                            // onClick={() => setShowPassword(!showPassword)}
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? <EyeOutline /> : <EyeOffOutline />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                  )}
+                />
+                {errors.confirmPassword && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.confirmPassword.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="name"
                   control={control}
@@ -449,7 +513,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
-                      placeholder="johndoe"
+                      placeholder="ex) 클라이"
                       error={Boolean(errors.name)}
                     />
                   )}
@@ -471,7 +535,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="이메일"
                       onChange={onChange}
-                      placeholder="johndoe"
+                      placeholder="ex) klaiEdu@doubledlab.co.kr"
                       error={Boolean(errors.email)}
                     />
                   )}
@@ -494,7 +558,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="전화번호"
                       onChange={onChange}
-                      placeholder="01011112222"
+                      placeholder="ex) 01012345678"
                       error={Boolean(errors.phone)}
                     />
                   )}
@@ -517,7 +581,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="닉네임"
                       onChange={onChange}
-                      placeholder="johndoe123"
+                      placeholder="ex) klai123"
                       error={Boolean(errors.nickname)}
                     />
                   )}
@@ -540,7 +604,7 @@ const Register = () => {
                         onBlur={onBlur}
                         label="생년월일"
                         onChange={onChange}
-                        placeholder="1997/11/13"
+                        placeholder="ex) 1997-11-13"
                         error={Boolean(errors.birth)}
                       />
                     )}
@@ -666,7 +730,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="회원사명"
                       onChange={onChange}
-                      placeholder="companyName"
+                      placeholder="ex) 클라이교육"
                       error={Boolean(errors.companyName)}
                     />
                   )}
@@ -674,6 +738,29 @@ const Register = () => {
                 {errors.companyName && (
                   <FormHelperText sx={{ color: 'error.main' }}>
                     {errors.companyName.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 7 }}>
+                <Controller
+                  name="businessNumber"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      value={value}
+                      onBlur={onBlur}
+                      label="사업자번호"
+                      onChange={onChange}
+                      placeholder="ex 000-00-00000 형식으로 입력해주세요."
+                      error={Boolean(errors.businessNumber)}
+                    />
+                  )}
+                />
+                {errors.businessNumber && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.businessNumber.message}
                   </FormHelperText>
                 )}
               </FormControl>

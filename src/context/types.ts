@@ -16,6 +16,7 @@ export type LoginParams = {
 export type RegisterParams = {
   id: string;
   password: string;
+  confirmPassword: string;
   name: string;
   email: string;
   phone: string;
@@ -24,6 +25,7 @@ export type RegisterParams = {
   gender: string;
   companyName: string;
   companyCode: number;
+  businessNumber: string;
 };
 
 //카카오 2차정보 데이터 정의
@@ -37,6 +39,7 @@ export type KakaoRegisterParams = {
   snsToken: string;
   companyName: string;
   companyCode: number;
+  businessNumber: string;
 };
 
 //네이버 2차정보 데이터 정의
@@ -50,6 +53,7 @@ export type NaverRegisterParams = {
   snsToken: string;
   companyName: string;
   companyCode: number;
+  businessNumber: string;
 };
 
 //구글 2차정보 데이터 정의
@@ -63,6 +67,7 @@ export type GoogleRegisterParams = {
   snsToken: string;
   companyName: string;
   companyCode: number;
+  businessNumber: string;
 };
 
 // export type UserDataType = {
