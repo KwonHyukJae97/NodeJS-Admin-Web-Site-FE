@@ -1,39 +1,57 @@
+// ** React Imports
+import React from 'react';
+
+// ** Next Imports
+import { useRouter } from 'next/router';
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid';
-
-// ** Types
-import { PageLeftHeaderProps } from './types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { useRouter } from 'next/router';
+import { mdiChevronLeft } from '@mdi/js';
+import Icon from '@mdi/react';
+
+// ** Types
+import { PageLeftHeaderProps } from './types';
 
 // 목록 페이지 헤더 컴포넌트 (왼쪽 정렬 + 카드 영역 내부에서 사용시)
 const PageLeftInHeader = (props: PageLeftHeaderProps) => {
   // ** Props
-  const { title, subtitle, maincategory, subcategory, setPageNo, setSearchWord } = props;
+  const {
+    title,
+    subtitle,
+    maincategory,
+    subcategory,
+    setPageNo,
+    setSearchWord,
+    pageName,
+    setSearchKey,
+  } = props;
 
   // ** Hooks
   const router = useRouter();
 
+  // 페이지 헤더 클릭 시, 페이지 번호, 검색어 입력값, 검색 카테고리 초기화
+  const handleInitState = () => {
+    setPageNo(1);
+    setSearchWord ? setSearchWord('') : null;
+    setSearchKey ? setSearchKey('') : null;
+    router.push(`/${pageName}/list`);
+  };
+
   return (
     <Grid item xs={12}>
       <Box sx={{ mt: 12, ml: 16, display: 'flex', alignItems: 'center' }}>
-        <Box
-          onClick={() => {
-            setPageNo(1);
-            setSearchWord('');
-            router.push('/board/notice/list');
-          }}
-        >
+        <Box onClick={handleInitState}>
           <Typography variant="h4">{title}</Typography>
         </Box>
-        <Divider sx={{ ml: 5, mr: 5, borderLeftWidth: 'unset', height: 28 }} />
-        <Box sx={{ display: 'flex' }}>
+        <Divider
+          sx={{ ml: 5, mr: 5, borderLeftWidth: 'unset', height: 28, border: '1px solid lightgrey' }}
+        />
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="body1">{maincategory}</Typography>
-          <Box sx={{ ml: 1.2, mr: 1.2 }}>
-            <Typography variant="subtitle2">{'>'}</Typography>
-          </Box>
+          <Icon path={mdiChevronLeft} size={1} horizontal color="lightgrey" />
           <Typography variant="body1">{subcategory}</Typography>
         </Box>
       </Box>
