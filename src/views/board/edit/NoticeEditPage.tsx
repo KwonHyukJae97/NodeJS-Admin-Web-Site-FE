@@ -111,6 +111,9 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
     if (data.title !== '') {
       setValue('title', data.title);
       setValue('isTop', data.isTop);
+
+      // htmlStr에 대한 상태변화가 없을경우, content 수정 없이 patch 요청 시 null 값으로 할당됨
+      setHtmlStr(data.content!);
     }
   }, [data]);
 
@@ -157,6 +160,10 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
 
   // 수정 버튼 클릭 시, api 요청
   const onSubmit = async (data: FormData) => {
+    console.log('isTop', data.isTop);
+    console.log('content', htmlStr);
+    console.log('title', data.title);
+
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -176,6 +183,10 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
 
   // 공지사항 수정 API 호출
   const editNotice = async (formData: any) => {
+    for (const value of formData.values()) {
+      console.log('value', value);
+    }
+
     if (confirm('수정 하시겠습니까?')) {
       try {
         const req = await axios.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {

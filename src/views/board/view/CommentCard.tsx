@@ -200,7 +200,7 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
     </form>
   );
 
-  // 답변 입력 컴포넌트 - 입력값과 버튼 나란히 배치
+  // 답변 입력 컴포넌트 - 입력값과 버튼 나란히 배치한 버전
   // const inputComment = (
   //   <Box sx={{ mb: 6, display: 'flex' }}>
   //     <TextField
@@ -223,26 +223,36 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
       {commentData.length !== 0
         ? commentData.map((comment) => (
             <Card key={comment.commentId} sx={{ mb: 6 }}>
-              <Box sx={{ display: 'flex', ml: 10, mr: 10, mt: 8, mb: 6 }}>
+              <Box sx={{ display: 'flex', ml: 12, mr: 12, mt: 8, mb: 5 }}>
                 <Box>
                   <Avatar
                     alt="Victor Anderson"
                     src="/demo/materialize-mui-react-nextjs-admin-template/demo-1/images/avatars/3.png"
-                    sx={{ width: 42, height: 42, mr: 6 }}
+                    sx={{ width: 42, height: 42, mr: 4 }}
                   />
                 </Box>
 
-                <Box sx={{ backgroundColor: 'orange', flex: 1 }}>
+                <Box
+                  sx={{
+                    // backgroundColor: 'orange',
+                    flex: 1,
+                  }}
+                >
                   <Box
                     sx={{
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      backgroundColor: 'red',
                       mt: 1,
+                      // backgroundColor: 'red',
                     }}
                   >
-                    <Box sx={{ backgroundColor: 'skyblue', display: 'flex' }}>
+                    <Box
+                      sx={{
+                        // backgroundColor: 'skyblue',
+                        display: 'flex',
+                      }}
+                    >
                       <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                         {comment.writer}
                       </Typography>
@@ -252,7 +262,7 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
                     </Box>
 
                     {comment.commentId == editState.commentId && editState.isEdit ? null : (
-                      <Box sx={{ backgroundColor: 'green' }}>
+                      <Box>
                         <Button
                           sx={{ minWidth: 0, p: 1.25 }}
                           onClick={() => handleEditComment(comment.commentId, comment.comment)}
@@ -272,7 +282,14 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
                   {comment.commentId == editState.commentId && editState.isEdit ? (
                     editCommentForm
                   ) : (
-                    <Typography variant="subtitle1" sx={{ backgroundColor: 'grey', pt: 3, pb: 5 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        // backgroundColor: 'grey',
+                        pt: 2,
+                        pb: 5,
+                      }}
+                    >
                       {comment.comment}
                     </Typography>
                   )}

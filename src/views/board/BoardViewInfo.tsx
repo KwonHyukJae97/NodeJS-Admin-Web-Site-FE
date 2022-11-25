@@ -29,52 +29,43 @@ const BoardViewInfo = ({
 }: BoardViewInfoProps) => {
   return (
     <>
-      {/* 공지사항일 경우 */}
-      {isTop != null ? (
-        <Box sx={{ ml: 13, mt: 7, display: 'flex' }}>
-          {isTop ? (
-            <CustomChip
-              skin="light"
-              size="medium"
-              label="중요"
-              color="primary"
-              sx={{
-                '& .MuiChip-label': { lineHeight: '18px' },
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                mr: 2.5,
-              }}
-            />
-          ) : null}
-          <Typography variant="h5" sx={{ fontWeight: 700, ml: 1 }}>
-            {title}
-          </Typography>
-        </Box>
-      ) : null}
-
-      {/* FAQ/QnA일 경우 */}
-      {categoryName != null ? (
-        <Box sx={{ ml: 13, mt: 7, display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ display: 'flex' }}>
-            <Divider sx={{ borderLeftWidth: 'medium', mt: 1, mb: 1 }} />
-            <Box sx={{ mr: 3.5, ml: 3.5 }}>
-              <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
-                {categoryName}
-              </Typography>
-            </Box>
-            <Divider sx={{ borderRightWidth: 'medium', mr: 2.5, mt: 1, mb: 1 }} />
-          </Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, ml: 1 }}>
-            {title}
-          </Typography>
-        </Box>
-      ) : (
-        <Box sx={{ ml: 13, mt: 7 }}>
-          <Typography variant="h5" sx={{ fontWeight: 700, ml: 1 }}>
-            {title}
-          </Typography>
-        </Box>
-      )}
+      <Box sx={{ ml: 13, mt: 7, display: 'flex', alignItems: 'center' }}>
+        {/* 공지사항일 경우 */}
+        {isTop != null && isTop == true ? (
+          <CustomChip
+            skin="light"
+            size="medium"
+            label="중요"
+            color="primary"
+            sx={{
+              '& .MuiChip-label': { lineHeight: '18px' },
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              mr: 2.5,
+            }}
+          />
+        ) : (
+          <>
+            {/* FAQ일 경우 */}
+            {categoryName != null ? (
+              <>
+                <Box sx={{ display: 'flex' }}>
+                  <Divider sx={{ borderLeftWidth: 'medium', mt: 1, mb: 1 }} />
+                  <Box sx={{ mr: 3.5, ml: 3.5 }}>
+                    <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
+                      {categoryName}
+                    </Typography>
+                  </Box>
+                  <Divider sx={{ borderRightWidth: 'medium', mr: 2.5, mt: 1, mb: 1 }} />
+                </Box>
+              </>
+            ) : null}
+          </>
+        )}
+        <Typography variant="h5" sx={{ fontWeight: 700, ml: 1 }}>
+          {title}
+        </Typography>
+      </Box>
 
       <Box sx={{ ml: 14, mr: 14, mt: 3, display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>

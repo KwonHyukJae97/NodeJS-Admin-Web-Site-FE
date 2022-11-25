@@ -199,7 +199,7 @@ const NoticeAdd = () => {
               <EditorWrapper>
                 <Grid container spacing={6} className="match-height">
                   <Grid item xs={12} sx={{ mt: 2 }}>
-                    <EditorControlled initStr={''} htmlStr={htmlStr} setHtmlStr={setHtmlStr} />
+                    <EditorControlled initStr={''} setHtmlStr={setHtmlStr} />
                   </Grid>
                 </Grid>
               </EditorWrapper>
