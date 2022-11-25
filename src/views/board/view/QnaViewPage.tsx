@@ -156,10 +156,6 @@ const QnaView = ({ id }: dataProps) => {
           </Box>
         </Card>
 
-        <Box sx={{ mt: 8, ml: 3, mb: 3 }}>
-          <Typography variant="h6">답변 내역</Typography>
-        </Box>
-
         <CommentCard qnaId={data.boardId} commentData={comment} />
       </Grid>
     </Grid>

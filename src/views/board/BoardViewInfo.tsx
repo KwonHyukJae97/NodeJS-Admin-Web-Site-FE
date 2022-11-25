@@ -79,7 +79,23 @@ const BoardViewInfo = ({
       <Divider sx={{ ml: 12, mr: 12, mt: 6, borderBottomWidth: 'unset' }} />
 
       <Box sx={{ ml: 14, mr: 14, mt: 8, mb: 8 }} ref={viewContentRef}>
-        <Typography variant="body1">{htmlStr}</Typography>
+        {/*<Typography variant="body1">{htmlStr}</Typography>*/}
+
+        <Typography variant="body1">
+          {/* 문의사항 TextField 개행 처리 */}
+          {htmlStr.includes('\r\n') ? (
+            <>
+              {htmlStr.split('\r\n').map((line) => (
+                <>
+                  {line}
+                  <br />
+                </>
+              ))}
+            </>
+          ) : (
+            htmlStr
+          )}
+        </Typography>
       </Box>
     </>
   );

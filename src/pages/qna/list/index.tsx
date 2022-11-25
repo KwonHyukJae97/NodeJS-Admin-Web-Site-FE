@@ -148,18 +148,35 @@ const columns = [
       return (
         <Box sx={{ margin: '0 auto' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Link href={`/qna/edit/${row.boardId}`}>
-              <Button sx={{ minWidth: 0, p: 1.25 }}>
+            {row.isComment ? (
+              <Button
+                sx={{ minWidth: 0, p: 1.25 }}
+                onClick={() => alert('답변된 문의내역은 수정이 불가합니다.')}
+              >
                 <Icon
                   path={mdiSquareEditOutline}
                   size={0.75}
                   horizontal
                   vertical
                   rotate={90}
-                  color="grey"
+                  color="lightgrey"
                 />
               </Button>
-            </Link>
+            ) : (
+              <Link href={`/qna/edit/${row.boardId}`}>
+                <Button sx={{ minWidth: 0, p: 1.25 }}>
+                  <Icon
+                    path={mdiSquareEditOutline}
+                    size={0.75}
+                    horizontal
+                    vertical
+                    rotate={90}
+                    color="grey"
+                  />
+                </Button>
+              </Link>
+            )}
+
             <Button
               sx={{ minWidth: 0, p: 1.25 }}
               onClick={() => handleDeleteQna(Number(row.boardId))}

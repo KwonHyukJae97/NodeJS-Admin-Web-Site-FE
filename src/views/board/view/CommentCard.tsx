@@ -129,34 +129,49 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
 
   // 답변 입력 컴포넌트
   const inputCommentForm = (
-    <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-      <Box sx={{ mb: 6 }}>
-        <FormControl fullWidth>
-          <Controller
-            name="comment"
-            control={control}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <TextField
-                id="comment"
-                value={value}
-                onBlur={onBlur}
-                onChange={onChange}
-                placeholder="답변을 입력해주세요."
-                multiline
-                type="text"
-                sx={{ flex: 1, whiteSpace: 'pre-wrap' }}
-              />
-            )}
-          />
-        </FormControl>
-
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="contained" size="large" sx={{ mt: 4 }} type="submit">
+    <>
+      <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+        {/* 헤더 및 등록 버튼 */}
+        <Box
+          sx={{
+            mt: 8,
+            ml: 3,
+            mr: 3,
+            mb: 3,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h6">답변 내역</Typography>
+          <Button variant="contained" size="large" type="submit">
             등록
           </Button>
         </Box>
-      </Box>
-    </form>
+
+        {/* 작성 */}
+        <Box sx={{ mb: 6 }}>
+          <FormControl fullWidth>
+            <Controller
+              name="comment"
+              control={control}
+              render={({ field: { value, onChange, onBlur } }) => (
+                <TextField
+                  id="comment"
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  placeholder="답변을 입력해주세요."
+                  multiline
+                  type="text"
+                  sx={{ flex: 1, whiteSpace: 'pre-wrap' }}
+                />
+              )}
+            />
+          </FormControl>
+        </Box>
+      </form>
+    </>
   );
 
   // 답변 수정 컴포넌트
@@ -244,6 +259,7 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       mt: 1,
+
                       // backgroundColor: 'red',
                     }}
                   >
@@ -290,7 +306,19 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
                         pb: 5,
                       }}
                     >
-                      {comment.comment}
+                      {/* 답변 TextField 개행 처리 */}
+                      {comment.comment.includes('\n') ? (
+                        <>
+                          {comment.comment.split('\n').map((line) => (
+                            <>
+                              {line}
+                              <br />
+                            </>
+                          ))}
+                        </>
+                      ) : (
+                        comment.comment
+                      )}
                     </Typography>
                   )}
                 </Box>

@@ -91,6 +91,7 @@ const DataGrid = (theme: Theme) => {
           '&:focus, &:focus-within': {
             outline: 'none',
           },
+
           // '&:'
         },
         cellCheckbox: {

@@ -153,6 +153,7 @@ const UserViewLeft = ({ data }: Props) => {
         return (
           <CustomAvatar
             alt="User Image"
+
             // src={data.avatar}
             variant="rounded"
             sx={{ width: 120, height: 120, mb: 4 }}
@@ -163,6 +164,7 @@ const UserViewLeft = ({ data }: Props) => {
           <CustomAvatar
             skin="light"
             variant="rounded"
+
             // color={data.avatarColor as ThemeColor}
             sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
           >
@@ -380,6 +382,7 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
+
                         // defaultValue={data.email}
                         // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}

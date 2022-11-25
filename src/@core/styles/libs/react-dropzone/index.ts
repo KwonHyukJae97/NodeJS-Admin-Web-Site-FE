@@ -31,6 +31,7 @@ const DropzoneWrapper = styled(Box)<BoxProps>(({ theme }) => ({
         borderRadius: theme.shape.borderRadius,
         padding: theme.spacing(2.5, 2.4, 2.5, 5),
         backgroundColor: 'rgb(245, 245, 245)',
+
         // border: `1px solid ${
         //   theme.palette.mode === 'light' ? 'rgba(93, 89, 98, 0.14)' : 'rgba(247, 244, 254, 0.14)'
         // }`,
