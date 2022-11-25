@@ -235,7 +235,7 @@ const ForgotId = () => {
             </Box>
             <Box sx={{ mb: 6 }}>
               <TypographyStyled variant="h5">아이디를 잊으셨나요?</TypographyStyled>
-              <Typography variant="body2">이름과 연락처를 입력하세요</Typography>
+              <Typography variant="body2">가입 시 등록한 이름과 연락처를 입력하세요</Typography>
               {/* <Typography variant="body2">
                 Enter your email and we&prime;ll send you instructions to reset your password
               </Typography> */}
@@ -284,7 +284,7 @@ const ForgotId = () => {
                     });
                 }}
               >
-                찾기
+                아이디 찾기
               </Button>
               <Typography sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Link passHref href="/login">

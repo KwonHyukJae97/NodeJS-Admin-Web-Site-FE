@@ -5,10 +5,10 @@ import React from 'react';
 import { useRouter } from 'next/router';
 
 // ** MUI Imports
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
 import { mdiChevronLeft } from '@mdi/js';
 import Icon from '@mdi/react';
 

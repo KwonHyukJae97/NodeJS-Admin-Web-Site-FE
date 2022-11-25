@@ -237,7 +237,7 @@ const ForgotPassword = () => {
               {/* <Typography variant="body2">
                 Enter your email and we&prime;ll send you instructions to reset your password
               </Typography> */}
-              <Typography variant="body2">가입 시 입력한 이메일 주소를 입력해주세요.</Typography>
+              <Typography variant="body2">가입 시 등록한 이메일 주소를 입력해주세요.</Typography>
             </Box>
             {/* <form noValidate autoComplete="off" onSubmit={handleSubmit}> */}
             <form>
@@ -257,7 +257,7 @@ const ForgotPassword = () => {
                 onClick={() => {
                   if (confirm('회원님의 메일로 임시 비밀번호를 보낼까요?')) {
                     axios
-                      .post(`${apiConfig.apiEndpoint}/auth/find_password/`, {
+                      .post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
                         email: email,
                       })
                       .then((res) => {
@@ -273,7 +273,7 @@ const ForgotPassword = () => {
                   }
                 }}
               >
-                메일 보내기
+                메일로 임시비밀번호 보내기
               </Button>
               <Typography sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Link passHref href="/login">

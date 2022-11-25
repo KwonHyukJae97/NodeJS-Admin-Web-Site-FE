@@ -152,7 +152,7 @@ const CompanyList = ({
       : null;
 
   // ** Hooks
-  // 게시글이 없을 경우 처리하는 컴포넌트
+  // 회원사 정보가 없을 경우 처리하는 컴포넌트
   const renderNoResult = (
     <Box
       sx={{
