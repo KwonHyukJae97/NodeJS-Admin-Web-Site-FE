@@ -6,5 +6,7 @@ export type PageLeftHeaderProps = {
   maincategory?: ReactNode;
   subcategory?: ReactNode;
   setPageNo: (value: number) => void;
-  setSearchWord: (value: string) => void;
+  setSearchWord?: (value: string) => void;
+  pageName: string;
+  setSearchKey?: (value: string) => void;
 };
