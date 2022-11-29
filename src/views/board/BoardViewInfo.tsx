@@ -7,7 +7,8 @@ import CustomChip from '../../@core/components/mui/chip';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 
-type BoardViewInfoProps = {
+// props 타입 정의
+interface BoardViewInfoProps {
   isTop?: boolean | null;
   categoryName?: string;
   title: string;
@@ -15,18 +16,13 @@ type BoardViewInfoProps = {
   writer?: string;
   htmlStr: string;
   viewContentRef?: Ref<HTMLDivElement>;
-};
+}
 
 // 게시글 정보 UI 컴포넌트
-const BoardViewInfo = ({
-  isTop,
-  categoryName,
-  title,
-  regDate,
-  writer,
-  htmlStr,
-  viewContentRef,
-}: BoardViewInfoProps) => {
+const BoardViewInfo = (props: BoardViewInfoProps) => {
+  // ** Props
+  const { isTop, categoryName, title, regDate, writer, htmlStr, viewContentRef } = props;
+
   return (
     <>
       <Box sx={{ ml: 13, mt: 7, display: 'flex', alignItems: 'center' }}>

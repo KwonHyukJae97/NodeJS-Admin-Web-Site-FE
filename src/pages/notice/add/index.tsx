@@ -26,34 +26,34 @@ import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 
 // ** Custom Components Imports
-import BoardLeftInHeader from '../../../views/board/BoardLeftInHeader';
+import BoardLeftInHeader from 'src/views/board/BoardLeftInHeader';
 
 // ** Styles
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
-// ** axios
-import axios from 'axios';
-import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-// import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
+// ** axios
+import axios from 'axios';
+import apiConfig from 'src/configs/api';
 
+// import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 const EditorControlled = dynamic(
   () => import('src/views/forms/form-elements/editor/EditorControlled'),
   { ssr: false },
 );
 
 // 공지사항 입력값 타입 정의
-interface FormData {
+interface NoticeInputData {
   title: string;
   isTop: string;
   role: string;
   noticeGrant: string;
 }
 
+// input 초기값
 const defaultValues = {
   title: '',
   isTop: false,
@@ -62,8 +62,8 @@ const defaultValues = {
 // 공지사항 등록 페이지
 const NoticeAdd = () => {
   // ** State
-  const [files, setFiles] = useState<File[]>([]);
-  const [htmlStr, setHtmlStr] = useState<string>('');
+  const [files, setFiles] = useState<File[]>([]),
+    [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Vars
   const schema = yup.object().shape({
@@ -82,8 +82,8 @@ const NoticeAdd = () => {
     resolver: yupResolver(schema),
   });
 
-  // 등록 버튼 클릭 시, api 요청
-  const onSubmit = async (data: FormData) => {
+  // 등록 버튼 클릭 시 호출
+  const onSubmit = async (data: NoticeInputData) => {
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -98,11 +98,11 @@ const NoticeAdd = () => {
     formData.append('content', htmlStr);
     formData.append('isTop', data.isTop);
 
-    await registerNotice(formData);
+    await createNotice(formData);
   };
 
   // 공지사항 등록 API 호출
-  const registerNotice = async (formData: any) => {
+  const createNotice = async (formData: any) => {
     if (confirm('등록 하시겠습니까?')) {
       try {
         const req = await axios.post(`${apiConfig.apiEndpoint}/notice`, formData, {

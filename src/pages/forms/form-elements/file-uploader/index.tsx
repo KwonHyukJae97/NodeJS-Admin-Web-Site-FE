@@ -1,54 +1,57 @@
 // ** MUI Imports
-import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
-import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 
 // ** Custom Components Imports
-import PageHeader from 'src/@core/components/page-header'
-import CardSnippet from 'src/@core/components/card-snippet'
+import PageHeader from 'src/@core/components/page-header';
+import CardSnippet from 'src/@core/components/card-snippet';
 
 // ** Styled Component
-import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
+import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 
 // ** Demo Components Imports
-import FileUploaderSingle from 'src/views/forms/form-elements/file-uploader/FileUploaderSingle'
-import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple'
-import FileUploaderRestrictions from 'src/views/forms/form-elements/file-uploader/FileUploaderRestrictions'
+import FileUploaderSingle from 'src/views/forms/form-elements/file-uploader/FileUploaderSingle';
+
+// import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
+import FileUploaderRestrictions from 'src/views/forms/form-elements/file-uploader/FileUploaderRestrictions';
 
 // ** Source code imports
-import * as source from 'src/views/forms/form-elements/file-uploader/FileUploaderSourceCode'
+import * as source from 'src/views/forms/form-elements/file-uploader/FileUploaderSourceCode';
 
 const FileUploader = () => {
   return (
     <DropzoneWrapper>
-      <Grid container spacing={6} className='match-height'>
+      <Grid container spacing={6} className="match-height">
         <PageHeader
           title={
-            <Typography variant='h5'>
-              <Link href='https://github.com/react-dropzone/react-dropzone/' target='_blank'>
+            <Typography variant="h5">
+              <Link href="https://github.com/react-dropzone/react-dropzone/" target="_blank">
                 React Dropzone
               </Link>
             </Typography>
           }
-          subtitle={<Typography variant='body2'>Simple HTML5 drag-drop zone with React.js</Typography>}
+          subtitle={
+            <Typography variant="body2">Simple HTML5 drag-drop zone with React.js</Typography>
+          }
         />
         <Grid item xs={12}>
           <CardSnippet
-            title='Upload Multiple Files'
+            title="Upload Multiple Files"
             code={{
               tsx: source.FileUploaderMultipleTSXCode,
-              jsx: source.FileUploaderMultipleJSXCode
+              jsx: source.FileUploaderMultipleJSXCode,
             }}
           >
-            <FileUploaderMultiple />
+            {/*<FileUploaderMultiple />*/}
           </CardSnippet>
         </Grid>
         <Grid item xs={12}>
           <CardSnippet
-            title='Upload Single Files'
+            title="Upload Single Files"
             code={{
               tsx: source.FileUploaderSingleTSXCode,
-              jsx: source.FileUploaderSingleJSXCode
+              jsx: source.FileUploaderSingleJSXCode,
             }}
           >
             <FileUploaderSingle />
@@ -56,10 +59,10 @@ const FileUploader = () => {
         </Grid>
         <Grid item xs={12}>
           <CardSnippet
-            title='Upload Files with Restrictions'
+            title="Upload Files with Restrictions"
             code={{
               tsx: source.FileUploaderRestrictionsTSXCode,
-              jsx: source.FileUploaderRestrictionsJSXCode
+              jsx: source.FileUploaderRestrictionsJSXCode,
             }}
           >
             <FileUploaderRestrictions />
@@ -67,7 +70,7 @@ const FileUploader = () => {
         </Grid>
       </Grid>
     </DropzoneWrapper>
-  )
-}
+  );
+};
 
-export default FileUploader
+export default FileUploader;

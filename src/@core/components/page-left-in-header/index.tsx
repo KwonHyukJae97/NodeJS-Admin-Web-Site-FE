@@ -1,5 +1,5 @@
 // ** React Imports
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 // ** Next Imports
 import { useRouter } from 'next/router';
@@ -12,8 +12,17 @@ import Divider from '@mui/material/Divider';
 import { mdiChevronLeft } from '@mdi/js';
 import Icon from '@mdi/react';
 
-// ** Types
-import { PageLeftHeaderProps } from './types';
+// props 타입 정의
+interface PageLeftHeaderProps {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  maincategory?: ReactNode;
+  subcategory?: ReactNode;
+  setPageNo: (value: number) => void;
+  setSearchWord?: (value: string) => void;
+  pageName: string;
+  setSearchKey?: (value: string) => void;
+}
 
 // 목록 페이지 헤더 컴포넌트 (왼쪽 정렬 + 카드 영역 내부에서 사용시)
 const PageLeftInHeader = (props: PageLeftHeaderProps) => {

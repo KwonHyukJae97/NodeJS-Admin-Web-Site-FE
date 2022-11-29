@@ -178,7 +178,6 @@ const CompanyList = ({
             subcategory={'회원사관리'}
             setPageNo={setPageNo}
             setSearchWord={setSearchWord}
-            // 해당 컴포넌트 필수 props로 변경되어 추가해두었습니다.
             pageName="company"
           />
           <TableSearchHeader

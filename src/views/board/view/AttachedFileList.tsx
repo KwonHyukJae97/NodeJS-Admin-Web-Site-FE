@@ -8,9 +8,10 @@ import { FileDownloadOutline } from 'mdi-material-ui';
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 
-type AttachedFileListProps = {
+// props 타입 정의
+interface AttachedFileListProps {
   fileList: any;
-};
+}
 
 // 첨부파일 목록 UI
 const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
@@ -37,7 +38,7 @@ const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
       // blob을 사용해 객체 URL을 생성
       const fileObjectUrl = window.URL.createObjectURL(blob);
 
-      // blob 객체 URL을 설정
+      // blob 객체 URL를 설정
       const link = document.createElement('a');
       link.href = fileObjectUrl;
       link.style.display = 'none';
@@ -58,6 +59,7 @@ const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
     }
   };
 
+  // 파일 영역 클릭 시 호출
   const handleFileDownload = (fileId: number) => {
     getFileDownload(fileId);
   };

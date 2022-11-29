@@ -23,7 +23,6 @@ import Button from '@mui/material/Button';
 // ** Custom Components Imports
 import BoardLeftInHeader from '../BoardLeftInHeader';
 
-// ** Styled Component Import
 // ** Demo Components Imports
 import FileUploaderMultiple from 'src/views/forms/form-elements/file-uploader/FileUploaderMultiple';
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
@@ -33,8 +32,8 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import { BoardType } from '../../../types/apps/userTypes';
-import { getDateTime, role } from 'src/pages/notice/list';
+import { role } from 'src/pages/notice/list';
+import { NoticeType } from 'src/types/apps/boardTypes';
 
 // ** axios
 import axios from 'axios';
@@ -44,51 +43,58 @@ import apiConfig from 'src/configs/api';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-// import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
+// import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 const EditorControlled = dynamic(
   () => import('src/views/forms/form-elements/editor/EditorControlled'),
   { ssr: false },
 );
 
-type NoticeEditProps = {
-  id: number;
+// input 초기값
+const defaultValues = {
+  title: '',
+  isTop: false,
 };
 
+// props 타입 정의
+interface NoticeEditProps {
+  id: number;
+}
+
 // 공지사항 입력값 타입 정의
-interface FormData {
+interface NoticeInputData {
   title: string;
   isTop: string;
   role: string;
   noticeGrant: string;
 }
 
+// 공지사항 초기값 정의
+const initNotice = {
+  id: 0,
+  boardId: 0,
+  isTop: false,
+  title: '',
+  content: '',
+  fileList: [],
+  writer: '',
+  regDate: '',
+  viewCnt: 0,
+};
+
 // 공지사항 수정 페이지
 const NoticeEdit = ({ id }: NoticeEditProps) => {
   // ** State
-  const [data, setData] = useState<BoardType>({
-    boardId: 0,
-    content: '',
-    fileList: [],
-    id: 0,
-    isTop: false,
-    regDate: '',
-    title: '',
-    viewCnt: 0,
-    writer: '',
-  });
-  const [files, setFiles] = useState<File[]>([]);
-  const [htmlStr, setHtmlStr] = useState<string>('');
+  const [data, setData] = useState<NoticeType>(initNotice),
+    [files, setFiles] = useState<File[]>([]),
+    [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Vars
   const schema = yup.object().shape({
     title: yup.string().required(),
   });
-
-  const defaultValues = {
-    title: '',
-    isTop: false,
-  };
 
   // ** Hooks
   const router = useRouter();
@@ -104,7 +110,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
   });
 
   useEffect(() => {
-    getNoticeDetail(id);
+    getDetailNotice(id);
   }, []);
 
   useEffect(() => {
@@ -118,7 +124,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
   }, [data]);
 
   // 공지사항 상세조회 API 호출
-  const getNoticeDetail = async (id: number) => {
+  const getDetailNotice = async (id: number) => {
     try {
       const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
         data: { role },
@@ -126,12 +132,12 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
 
       const noticeData = {
         boardId: res.data.notice.boardId,
+        isTop: res.data.notice.isTop,
         title: res.data.notice.board.title,
         content: res.data.notice.board.content,
-        isTop: res.data.notice.isTop,
-        regDate: getDateTime(res.data.notice.board.regDate),
         writer: res.data.writer,
         fileList: res.data.fileList,
+        regDate: getDateTime(res.data.notice.board.regDate),
       };
       console.log(noticeData);
       setData(noticeData);
@@ -158,12 +164,8 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
     }
   };
 
-  // 수정 버튼 클릭 시, api 요청
-  const onSubmit = async (data: FormData) => {
-    console.log('isTop', data.isTop);
-    console.log('content', htmlStr);
-    console.log('title', data.title);
-
+  // 수정 버튼 클릭 시 호출
+  const onSubmit = async (data: NoticeInputData) => {
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -178,15 +180,11 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
     formData.append('content', htmlStr);
     formData.append('isTop', data.isTop);
 
-    await editNotice(formData);
+    await updateNotice(formData);
   };
 
   // 공지사항 수정 API 호출
-  const editNotice = async (formData: any) => {
-    for (const value of formData.values()) {
-      console.log('value', value);
-    }
-
+  const updateNotice = async (formData: any) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
         const req = await axios.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
