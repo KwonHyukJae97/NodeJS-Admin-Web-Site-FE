@@ -431,6 +431,8 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
+                        // defaultValue={data.email}
+                        // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </Grid>
