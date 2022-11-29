@@ -83,8 +83,25 @@ const ForgotPassword = () => {
 
   const inputChangeEmail = (e: any) => {
     setEmail(e.target.value);
-
     // console.log(email);
+  };
+
+  //임시 비밀번호 발급 메소드
+  const temporaryPassword = async () => {
+    if (confirm('회원님의 메일로 임시 비밀번호를 보낼까요?')) {
+      try {
+        await axios.post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
+          email: email,
+        });
+        alert(
+          '메일 전송 완료했습니다. 임시 비밀번호를 이용하여 로그인 후 비밀번호 수정을 권장 드립니다.',
+        );
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
+        return alert(message);
+      }
+    }
   };
 
   // ** Vars
@@ -254,24 +271,7 @@ const ForgotPassword = () => {
                 size="large"
                 variant="contained"
                 sx={{ mb: 5.25 }}
-                onClick={() => {
-                  if (confirm('회원님의 메일로 임시 비밀번호를 보낼까요?')) {
-                    axios
-                      .post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
-                        email: email,
-                      })
-                      .then((res) => {
-                        console.log('이메일 전송 완료', res);
-                        alert(
-                          '메일 전송 완료했습니다. 임시 비밀번호를 이용하여 로그인 후 비밀번호 수정을 권장 드립니다.',
-                        );
-                      })
-                      .catch((err) => {
-                        alert('입력하신 이메일을 확인해주세요.');
-                        console.log('메일 전송 실패', err);
-                      });
-                  }
-                }}
+                onClick={() => temporaryPassword()}
               >
                 메일로 임시비밀번호 보내기
               </Button>

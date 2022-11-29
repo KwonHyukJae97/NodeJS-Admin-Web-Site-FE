@@ -118,6 +118,57 @@ const UserViewLeft = ({ data }: Props) => {
   const handleEditClickClosePhone = () => setOpenEditPhone(false);
   const handleEditClickCloseNickname = () => setOpenEditNickname(false);
 
+  //이메일 수정 메소드
+  const editEmail = async () => {
+    if (confirm('이메일을 수정하시겠습니까?')) {
+      try {
+        await axios.patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
+          email: email,
+        });
+        location.reload();
+        alert('이메일 수정이 완료되었습니다.');
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
+        return alert(message);
+      }
+    }
+  };
+
+  //연락처 수정 메소드
+  const editPhone = async () => {
+    if (confirm('연락처를 수정하시겠습니까?')) {
+      try {
+        await axios.patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
+          phone: phone,
+        });
+        location.reload();
+        alert('연락처 수정이 완료되었습니다.');
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
+        return alert(message);
+      }
+    }
+  };
+
+  //닉네임 수정 메소드
+  const editNickname = async () => {
+    if (confirm('닉네임을 수정하시겠습니까?')) {
+      try {
+        await axios.patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
+          nickname: nickname,
+        });
+        location.reload();
+        alert('닉네임 수정이 완료되었습니다.');
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
+        return alert(message);
+      }
+    }
+  };
+
   // const inputChangeEmail = (e: any) => {
   //   setEmail(e.target.value);
   //   data.email = e.target.value;
@@ -380,41 +431,12 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
-                        // defaultValue={data.email}
-                        // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </Grid>
 
                     <DialogActions sx={{ justifyContent: 'center' }}>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1 }}
-                        onClick={() => {
-                          if (confirm('이메일을 수정하시겠습니까?')) {
-                            console.log(data);
-                            axios
-                              .patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
-                                email: email,
-                              })
-                              .then((res) => {
-                                console.log('resresres', res);
-                                location.reload();
-                                alert('이메일 수정이 완료되었습니다.');
-                              })
-                              .catch((err: any) => {
-                                console.log('errerrerr', err);
-                                console.log('에러처리해야댐', err.response.data.message);
-                                if (
-                                  err.response.data.message ===
-                                  '이미 존재하는 이메일이므로 수정 정보를 확인해주세요.'
-                                ) {
-                                  return alert('누군가 사용중인 이메일입니다. 다시 입력해주세요!');
-                                }
-                              });
-                          }
-                        }}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={() => editEmail()}>
                         수정
                       </Button>
                       <Button
@@ -459,39 +481,10 @@ const UserViewLeft = ({ data }: Props) => {
                         label="연락처"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-
-                        // onChange={inputChangePhone}
-                        // defaultValue={data.phone}
                       />
                     </Grid>
                     <DialogActions sx={{ justifyContent: 'center' }}>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1 }}
-                        onClick={() => {
-                          if (confirm('연락처를 수정하시겠습니까?')) {
-                            console.log(data);
-                            axios
-                              .patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
-                                phone: phone,
-                              })
-                              .then((res) => {
-                                console.log('resresres', res);
-                                location.reload();
-                                alert('연락처 수정이 완료되었습니다.');
-                              })
-                              .catch((err) => {
-                                console.log('errerrerr', err);
-                                if (
-                                  err.response.data.message ===
-                                  '이미 존재하는 연락처이므로 수정 정보를 확인해주세요.'
-                                ) {
-                                  return alert('누군가 사용중인 연락처입니다. 다시 입력해주세요!');
-                                }
-                              });
-                          }
-                        }}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={() => editPhone()}>
                         수정
                       </Button>
                       <Button
@@ -536,40 +529,11 @@ const UserViewLeft = ({ data }: Props) => {
                         label="닉네임"
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
-
-                        // onChange={inputChangeNickname}
-                        // defaultValue={data.nickname}
                       />
                     </Grid>
 
                     <DialogActions sx={{ justifyContent: 'center' }}>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1 }}
-                        onClick={() => {
-                          if (confirm('닉네임을 수정하시겠습니까?')) {
-                            console.log(data);
-                            axios
-                              .patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
-                                nickname: nickname,
-                              })
-                              .then((res) => {
-                                console.log('resresres', res);
-                                location.reload();
-                                alert('닉네임 수정이 완료되었습니다.');
-                              })
-                              .catch((err) => {
-                                console.log('errerrerr', err);
-                                if (
-                                  err.response.data.message ===
-                                  '이미 존재하는 닉네임이므로 수정 정보를 확인해주세요.'
-                                ) {
-                                  return alert('누군가 사용중인 닉네임입니다. 다시 입력해주세요!');
-                                }
-                              });
-                          }
-                        }}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={() => editNickname()}>
                         수정
                       </Button>
                       <Button

@@ -88,6 +88,24 @@ const ForgotId = () => {
     setPhone(e.target.value);
   };
 
+  //아이디 찾기 메소드
+  const forgotId = async () => {
+    if (confirm('아이디를 찾으시겠습니까?')) {
+      try {
+        const resData = axios.post(`${apiConfig.apiEndpoint}/auth/find_id`, {
+          name: name,
+          phone: phone,
+        });
+        const resID = JSON.stringify(await (await resData).data.id);
+        alert(`회원님의 아이디는 ${resID.replace(/\"/gi, '')} 입니다.`);
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
+        return alert(message);
+      }
+    }
+  };
+
   // ** Vars
   const { skin } = settings;
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
@@ -265,24 +283,7 @@ const ForgotId = () => {
                 size="large"
                 variant="contained"
                 sx={{ mb: 5.25 }}
-
-                // 아이디 찾기 완료 화면에 얼럿창으로 뿌리기만하면됨.
-                onClick={() => {
-                  axios
-                    .post(`${apiConfig.apiEndpoint}/auth/find_id`, {
-                      name: name,
-                      phone: phone,
-                    })
-                    .then((res) => {
-                      console.log(res.data.id);
-                      const resData = JSON.stringify(res.data.id);
-                      alert(`회원님의 아이디는 ${resData.replace(/\"/gi, '')} 입니다.`);
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                      alert('입력하신 정보를 다시 확인해 주세요.');
-                    });
-                }}
+                onClick={() => forgotId()}
               >
                 아이디 찾기
               </Button>
