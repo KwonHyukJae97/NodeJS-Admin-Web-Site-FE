@@ -32,15 +32,18 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
 import { CategoryType, FaqType } from 'src/types/apps/boardTypes';
+import { role } from 'src/pages/notice/list';
 
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
-import { getDateTime, role } from 'src/pages/notice/list';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 
@@ -114,14 +117,14 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
 
   useEffect(() => {
     getFaqDetail(id);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (data.title !== '') {
       setValue('title', data.title);
       setValue('categoryName', data.categoryName);
     }
-  }, [data]);
+  }, [data, setValue]);
 
   // FAQ 상세조회 API 호출
   const getFaqDetail = async (id: number) => {

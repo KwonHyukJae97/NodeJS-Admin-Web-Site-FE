@@ -111,7 +111,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
 
   useEffect(() => {
     getDetailNotice(id);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (data.title !== '') {
@@ -121,7 +121,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
       // htmlStr에 대한 상태변화가 없을경우, content 수정 없이 patch 요청 시 null 값으로 할당됨
       setHtmlStr(data.content!);
     }
-  }, [data]);
+  }, [data, setValue]);
 
   // 공지사항 상세조회 API 호출
   const getDetailNotice = async (id: number) => {

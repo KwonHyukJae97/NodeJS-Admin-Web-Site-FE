@@ -47,6 +47,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
 
   // 검색 후 페이지 번호 상태가 바뀔 때마다 요청
   useEffect(() => {
+    console.log('render');
     router.push(
       `/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
     );

@@ -26,8 +26,8 @@ import { QnaType } from 'src/types/apps/boardTypes';
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 
-// ** Third Party Imports
-import { getDateTime } from 'src/pages/notice/list';
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 // 페이지 타입 정의
 interface PageType {

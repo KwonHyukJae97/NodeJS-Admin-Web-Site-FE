@@ -58,7 +58,7 @@ const NoticeView = ({ id }: NoticeViewProps) => {
   const router = useRouter();
   useEffect(() => {
     getDetailNotice(id);
-  }, []);
+  }, [id]);
 
   // 공지사항 상세조회 API 호출
   const getDetailNotice = async (id: number) => {
