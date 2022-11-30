@@ -16,21 +16,21 @@ import FileDocumentOutline from 'mdi-material-ui/FileDocumentOutline';
 import { useDropzone } from 'react-dropzone';
 import { FolderPlusOutline } from 'mdi-material-ui';
 
-interface FileProp {
+// File 타입 정의
+interface FileType {
   name: string;
   type: string;
   size: number;
 }
 
-interface Prop {
+// props 타입 정의
+interface FileUploaderMultipleProp {
   files: File[];
   setFiles: (value: File[]) => void;
 }
 
-const FileUploaderMultiple = (prop: Prop) => {
-  // ** Props
-  const { files, setFiles } = prop;
-
+// 다중 파일 업로드 관련 컴포넌트
+const FileUploaderMultiple = ({ files, setFiles }: FileUploaderMultipleProp) => {
   // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles: File[]) => {
@@ -38,7 +38,7 @@ const FileUploaderMultiple = (prop: Prop) => {
     },
   });
 
-  const renderFilePreview = (file: FileProp) => {
+  const renderFilePreview = (file: FileType) => {
     if (file.type.startsWith('')) {
       return <img width={38} height={38} alt={file.name} src={URL.createObjectURL(file as any)} />;
     } else {
@@ -46,13 +46,13 @@ const FileUploaderMultiple = (prop: Prop) => {
     }
   };
 
-  const handleRemoveFile = (file: FileProp) => {
+  const handleRemoveFile = (file: FileType) => {
     const uploadedFiles = files;
-    const filtered = uploadedFiles.filter((i: FileProp) => i.name !== file.name);
+    const filtered = uploadedFiles.filter((i: FileType) => i.name !== file.name);
     setFiles([...filtered]);
   };
 
-  const fileList = files.map((file: FileProp) => (
+  const fileList = files.map((file: FileType) => (
     <ListItem key={file.name}>
       <div className="file-details">
         <div className="file-preview">{renderFilePreview(file)}</div>

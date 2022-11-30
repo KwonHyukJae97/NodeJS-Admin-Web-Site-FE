@@ -25,13 +25,14 @@ import AddBoardButton from 'src/views/board/add/AddBoardButton';
 // ** Types Imports
 import { BoardType } from 'src/types/apps/userTypes';
 import { QnaType } from 'src/types/apps/boardTypes';
+import { role } from '../../notice/list';
 
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 
-// ** Third Party Imports
-import { getDateTime, role } from '../../notice/list';
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 // 페이지 타입 정의
 interface PageType {

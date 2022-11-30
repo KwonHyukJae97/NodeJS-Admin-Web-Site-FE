@@ -23,6 +23,7 @@ const RolesComponent = () => {
         subcategory={'역할'}
         setPageNo={setPageNo}
         setSearchWord={setSearchWord}
+        pageName="role"
       />
       <Grid item xs={12} sx={{ mb: 5 }}>
         <RoleCards />

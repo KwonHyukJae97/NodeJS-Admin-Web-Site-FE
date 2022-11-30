@@ -10,20 +10,19 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { auto } from '@popperjs/core';
-
-// ** Icons Imports
 import Magnify from 'mdi-material-ui/Magnify';
 import { Plus } from 'mdi-material-ui';
 import Typography from '@mui/material/Typography';
 
-type TableSearchHeaderProps = {
+// props 타입 정의
+interface TableSearchHeaderProps {
   searchWord: string;
   setSearchWord: (value: string) => void;
   pageNo: number;
   setPageNo: (value: number) => void;
   searchKey?: string | null;
   pageName: string;
-};
+}
 
 // 테이블 헤더 컴포넌트 (검색창 + 등록 btn)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
@@ -38,12 +37,9 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
     setSearchWord(e.target.value);
   };
 
-  // 검색 버튼 클릭 시 실행되는 함수
+  // 검색 버튼 클릭 시 호출
   const handleSearchKeyword = () => {
-    // setSearchWord('');
-
     setPageNo(1);
-
     router.push(
       `/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
     );
@@ -51,6 +47,7 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
 
   // 검색 후 페이지 번호 상태가 바뀔 때마다 요청
   useEffect(() => {
+    console.log('render');
     router.push(
       `/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}&searchKey=${searchKey}`,
     );
