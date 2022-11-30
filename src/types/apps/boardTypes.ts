@@ -1,3 +1,16 @@
+// 공지사항 타입 정의
+export type NoticeType = {
+  id?: number;
+  boardId: number;
+  isTop: boolean;
+  title: string;
+  content?: string;
+  viewCnt?: number;
+  regDate: string;
+  writer?: string;
+  fileList?: any;
+};
+
 // Faq 타입 정의
 export type FaqType = {
   id?: number;

@@ -19,31 +19,24 @@ import PageLeftInHeader from 'src/@core/components/page-left-in-header';
 import TableSearchHeader from 'src/views/board/list/TableSearchHeader';
 import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
-// ** Types Imports
-import { BoardType } from 'src/types/apps/userTypes';
-
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 
-// ** Third Party Imports
-import moment from 'moment';
+// ** Types Imports
+import { NoticeType } from 'src/types/apps/boardTypes';
+import { PageType } from 'src/utils/pageType';
+
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 // 조회 권한과 역할에 대한 정보 임시 부여
 export const role = '본사 관리자';
 export const noticeGrant = '0|1|2';
 
-// 페이지 타입 정의
-interface PageType {
-  currentPage: number;
-  pageSize: number;
-  totalCount: number;
-  totalPage: number;
-}
-
 // 테이블 행 데이터 타입 정의
 interface CellType {
-  row: BoardType;
+  row: NoticeType;
 }
 
 // 테이블 컬럼 데이터 맵핑
@@ -114,30 +107,21 @@ const columns = [
   },
 ];
 
-// 한국 시간으로 변경하는 메서드
-export const getDateTime = (utcTime: Date) => {
-  const kstTime = moment(utcTime).toDate();
-  kstTime.setHours(kstTime.getHours() + 9);
-
-  // yyyy-mm-dd 형식으로 반환
-  return kstTime.toISOString().replace('T', ' ').substring(0, 11);
-};
-
 // 공지사항 목록 페이지
 const NoticeList = ({
   apiData,
   pageData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** State
-  const [pageNo, setPageNo] = useState<number>(1);
-  const [searchWord, setSearchWord] = useState<string>('');
+  const [pageNo, setPageNo] = useState<number>(1),
+    [searchWord, setSearchWord] = useState<string>('');
 
   // API로 조회한 데이터 리스트를 타입에 맞게 할당(SSR)
-  const noticeData: BoardType[] =
+  const noticeData: NoticeType[] =
     apiData !== null
-      ? apiData.map((data: any, idx: number) => {
-          const notice: BoardType = {
-            id: pageData.totalCount - pageData.pageSize * (pageData.currentPage - 1) - idx,
+      ? apiData.map((data: any, index: number) => {
+          const notice: NoticeType = {
+            id: pageData.totalCount - pageData.pageSize * (pageData.currentPage - 1) - index,
             boardId: data.noticeId,
             isTop: data.isTop,
             title: data.board.title,
@@ -213,7 +197,7 @@ const NoticeList = ({
 };
 
 // 공지사항 조회 API 호출
-export const getNotice = async (pageNo: number, searchWord: string) => {
+export const getAllNotice = async (pageNo: number, searchWord: string) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
@@ -232,9 +216,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const result = await getNotice(Number(pageNo), searchWord as string);
+  const result = await getAllNotice(Number(pageNo), searchWord as string);
 
-  const apiData: BoardType = result === undefined ? null : result.items;
+  const apiData: NoticeType = result === undefined ? null : result.items;
   const pageData: PageType =
     result === undefined
       ? {

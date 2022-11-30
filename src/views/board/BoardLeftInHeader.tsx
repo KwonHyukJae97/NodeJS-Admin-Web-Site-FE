@@ -8,14 +8,15 @@ import Divider from '@mui/material/Divider';
 import { mdiChevronLeft } from '@mdi/js';
 import Icon from '@mdi/react';
 
-type BoardLeftInHeader = {
+// props 타입 정의
+interface BoardLeftInHeaderProps {
   title: string;
   maincategory?: string | null;
   subcategory?: string | null;
-};
+}
 
 // 게시글 헤더 UI
-const BoardLeftInHeader = ({ title, maincategory, subcategory }: BoardLeftInHeader) => {
+const BoardLeftInHeader = ({ title, maincategory, subcategory }: BoardLeftInHeaderProps) => {
   return (
     <>
       <Box sx={{ mt: 10, ml: 14, display: 'flex', alignItems: 'center' }}>

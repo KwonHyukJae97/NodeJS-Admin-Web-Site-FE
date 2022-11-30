@@ -9,13 +9,14 @@ import htmlToDraft from 'html-to-draftjs';
 // ** Component Import
 import ReactDraftWysiwyg from 'src/@core/components/react-draft-wysiwyg';
 
-interface IEditor {
+// props 타입 정의
+interface EditorControlledProps {
   initStr: string;
   setHtmlStr: React.Dispatch<React.SetStateAction<string>>;
 }
 
 // 에디터 UI 컴포넌트
-const EditorControlled = (props: IEditor) => {
+const EditorControlled = (props: EditorControlledProps) => {
   // ** Props
   const { initStr, setHtmlStr } = props;
 
@@ -35,17 +36,6 @@ const EditorControlled = (props: IEditor) => {
       }
     }
   }, [initStr]);
-
-  // useEffect(() => {
-  //   // 문자열을 html 코드로 변환
-  //   const blocksFromHtml = htmlToDraft(htmlStr);
-  //   if (blocksFromHtml) {
-  //     const { contentBlocks, entityMap } = blocksFromHtml;
-  //     const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
-  //     const editorState = EditorState.createWithContent(contentState);
-  //     setEditorState(editorState);
-  //   }
-  // }, [initStr]);
 
   // editor에 입력했을 때, html 코드로 변환 (등록/수정)
   const onEditorStateChange = (editorState: EditorState) => {
