@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import BoardLeftInHeader from '../BoardLeftInHeader';
 import AttachedFileList from './AttachedFileList';
 import BoardViewInfo from '../BoardViewInfo';
+import CommentCard from './CommentCard';
 
 // ** Types Imports
 import { CommentType, QnaType } from 'src/types/apps/boardTypes';
@@ -22,9 +23,9 @@ import { CommentType, QnaType } from 'src/types/apps/boardTypes';
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
-import { getDateTime } from 'src/pages/notice/list';
-import CommentCard from './CommentCard';
-import Typography from '@mui/material/Typography';
+
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 type dataProps = {
   id: number;
@@ -50,7 +51,7 @@ const QnaView = ({ id }: dataProps) => {
   const router = useRouter();
   useEffect(() => {
     getQnaDetail(id);
-  }, []);
+  }, [id]);
 
   // QnA 상세조회 API 호출
   const getQnaDetail = async (id: number) => {

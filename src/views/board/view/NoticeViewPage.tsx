@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 // ** Next Import
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // ** MUI Imports
 import Button from '@mui/material/Button';
@@ -13,38 +14,42 @@ import Box from '@mui/material/Box';
 // ** Custom Components Imports
 import BoardLeftInHeader from '../BoardLeftInHeader';
 import AttachedFileList from './AttachedFileList';
+import BoardViewInfo from '../BoardViewInfo';
 
 // ** Types Imports
-import { getDateTime, role } from 'src/pages/notice/list';
-import apiConfig from 'src/configs/api';
-
-// @ts-ignore
-import { BoardType } from 'src/types/apps/userTypes';
+import { role } from 'src/pages/notice/list';
+import { NoticeType } from 'src/types/apps/boardTypes';
 
 // ** axios
 import axios from 'axios';
-import { useRouter } from 'next/router';
-import BoardViewInfo from '../BoardViewInfo';
+import apiConfig from 'src/configs/api';
 
-type dataProps = {
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
+
+// props 타입 정의
+interface NoticeViewProps {
   id: number;
+}
+
+// 공지사항 초기값 정의
+const initNotice = {
+  id: 0,
+  boardId: 0,
+  isTop: false,
+  title: '',
+  content: '',
+  fileList: [],
+  writer: '',
+  regDate: '',
+  viewCnt: 0,
 };
 
 // 공지사항 상세 페이지
-const NoticeView = ({ id }: dataProps) => {
+const NoticeView = ({ id }: NoticeViewProps) => {
   // ** State
-  const [data, setData] = useState<BoardType>({
-    boardId: 0,
-    content: '',
-    fileList: [],
-    id: 0,
-    isTop: false,
-    regDate: '',
-    title: '',
-    viewCnt: 0,
-    writer: '',
-  });
-  const [htmlStr, setHtmlStr] = useState<string>('');
+  const [data, setData] = useState<NoticeType>(initNotice),
+    [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Ref
   const viewContentRef = useRef<HTMLDivElement>(null);
@@ -52,11 +57,11 @@ const NoticeView = ({ id }: dataProps) => {
   // ** Hooks
   const router = useRouter();
   useEffect(() => {
-    getNoticeDetail(id);
-  }, []);
+    getDetailNotice(id);
+  }, [id]);
 
   // 공지사항 상세조회 API 호출
-  const getNoticeDetail = async (id: number) => {
+  const getDetailNotice = async (id: number) => {
     try {
       const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
         data: { role },
@@ -64,12 +69,12 @@ const NoticeView = ({ id }: dataProps) => {
 
       const noticeData = {
         boardId: res.data.notice.boardId,
+        isTop: res.data.notice.isTop,
         title: res.data.notice.board.title,
         content: res.data.notice.board.content,
-        isTop: res.data.notice.isTop,
-        regDate: getDateTime(res.data.notice.board.regDate),
         writer: res.data.writer,
         fileList: res.data.fileList,
+        regDate: getDateTime(res.data.notice.board.regDate),
       };
 
       console.log(noticeData);
@@ -101,6 +106,7 @@ const NoticeView = ({ id }: dataProps) => {
     }
   };
 
+  // 삭제 버튼 클릭 시 호출
   const handleDeleteNotice = (id: number) => {
     deleteNotice(id);
   };

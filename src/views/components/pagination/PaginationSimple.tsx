@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Pagination from '@mui/material/Pagination';
 
 // props 타입 정의
-interface Props {
+interface PaginationSimpleProps {
   totalPage: number;
   pageNo: number;
   setPageNo: (value: number) => void;
@@ -13,21 +13,19 @@ interface Props {
 }
 
 // 페이징 UI 컴포넌트
-const PaginationSimple = (props: Props) => {
+const PaginationSimple = (props: PaginationSimpleProps) => {
   // ** Props
   const { totalPage, pageNo, setPageNo, pageName } = props;
 
   // ** Hooks
   const router = useRouter();
 
-  // 페이지 번호 클릭 시 실행되는 함수
+  // 페이지 번호 클릭 시 호출
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNo(value);
     if (pageName !== 'notice' && pageName !== 'faq') {
       router.push(`/${pageName}/list/?pageNo=${value}`);
     }
-
-    // router.push(`/${pageName}/list/?pageNo=${value}`);
   };
 
   return (

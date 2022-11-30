@@ -6,16 +6,16 @@ import {
   InferGetStaticPropsType,
 } from 'next/types';
 
-// ** Third Party Imports
-import axios from 'axios';
-
-// ** Types
-import { BoardType } from 'src/types/apps/userTypes';
-import apiConfig from 'src/configs/api';
-import { noticeGrant, role } from '../list';
-
 // ** Demo Components Imports
 import NoticeViewPage from 'src/views/board/view/NoticeViewPage';
+
+// ** axios
+import axios from 'axios';
+import apiConfig from 'src/configs/api';
+
+// ** Types Imports
+import { noticeGrant, role } from '../list';
+import { NoticeType } from 'src/types/apps/boardTypes';
 
 // 공지사항 상세 페이지
 const NoticeView = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
@@ -23,7 +23,7 @@ const NoticeView = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
 };
 
 // 공지사항 조회 API 호출
-export const getNotice = async () => {
+export const getAllNotice = async () => {
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
       data: { role, noticeGrant, pageNo: 1, pageSize: 10, totalData: true },
@@ -37,9 +37,9 @@ export const getNotice = async () => {
 
 // getStaticPaths에서 동적 경로를 할당할 id값들을 지정해줘야, 해당 경로로 접근이 가능하기 때문에 모든 데이터 조회
 export const getStaticPaths: GetStaticPaths = async () => {
-  const result = await getNotice();
+  const result = await getAllNotice();
 
-  const apiData: BoardType[] = result;
+  const apiData: NoticeType[] = result;
 
   const paths = apiData.map((item: any) => ({
     params: { id: `${item.noticeId}` },

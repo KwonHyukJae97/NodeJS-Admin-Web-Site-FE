@@ -16,13 +16,16 @@ import BoardLeftInHeader from '../BoardLeftInHeader';
 import AttachedFileList from './AttachedFileList';
 
 // ** Types Imports
-import { getDateTime, role } from 'src/pages/notice/list';
+import { role } from 'src/pages/notice/list';
 import { FaqType } from 'src/types/apps/boardTypes';
 
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 import BoardViewInfo from '../BoardViewInfo';
+
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 type dataProps = {
   id: number;
@@ -51,7 +54,7 @@ const FaqView = ({ id }: dataProps) => {
   const router = useRouter();
   useEffect(() => {
     getFaqDetail(id);
-  }, []);
+  }, [id]);
 
   // FAQ 상세조회 API 호출
   const getFaqDetail = async (id: number) => {

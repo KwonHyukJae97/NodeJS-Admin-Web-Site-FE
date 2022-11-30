@@ -27,7 +27,8 @@ import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import { QnaType } from '../../../types/apps/boardTypes';
+import { QnaType } from 'src/types/apps/boardTypes';
+import { role } from 'src/pages/notice/list';
 
 // ** axios
 import axios from 'axios';
@@ -36,7 +37,9 @@ import apiConfig from 'src/configs/api';
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { getDateTime, role } from 'src/pages/notice/list';
+
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 type dataProps = {
   id: number;
@@ -90,14 +93,14 @@ const QnaEdit = ({ id }: dataProps) => {
 
   useEffect(() => {
     getQnaDetail(id);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (data.title !== '') {
       setValue('title', data.title);
       setValue('content', data.content!);
     }
-  }, [data]);
+  }, [data, setValue]);
 
   // QnA 상세조회 API 호출
   const getQnaDetail = async (id: number) => {
