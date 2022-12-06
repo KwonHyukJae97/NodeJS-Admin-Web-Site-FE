@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
 import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 // ** Next Import
 import Link from 'next/link';
+import router from 'next/router';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
@@ -20,6 +23,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
+import FormControl from '@mui/material/FormControl';
 import { styled } from '@mui/material/styles';
 
 // ** Icons Imports
@@ -32,63 +36,93 @@ import CustomAvatar from 'src/@core/components/mui/avatar';
 import { CompanyLayoutProps, CompanyType } from 'src/types/apps/companyTypes';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 
 // ** Config
 import apiConfig from 'src/configs/api';
 
 // ** moment
 import moment from 'moment';
-import router from 'next/router';
+import FormHelperText from '@mui/material/FormHelperText';
 
-// ** Styled component for the link in the dataTable
+// 링크 스타일 변경
 const StyledLink = styled('a')(({ theme }) => ({
   textDecoration: 'none',
   color: theme.palette.common.white,
 }));
+
+// 회원사 정보 입력값 타입 정의
+interface CompanyInputData {
+  companyName: string;
+  businessNumber: string;
+}
 
 // 회원사 정보 상세 페이지
 const CompanyDetail = ({ id }: CompanyLayoutProps) => {
   // ** States
   const [openEdit, setOpenEdit] = useState<boolean>(false),
     [error, setError] = useState<boolean>(false),
-    [data, setData] = useState<null | CompanyType>(null),
-    [value, setValue] = useState<string>('');
+    [data, setData] = useState<null | CompanyType>(null);
 
-  // 회원사 상세 정보 API 호출
+  // ** Hooks
   useEffect(() => {
-    axios
-      .get(`${apiConfig.apiEndpoint}/company/${id}`, { params: { id } })
-      .then((res) => {
-        res.data.forEach((company: CompanyType) => {
-          const companyData: CompanyType = {
-            companyId: company.companyId,
-            companyCode: company.companyCode,
-            companyName: company.companyName,
-            userCount: company.userCount,
-            adminCount: company.adminCount,
-            businessNumber: company.businessNumber,
-            regDate: moment(company.regDate).format('YYYY-MM-DD'),
-          };
-          setData(companyData);
-        });
-
-        setError(false);
-      })
-      .catch(() => {
-        setData(null);
-        setError(true);
-      });
+    getDetailCompany();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  const {
+    control,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: { companyName: '', businessNumber: '' } });
+
+  // 회원사 상세 정보 API 호출
+  const getDetailCompany = async () => {
+    try {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/company/${id}`, { params: { id } });
+      res.data.forEach((company: CompanyType) => {
+        const companyData: CompanyType = {
+          companyId: company.companyId,
+          companyCode: company.companyCode,
+          companyName: company.companyName,
+          userCount: company.userCount,
+          adminCount: company.adminCount,
+          businessNumber: company.businessNumber,
+          regDate: moment(company.regDate).format('YYYY-MM-DD'),
+        };
+        setData(companyData);
+      });
+
+      setError(false);
+    } catch (err) {
+      console.log(err);
+      setData(null);
+      setError(true);
+    }
+  };
+
+  // 수정버튼 클릭 시 처리
+  const handleEditClickOpen = () => setOpenEdit(true);
+  const handleEditClose = () => {
+    setOpenEdit(false);
+    setValue('companyName', '');
+    setValue('businessNumber', '');
+  };
+
+  // 수정할 정보 저장 처리
+  const onSubmit = async (data: CompanyInputData) => {
+    setValue('companyName', data.companyName);
+    setValue('businessNumber', data.businessNumber);
+
+    await updateCompany(data);
+  };
+
   // 회원사 정보 수정 API호출
-  const updateCompany = async () => {
+  const updateCompany = async (value: CompanyInputData) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        /* eslint-disable */
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/company/${id}`, {
-          companyName: value,
-        });
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/company/${id}`, value);
         alert('수정이 완료 되었습니다.');
         location.reload();
       } catch (err: any) {
@@ -102,15 +136,14 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
   const deleteCompany = async () => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        /* eslint-disable */
-        const req = await axios.delete(`${apiConfig.apiEndpoint}/company/${id}`, {
+        const req = await Api.delete(`${apiConfig.apiEndpoint}/company/${id}`, {
           data: {
             // TODO: 삭제 권한자 체크 적용해야함.
             roleId: 13,
           },
           withCredentials: true,
         });
-        alert('삭제 되었습니다.');
+        alert(req.data);
         router.push('/company/list');
       } catch (err: any) {
         console.log('err', err.response.data);
@@ -118,10 +151,6 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
       }
     }
   };
-
-  // Handle Edit dialog
-  const handleEditClickOpen = () => setOpenEdit(true);
-  const handleEditClose = () => setOpenEdit(false);
 
   if (data) {
     return (
@@ -243,41 +272,79 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
               sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
               aria-describedby="user-view-edit-description"
             >
-              <DialogTitle
-                id="user-view-edit"
-                sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}
-              >
-                회원사 이름 수정
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText
-                  variant="body2"
-                  id="user-view-edit-description"
-                  sx={{ textAlign: 'center', mb: 7 }}
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <DialogTitle
+                  id="user-view-edit"
+                  sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}
                 >
-                  회원사 이름을 수정하시려면 내용을 입력해주세요.
-                </DialogContentText>
-                <form>
-                  <Grid container spacing={6}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="회원사 이름"
-                        defaultValue={data.companyName}
-                        onChange={(e) => setValue(e.target.value)}
-                      />
-                    </Grid>
-                  </Grid>
-                </form>
-              </DialogContent>
-              <DialogActions sx={{ justifyContent: 'center' }}>
-                <Button variant="contained" sx={{ mr: 1 }} onClick={updateCompany}>
-                  수정
-                </Button>
-                <Button variant="outlined" color="secondary" onClick={handleEditClose}>
-                  취소
-                </Button>
-              </DialogActions>
+                  회원사 정보 수정
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText
+                    variant="body2"
+                    id="user-view-edit-description"
+                    sx={{ textAlign: 'center', mb: 7 }}
+                  >
+                    회원사 정보를 수정하시려면 내용을 입력해주세요.
+                  </DialogContentText>
+                  <Box sx={{ ml: 14, mr: 14, mt: 6 }}>
+                    <FormControl sx={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+                      <Grid container spacing={6}>
+                        <Grid item xs={12} sm={6}>
+                          <Controller
+                            name="companyName"
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field: { value, onChange } }) => (
+                              <TextField
+                                fullWidth
+                                label="회원사 이름"
+                                defaultValue={data.companyName}
+                                value={value}
+                                onChange={onChange}
+                                error={Boolean(errors.companyName)}
+                              />
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                          <Controller
+                            name="businessNumber"
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field: { value, onChange } }) => (
+                              <TextField
+                                fullWidth
+                                label="사업자번호"
+                                defaultValue={data.businessNumber}
+                                value={value}
+                                onChange={onChange}
+                                error={Boolean(errors.businessNumber)}
+                              />
+                            )}
+                          />
+                        </Grid>
+                      </Grid>
+                      {(errors.companyName || errors.businessNumber) && (
+                        <FormHelperText
+                          sx={{ color: 'error.main', mt: 3, textAlign: 'center', fontSize: 15 }}
+                        >
+                          정보를 입력해주세요.
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                  <Button variant="contained" sx={{ mr: 1 }} type="submit">
+                    수정
+                  </Button>
+                  <Button variant="outlined" color="secondary" onClick={handleEditClose}>
+                    취소
+                  </Button>
+                </DialogActions>
+              </form>
             </Dialog>
           </Card>
         </Grid>
