@@ -98,24 +98,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   },
 }));
 
-const defaultValues = {
-  id: '',
-  password: '',
-  confirmPassword: '',
-  name: '',
-  email: '',
-  phone: '',
-  nickname: '',
-  birth: '',
-  gender: '',
-  companyName: '',
-  companyCode: null,
-  businessNumber: '',
-
-  // terms: false,
-  radio: '',
-};
-
+//회원가입 입력값 타입 정의
 interface FormData {
   id: string;
   password: string;
@@ -132,6 +115,24 @@ interface FormData {
   businessNumber: string;
 }
 
+// input 초기값
+const defaultValues = {
+  id: '',
+  password: '',
+  confirmPassword: '',
+  name: '',
+  email: '',
+  phone: '',
+  nickname: '',
+  birth: '',
+  gender: '',
+  companyName: '',
+  companyCode: null,
+  businessNumber: '',
+  radio: '',
+};
+
+//회원가입 페이지
 const Register = () => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -139,10 +140,7 @@ const Register = () => {
 
   // ** Hooks
   const theme = useTheme();
-
   const auth = useAuth();
-
-  // const { register } = useAuth()
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -160,8 +158,6 @@ const Register = () => {
     gender: yup.string().required(),
     companyName: yup.string().required(),
     companyCode: yup.number().required(),
-
-    // terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
   const {
@@ -175,6 +171,7 @@ const Register = () => {
     resolver: yupResolver(schema),
   });
 
+  //회원 가입 입력값 넘기기
   const onSubmit = (data: FormData) => {
     const {
       id,
@@ -609,12 +606,6 @@ const Register = () => {
                       />
                     )}
                   />
-                  {/* <DatePicker
-                    label="Basic"
-                    value={basicPicker}
-                    // onChange={(birth) => setBasicPicker(birth)}
-                    renderInput={(params) => <TextField {...params} />}
-                  /> */}
                 </LocalizationProvider>
                 {errors.nickname && (
                   <FormHelperText sx={{ color: 'error.main' }}>
@@ -622,56 +613,6 @@ const Register = () => {
                   </FormHelperText>
                 )}
               </FormControl>
-
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <Controller
-                    name="birth"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <DatePicker
-                        value={value}
-                        // onBlur={onBlur}
-                        label="생년월일"
-                        onChange={onChange}
-                        renderInput={(params) => <TextField {...params} />}
-                        // placeholder="ex) 971113"
-                        // error={Boolean(errors.birth)}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-                {errors.birth && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.birth.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
-
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="birth"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      onBlur={onBlur}
-                      label="생년월일"
-                      onChange={onChange}
-                      placeholder="ex) 971113"
-                      error={Boolean(errors.birth)}
-                    />
-                  )}
-                />
-                {errors.birth && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.birth.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
-
               <FormControl fullWidth sx={{ mb: 1 }}>
                 <FormLabel>성별</FormLabel>
                 <Controller
@@ -696,29 +637,6 @@ const Register = () => {
                   )}
                 />
               </FormControl>
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="gender"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      onBlur={onBlur}
-                      label="성별"
-                      onChange={onChange}
-                      placeholder="ex) male"
-                      error={Boolean(errors.gender)}
-                    />
-                  )}
-                />
-                {errors.gender && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.gender.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
-
               <FormControl fullWidth sx={{ mb: 7 }}>
                 <Controller
                   name="companyName"
@@ -793,79 +711,6 @@ const Register = () => {
                   )}
                 />
               </FormControl>
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="companyCode"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      onBlur={onBlur}
-                      label="회원사코드"
-                      onChange={onChange}
-                      placeholder="ex) 기업일 경우 1, 기관일 경우 2"
-                      error={Boolean(errors.companyCode)}
-                    />
-                  )}
-                />
-                {errors.companyCode && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.companyCode.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
-
-              {/* <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
-                <Controller
-                  name="terms"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => {
-                    return (
-                      <FormControlLabel
-                        sx={{
-                          ...(errors.terms ? { color: 'error.main' } : null),
-                          '& .MuiFormControlLabel-label': { fontSize: '0.875rem' },
-                        }}
-                        control={
-                          <Checkbox
-                            checked={value}
-                            onChange={onChange}
-                            sx={errors.terms ? { color: 'error.main' } : null}
-                          />
-                        }
-                        label={
-                          <Fragment>
-                            <Typography
-                              variant="body2"
-                              component="span"
-                              sx={{ color: errors.terms ? 'error.main' : '' }}
-                            >
-                              I agree to{' '}
-                            </Typography>
-                            <Link href="/" passHref>
-                              <Typography
-                                variant="body2"
-                                component={MuiLink}
-                                sx={{ color: 'primary.main' }}
-                                onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                              >
-                                privacy policy & terms
-                              </Typography>
-                            </Link>
-                          </Fragment>
-                        }
-                      />
-                    );
-                  }}
-                />
-                {errors.terms && (
-                  <FormHelperText sx={{ mt: 0, color: 'error.main' }}>
-                    {errors.terms.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
               <Button fullWidth size="large" type="submit" variant="contained" sx={{ mb: 7 }}>
                 Sign up
               </Button>
@@ -936,45 +781,6 @@ const Register = () => {
                   width="190"
                 />
               </Box>
-              {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Facebook sx={{ color: '#497ce2' }} />
-                  </IconButton>
-                </Link>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Twitter sx={{ color: '#1da1f2' }} />
-                  </IconButton>
-                </Link>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Github
-                      sx={{
-                        color: (theme) =>
-                          theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300],
-                      }}
-                    />
-                  </IconButton>
-                </Link>
-                <Link href="/" passHref>
-                  <IconButton
-                    component="a"
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  >
-                    <Google sx={{ color: '#db4437' }} />
-                  </IconButton>
-                </Link>
-              </Box> */}
             </form>
           </BoxWrapper>
         </Box>
