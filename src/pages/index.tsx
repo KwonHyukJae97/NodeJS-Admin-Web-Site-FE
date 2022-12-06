@@ -17,11 +17,12 @@ import { useAuth } from 'src/hooks/useAuth';
 //   // if (role === 'client') return '/acl'
 //   // else return '/dashboards/crm'
 //   return '/dashboards/crm'
-// }
+//
 
 // 홈 화면 실행
 const Home = () => {
   // ** Hooks
+
   const auth = useAuth();
   const router = useRouter();
 
@@ -30,6 +31,7 @@ const Home = () => {
     if (auth.user) {
       router.replace('/dashboards/crm');
       console.log('auth.user 정보', auth.user);
+      console.log('auth.user 토큰정보', auth.accessToken?.accessToken);
     } else {
       router.replace('/login');
     }

@@ -107,6 +107,26 @@ const UserViewSecurity = () => {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
+  //비밀번호 수정 메소드
+  const editPassword = async () => {
+    if (password !== confirmPassword) {
+      return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
+    }
+    if (confirm('비밀번호를 수정하시겠습니까?')) {
+      try {
+        await axios.patch(`${apiConfig.apiEndpoint}/auth/update_password/${resData.accountId}`, {
+          password: password,
+        });
+        location.reload();
+        alert('비밀번호를 수정하였습니다.');
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
+        return alert(message);
+      }
+    }
+  };
+
   const inputChangePassword = (e: any) => {
     setPassword(e.target.value);
 
@@ -178,7 +198,6 @@ const UserViewSecurity = () => {
                   <OutlinedInput
                     autoFocus
                     type={values.showNewPassword ? 'text' : 'password'}
-
                     // type="password"
                     value={password}
                     onChange={inputChangePassword}
@@ -209,7 +228,6 @@ const UserViewSecurity = () => {
                   <OutlinedInput
                     label="Confirm New Password"
                     value={confirmPassword}
-
                     // value={values.confirmNewPassword}
                     id="user-view-security-confirm-new-password"
                     type={values.showConfirmNewPassword ? 'text' : 'password'}
@@ -232,32 +250,7 @@ const UserViewSecurity = () => {
               </Grid>
 
               <Grid item xs={12} sx={{ mt: 1.5 }}>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    if (password !== confirmPassword) {
-                      return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
-                    }
-                    if (confirm('비밀번호를 수정하시겠습니까?')) {
-                      axios
-                        .patch(
-                          `${apiConfig.apiEndpoint}/auth/update_password/${resData.accountId}`,
-                          {
-                            password: password,
-                          },
-                        )
-                        .then((res) => {
-                          console.log('변경 완료', res);
-                          location.reload();
-                          alert('비밀번호를 수정하였습니다.');
-                        })
-                        .catch((err) => {
-                          console.log('변경 실패', err);
-                          alert('비밀번호 변경에 실패하였습니다.');
-                        });
-                    }
-                  }}
-                >
+                <Button variant="contained" onClick={() => editPassword()}>
                   {/* Change Password */}
                   수정하기
                 </Button>

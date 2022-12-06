@@ -35,7 +35,6 @@ const UserView = ({ accountId, invoiceData }: any) => {
   const [error, setError] = useState<boolean>(false);
   const [data, setData] = useState<null | UsersType>(null);
 
-  console.log('qwe123qwe123', accountId);
   useEffect(() => {
     axios
       .get(`${apiConfig.apiEndpoint}/auth/${accountId}`)
