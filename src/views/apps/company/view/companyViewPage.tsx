@@ -36,7 +36,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar';
 import { CompanyLayoutProps, CompanyType } from 'src/types/apps/companyTypes';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 
 // ** Config
 import apiConfig from 'src/configs/api';
@@ -80,7 +80,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
   // 회원사 상세 정보 API 호출
   const getDetailCompany = async () => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/company/${id}`, { params: { id } });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/company/${id}`, { params: { id } });
       res.data.forEach((company: CompanyType) => {
         const companyData: CompanyType = {
           companyId: company.companyId,
@@ -122,7 +122,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
   const updateCompany = async (value: CompanyInputData) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/company/${id}`, value);
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/company/${id}`, value);
         alert('수정이 완료 되었습니다.');
         location.reload();
       } catch (err: any) {
@@ -136,7 +136,7 @@ const CompanyDetail = ({ id }: CompanyLayoutProps) => {
   const deleteCompany = async () => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        const req = await axios.delete(`${apiConfig.apiEndpoint}/company/${id}`, {
+        const req = await Api.delete(`${apiConfig.apiEndpoint}/company/${id}`, {
           data: {
             // TODO: 삭제 권한자 체크 적용해야함.
             roleId: 13,

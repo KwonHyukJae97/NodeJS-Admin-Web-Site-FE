@@ -38,7 +38,7 @@ import { Controller, useForm } from 'react-hook-form';
 import apiConfig from 'src/configs/api';
 
 // ** axios Imports
-import axios from 'axios';
+import Api from 'src/utils/api';
 
 // 역할 리스트 타입 정의
 interface RoleType {
@@ -233,7 +233,7 @@ const RolesCards = () => {
   // 역할 리스트 조회 API호출
   const getAllRole = async () => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/role`);
+      const res = await Api.get(`${apiConfig.apiEndpoint}/role`);
       const roleMap = new Map<number, RoleType>();
 
       res.data.forEach((role: { roleName: string; adminCount: number; roleId: any }) => {
@@ -265,7 +265,7 @@ const RolesCards = () => {
   // 화면 이름(권한) 데이터 조회 API호출
   const getDetailPermission = async () => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/permission`);
+      const res = await Api.get(`${apiConfig.apiEndpoint}/permission`);
       const permissionMap = new Map<number, permissionType>();
       res.data.forEach((permission: { displayName: string; permissionId: number }) => {
         if (!permissionMap.has(permission.permissionId)) {
@@ -296,7 +296,7 @@ const RolesCards = () => {
     setErrMessage('');
     if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.post(`${apiConfig.apiEndpoint}/role`, {
+        const req = await Api.post(`${apiConfig.apiEndpoint}/role`, {
           roleName: roleData.roleName,
           roleDto: roleData.roleDto,
 
@@ -316,7 +316,7 @@ const RolesCards = () => {
   const updateRole = async (roleData: any, roleId: number) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, roleData);
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, roleData);
         alert('수정이 완료 되었습니다.');
         location.reload();
       } catch (err: any) {
@@ -331,7 +331,7 @@ const RolesCards = () => {
   const deleteRole = async (roleId: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        await axios.delete(`${apiConfig.apiEndpoint}/role/${roleId}`);
+        await Api.delete(`${apiConfig.apiEndpoint}/role/${roleId}`);
         alert('삭제가 완료 되었습니다.');
         location.reload();
       } catch (err) {
@@ -343,7 +343,7 @@ const RolesCards = () => {
   // 역할 상세 정보 조회 API호출
   const getDetailRole = async (roleId: number, getInfo: string) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/role/${roleId}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/role/${roleId}`, {
         params: { getInfo: getInfo },
       });
       setViewData(res.data);
