@@ -53,6 +53,7 @@ import axios from 'axios';
 
 import apiConfig from 'src/configs/api';
 import Button from '@mui/material/Button';
+import Api from 'src/utils/api';
 
 interface Props {
   data: UsersType;
@@ -122,7 +123,7 @@ const UserViewLeft = ({ data }: Props) => {
   const editEmail = async () => {
     if (confirm('이메일을 수정하시겠습니까?')) {
       try {
-        await axios.patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
+        await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
           email: email,
         });
         location.reload();
@@ -139,7 +140,7 @@ const UserViewLeft = ({ data }: Props) => {
   const editPhone = async () => {
     if (confirm('연락처를 수정하시겠습니까?')) {
       try {
-        await axios.patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
+        await axios.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
           phone: phone,
         });
         location.reload();
@@ -156,7 +157,7 @@ const UserViewLeft = ({ data }: Props) => {
   const editNickname = async () => {
     if (confirm('닉네임을 수정하시겠습니까?')) {
       try {
-        await axios.patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
+        await axios.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
           nickname: nickname,
         });
         location.reload();
@@ -204,7 +205,6 @@ const UserViewLeft = ({ data }: Props) => {
         return (
           <CustomAvatar
             alt="User Image"
-
             // src={data.avatar}
             variant="rounded"
             sx={{ width: 120, height: 120, mb: 4 }}
@@ -215,7 +215,6 @@ const UserViewLeft = ({ data }: Props) => {
           <CustomAvatar
             skin="light"
             variant="rounded"
-
             // color={data.avatarColor as ThemeColor}
             sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
           >
@@ -433,7 +432,6 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
-
                         // defaultValue={data.email}
                         // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}
