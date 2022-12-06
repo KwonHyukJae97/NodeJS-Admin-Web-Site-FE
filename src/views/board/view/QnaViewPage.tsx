@@ -26,7 +26,6 @@ import apiConfig from 'src/configs/api';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
-import { role } from '../../../pages/notice/list';
 
 // props 타입 정의
 interface QnaViewProps {

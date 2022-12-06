@@ -20,7 +20,6 @@ import { CommentType } from 'src/types/apps/boardTypes';
 // ** axios
 import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
-import { role } from '../../../pages/notice/list';
 
 // props 타입 정의
 interface CommentCardProps {

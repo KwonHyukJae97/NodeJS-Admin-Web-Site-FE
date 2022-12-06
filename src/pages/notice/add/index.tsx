@@ -38,7 +38,6 @@ import * as yup from 'yup';
 // ** axios
 import apiConfig from 'src/configs/api';
 import Api from 'src/utils/api';
-import { getAllFaq } from '../../faq/list';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 const EditorControlled = dynamic(
