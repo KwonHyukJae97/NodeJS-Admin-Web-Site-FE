@@ -92,8 +92,9 @@ const NoticeView = ({ id }: NoticeViewProps) => {
   const deleteNotice = async (id: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
+        // @ts-ignore
         await Api.delete(`${apiConfig.apiEndpoint}/notice/${id}`, {
-          params: { role },
+          withCredentials: true,
         });
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');

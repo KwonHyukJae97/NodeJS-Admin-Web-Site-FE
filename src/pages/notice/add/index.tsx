@@ -38,6 +38,7 @@ import * as yup from 'yup';
 // ** axios
 import apiConfig from 'src/configs/api';
 import Api from 'src/utils/api';
+import { getAllFaq } from '../../faq/list';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 const EditorControlled = dynamic(
@@ -107,6 +108,7 @@ const NoticeAdd = () => {
       try {
         const req = await Api.post(`${apiConfig.apiEndpoint}/notice`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
         });
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');

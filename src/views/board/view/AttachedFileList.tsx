@@ -13,7 +13,7 @@ interface AttachedFileListProps {
   fileList: any;
 }
 
-// 첨부파일 목록 UI
+// 첨부파일 목록 UI 컴포넌트
 const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
   // 다운로드 파일 이름을 추출하는 함수
   const extractDownloadFilename = (res: any) => {

@@ -21,53 +21,56 @@ import CommentCard from './CommentCard';
 import { CommentType, QnaType } from 'src/types/apps/boardTypes';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
+import { role } from '../../../pages/notice/list';
 
-type dataProps = {
+// props 타입 정의
+interface QnaViewProps {
   id: number;
+}
+
+// Qna 초기값 정의
+const initQna = {
+  id: 0,
+  boardId: 0,
+  title: '',
+  content: '',
+  fileList: [],
+  isComment: false,
+  writer: '',
+  regDate: '',
+  viewCnt: 0,
 };
 
 // QnA 상세 페이지
-const QnaView = ({ id }: dataProps) => {
+const QnaView = ({ id }: QnaViewProps) => {
   // ** State
-  const [data, setData] = useState<QnaType>({
-    boardId: 0,
-    content: '',
-    fileList: [],
-    id: 0,
-    isComment: false,
-    regDate: '',
-    title: '',
-    viewCnt: 0,
-    writer: '',
-  });
-  const [comment, setComment] = useState<CommentType[]>([]);
+  const [data, setData] = useState<QnaType>(initQna),
+    [comment, setComment] = useState<CommentType[]>([]);
 
   // ** Hooks
   const router = useRouter();
   useEffect(() => {
-    getQnaDetail(id);
+    getDetailQna(id);
   }, [id]);
 
   // QnA 상세조회 API 호출
-  const getQnaDetail = async (id: number) => {
+  const getDetailQna = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/qna/${id}`);
-
-      console.log('상세조회 응답', res.data);
+      const res = await Api.get(`${apiConfig.apiEndpoint}/qna/${id}`, { withCredentials: true });
 
       const qnaData = {
         boardId: res.data.qna.qnaId,
         title: res.data.qna.title,
         content: res.data.qna.content,
         isComment: res.data.qna.isComment,
-        regDate: getDateTime(res.data.qna.regDate),
         writer: res.data.qna.writer,
         fileList: res.data.qna.fileList,
+        regDate: getDateTime(res.data.qna.regDate),
       };
 
       const commentData: CommentType[] =
@@ -75,10 +78,10 @@ const QnaView = ({ id }: dataProps) => {
           ? res.data.comment.map((data: any) => {
               const comment: CommentType = {
                 commentId: data.commentId,
-                writer: data.writer,
-                comment: data.comment,
-                regDate: getDateTime(data.regDate),
                 adminId: data.adminId,
+                comment: data.comment,
+                writer: data.writer,
+                regDate: getDateTime(data.regDate),
               };
 
               return comment;
@@ -96,10 +99,9 @@ const QnaView = ({ id }: dataProps) => {
   // QnA 삭제 API 호출
   const deleteQna = async (id: number) => {
     if (confirm('삭제 하시겠습니까?')) {
-      const accountId = 27;
       try {
-        await axios.delete(`${apiConfig.apiEndpoint}/qna/${id}`, {
-          params: { accountId },
+        await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`, {
+          withCredentials: true,
         });
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');
@@ -112,6 +114,7 @@ const QnaView = ({ id }: dataProps) => {
     }
   };
 
+  // 삭제 버튼 클릭 시 호출
   const handleDeleteQna = (id: number) => {
     deleteQna(id);
   };

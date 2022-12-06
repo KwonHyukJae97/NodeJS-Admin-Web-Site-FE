@@ -139,6 +139,7 @@ const FaqEdit = ({ id, categoryApiData }: FaqEditProps) => {
     try {
       const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
         data: { role },
+        withCredentials: true,
       });
 
       const faqData = {
@@ -199,6 +200,7 @@ const FaqEdit = ({ id, categoryApiData }: FaqEditProps) => {
       try {
         const req = await Api.patch(`${apiConfig.apiEndpoint}/faq/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
         });
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');

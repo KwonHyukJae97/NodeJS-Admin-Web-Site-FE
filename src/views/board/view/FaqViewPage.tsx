@@ -65,6 +65,7 @@ const FaqView = ({ id }: FaqViewProps) => {
     try {
       const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
         data: { role },
+        withCredentials: true,
       });
 
       const faqData = {
@@ -93,7 +94,7 @@ const FaqView = ({ id }: FaqViewProps) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
         await Api.delete(`${apiConfig.apiEndpoint}/faq/${id}`, {
-          params: { role },
+          withCredentials: true,
         });
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');

@@ -121,6 +121,7 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
       try {
         const req = await Api.post(`${apiConfig.apiEndpoint}/faq`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
         });
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');

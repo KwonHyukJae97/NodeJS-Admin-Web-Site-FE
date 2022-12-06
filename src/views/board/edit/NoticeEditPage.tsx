@@ -189,6 +189,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
       try {
         const req = await Api.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
         });
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');

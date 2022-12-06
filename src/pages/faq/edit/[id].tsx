@@ -7,9 +7,9 @@ import {
 } from 'next/types';
 
 // ** axios
-import Api from 'src/utils/api';
 import { getAllCategory } from '../list';
 import apiConfig from 'src/configs/api';
+import axios from 'axios';
 
 // ** Types
 import { role } from '../../notice/list';
@@ -27,7 +27,7 @@ const FaqEdit = ({ id, categoryApiData }: InferGetStaticPropsType<typeof getStat
 // FAQ 조회 API 호출
 export const getAllFaq = async () => {
   try {
-    const res = await Api.get(`${apiConfig.apiEndpoint}/faq`, {
+    const res = await axios.get(`${apiConfig.apiEndpoint}/faq`, {
       data: { role, pageNo: 1, pageSize: 10, totalData: true },
     });
 

@@ -19,8 +19,8 @@ import PageLeftInHeader from 'src/@core/components/page-left-in-header';
 import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
 // ** Types Imports
-import { BoardType } from 'src/types/apps/userTypes';
 import { QnaType } from 'src/types/apps/boardTypes';
+import { PageType } from 'src/utils/pageType';
 
 // ** axios
 import axios from 'axios';
@@ -28,14 +28,6 @@ import apiConfig from 'src/configs/api';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
-
-// 페이지 타입 정의
-interface PageType {
-  currentPage: number;
-  pageSize: number;
-  totalCount: number;
-  totalPage: number;
-}
 
 // 테이블 행 데이터 타입 정의
 interface CellType {
@@ -131,8 +123,8 @@ const QnaCommentList = ({
           const qna: QnaType = {
             id: pageData.totalCount - pageData.pageSize * (pageData.currentPage - 1) - idx,
             boardId: data.qnaId,
-            isComment: data.isComment,
             title: data.title,
+            isComment: data.isComment,
             viewCnt: data.viewCount,
             regDate: getDateTime(data.regDate),
           };
@@ -197,7 +189,7 @@ const QnaCommentList = ({
 };
 
 // QnA-Comment 조회 API 호출
-export const getComment = async (pageNo: number) => {
+export const getAllComment = async (pageNo: number) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/comment`, {
@@ -216,11 +208,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const result = await getComment(Number(pageNo));
+  const result = await getAllComment(Number(pageNo));
 
   console.log('result', result);
 
-  const apiData: BoardType = result === undefined ? null : result.items;
+  const apiData: QnaType = result === undefined ? null : result.items;
   const pageData: PageType =
     result === undefined
       ? {

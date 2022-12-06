@@ -233,7 +233,7 @@ const FaqList = ({
 };
 
 // FAQ 조회 API 호출
-export const getFaq = async (pageNo: number, searchKey: string, searchWord: string) => {
+export const getAllFaq = async (pageNo: number, searchKey: string, searchWord: string) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/faq`, {
@@ -265,7 +265,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const faqResult = await getFaq(Number(pageNo), searchKey as string, searchWord as string);
+  const faqResult = await getAllFaq(Number(pageNo), searchKey as string, searchWord as string);
   const categoryResult = await getAllCategory();
 
   const apiData: FaqType = faqResult === undefined ? null : faqResult.items;
