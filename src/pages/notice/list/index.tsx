@@ -20,7 +20,7 @@ import TableSearchHeader from 'src/views/board/list/TableSearchHeader';
 import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Types Imports
@@ -200,7 +200,7 @@ const NoticeList = ({
 export const getAllNotice = async (pageNo: number, searchWord: string) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
+    const res = await Api.get(`${apiConfig.apiEndpoint}/notice`, {
       data: { role, noticeGrant, searchWord, pageNo: page, pageSize: 10, totalData: false },
     });
 

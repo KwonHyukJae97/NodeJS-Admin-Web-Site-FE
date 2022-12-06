@@ -10,8 +10,8 @@ import {
 import NoticeEditPage from 'src/views/board/edit/NoticeEditPage';
 
 // ** axios
-import axios from 'axios';
 import apiConfig from 'src/configs/api';
+import Api from 'src/utils/api';
 
 // ** Types Imports
 import { noticeGrant, role } from '../list';
@@ -25,7 +25,7 @@ const NoticeEdit = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
 // 공지사항 조회 API 호출
 export const getAllNotice = async () => {
   try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
+    const res = await Api.get(`${apiConfig.apiEndpoint}/notice`, {
       data: { role, noticeGrant, pageNo: 1, pageSize: 10, totalData: true },
     });
 

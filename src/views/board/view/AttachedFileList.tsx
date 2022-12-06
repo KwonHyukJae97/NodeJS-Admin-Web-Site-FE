@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import { FileDownloadOutline } from 'mdi-material-ui';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // props 타입 정의
@@ -28,7 +28,7 @@ const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
   // 파일 다운로드 API 호출
   const getFileDownload = async (fileId: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/file/${fileId}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/file/${fileId}`, {
         responseType: 'blob',
       });
 

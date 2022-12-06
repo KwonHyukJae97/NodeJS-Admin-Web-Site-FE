@@ -36,7 +36,7 @@ import { role } from 'src/pages/notice/list';
 import { NoticeType } from 'src/types/apps/boardTypes';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
@@ -126,7 +126,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
   // 공지사항 상세조회 API 호출
   const getDetailNotice = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
         data: { role },
       });
 
@@ -151,7 +151,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
           filePath: string;
         } = res.data.fileList[index];
 
-        const fileResult = await axios.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
+        const fileResult = await Api.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
           responseType: 'blob',
         });
 
@@ -187,7 +187,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
   const updateNotice = async (formData: any) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/notice/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log('수정 성공', req);
