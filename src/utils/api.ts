@@ -7,6 +7,7 @@ const Api = axios.create({
   timeout: 10000,
   params: {},
 });
+
 //Api axios를 이용하여 BE와 통신 할 경우 쿠키 허용 설정값을 true 로 설정
 axios.defaults.withCredentials = true;
 

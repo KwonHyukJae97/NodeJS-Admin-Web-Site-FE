@@ -82,8 +82,7 @@ const AuthProvider = ({ children }: Props) => {
         setLoading(true);
         console.log('사용자 정보 있음');
 
-        await axios
-          .get(authConfig.meEndpoint, { withCredentials: true })
+        await Api.get(authConfig.meEndpoint, { withCredentials: true })
           .then(async (response) => {
             const user: UserDataType = {
               accountId: response.data.accountId,
@@ -117,13 +116,13 @@ const AuthProvider = ({ children }: Props) => {
   // 로그인 요청 시, 실행
   const handleLogin = async (params: LoginParams, errorCallback?: ErrCallbackType) => {
     try {
-      const responseData = await axios.post(authConfig.loginEndpoint, params, {
+      const responseData = await Api.post(authConfig.loginEndpoint, params, {
         withCredentials: true,
       });
 
       if (responseData) {
         console.log('api 호출 전');
-        const response = await axios.get(authConfig.meEndpoint, {
+        const response = await Api.get(authConfig.meEndpoint, {
           withCredentials: true,
         });
         console.log('api 호출 후');
@@ -219,7 +218,7 @@ const AuthProvider = ({ children }: Props) => {
     console.log('params!!', params);
 
     try {
-      const responseData = await axios.post(
+      const responseData = await Api.post(
         `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
         params,
         {
@@ -230,19 +229,19 @@ const AuthProvider = ({ children }: Props) => {
       // const data = responseData.data;
 
       if (responseData.data.loginSuccess == true) {
-        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+        const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
         const returnUrl = router.query.returnUrl;
         console.log('returnUrl', returnUrl);
 
         const user: UserDataType = {
-          accountId: res.data.accountId,
-          id: res.data.id,
-          snsId: res.data.snsId,
-          name: res.data.name,
-          email: res.data.email,
-          nickname: res.data.nickname,
+          accountId: res.data.authInfo.accountId,
+          id: res.data.authInfo.id,
+          snsId: res.data.authInfo.snsId,
+          name: res.data.authInfo.name,
+          email: res.data.authInfo.email,
+          nickname: res.data.authInfo.nickname,
           avatar: null,
         };
 
@@ -277,7 +276,7 @@ const AuthProvider = ({ children }: Props) => {
     console.log('구글 params', params);
 
     try {
-      const responseData = await axios.post(
+      const responseData = await Api.post(
         `${apiConfig.apiEndpoint}/auth/login/admin/google`,
         params,
         {
@@ -288,18 +287,18 @@ const AuthProvider = ({ children }: Props) => {
       // const data = responseData.data;
 
       if (responseData.data.loginSuccess == true) {
-        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+        const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
         const returnUrl = router.query.returnUrl;
 
         const user: UserDataType = {
-          accountId: res.data.accountId,
-          id: res.data.id,
-          snsId: res.data.snsId,
-          name: res.data.name,
-          email: res.data.email,
-          nickname: res.data.nickname,
+          accountId: res.data.authInfo.accountId,
+          id: res.data.authInfo.id,
+          snsId: res.data.authInfo.snsId,
+          name: res.data.authInfo.name,
+          email: res.data.authInfo.email,
+          nickname: res.data.authInfo.nickname,
           avatar: null,
         };
 
@@ -333,7 +332,7 @@ const AuthProvider = ({ children }: Props) => {
     console.log('네이버 params !', params);
 
     try {
-      const responseData = await axios.post(
+      const responseData = await Api.post(
         `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
         params,
         {
@@ -344,18 +343,19 @@ const AuthProvider = ({ children }: Props) => {
       // const data = responseData.data;
 
       if (responseData.data.loginSuccess == true) {
-        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+        const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
+        console.log('네이버 데이터ㅏ', res);
         const returnUrl = router.query.returnUrl;
 
         const user: UserDataType = {
-          accountId: res.data.accountId,
-          id: res.data.id,
-          snsId: res.data.snsId,
-          name: res.data.name,
-          email: res.data.email,
-          nickname: res.data.nickname,
+          accountId: res.data.authInfo.accountId,
+          id: res.data.authInfo.id,
+          snsId: res.data.authInfo.snsId,
+          name: res.data.authInfo.name,
+          email: res.data.authInfo.email,
+          nickname: res.data.authInfo.nickname,
           avatar: null,
         };
 
@@ -413,7 +413,7 @@ const AuthProvider = ({ children }: Props) => {
         return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
       }
 
-      const res = await axios.post(authConfig.registerEndpoint, params);
+      const res = await Api.post(authConfig.registerEndpoint, params);
 
       if (res.data.error) {
         if (errorCallback) errorCallback(res.data.error);
@@ -451,10 +451,10 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      await axios.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params, {
+      await Api.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params, {
         withCredentials: true,
       });
-      const responseData = await axios.post(
+      const responseData = await Api.post(
         `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
         params,
         {
@@ -463,7 +463,7 @@ const AuthProvider = ({ children }: Props) => {
       );
 
       if (responseData.data.loginSuccess == true) {
-        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+        const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
 
@@ -534,10 +534,10 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      await axios.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params, {
+      await Api.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params, {
         withCredentials: true,
       });
-      const responseData = await axios.post(
+      const responseData = await Api.post(
         `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
         params,
         {
@@ -546,7 +546,7 @@ const AuthProvider = ({ children }: Props) => {
       );
 
       if (responseData.data.loginSuccess == true) {
-        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+        const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
 
@@ -586,10 +586,10 @@ const AuthProvider = ({ children }: Props) => {
     errorCallback?: ErrCallbackType,
   ) => {
     try {
-      await axios.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params, {
+      await Api.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params, {
         withCredentials: true,
       });
-      const responseData = await axios.post(
+      const responseData = await Api.post(
         `${apiConfig.apiEndpoint}/auth/login/admin/google`,
         params,
         {
@@ -598,7 +598,7 @@ const AuthProvider = ({ children }: Props) => {
       );
 
       if (responseData.data.loginSuccess == true) {
-        const res = await axios.get(`${apiConfig.apiEndpoint}/auth/me`, {
+        const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
 
