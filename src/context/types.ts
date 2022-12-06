@@ -91,6 +91,14 @@ export type UserDataType = {
   avatar?: string | null;
 };
 
+export type TokenDataType = {
+  accessToken: string;
+};
+
+export type ExpireAtDataType = {
+  expireAt: Date;
+};
+
 export type AuthValuesType = {
   loading: boolean;
   setLoading: (value: boolean) => void;
@@ -98,6 +106,10 @@ export type AuthValuesType = {
   isInitialized: boolean;
   user: UserDataType | null;
   setUser: (value: UserDataType | null) => void;
+  accessToken: TokenDataType | null;
+  setAccessToken: (value: TokenDataType | null) => void;
+  expireAt: ExpireAtDataType | null;
+  setExpireAt: (value: ExpireAtDataType | null) => void;
   setIsInitialized: (value: boolean) => void;
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
   kakaoLogin: (params: any) => void;

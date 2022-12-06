@@ -4,6 +4,8 @@ export default {
   kakaoLoginEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/kakao`,
   LoginInfoEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/me`,
   storageUserDataKeyName: `userData`,
+  storageTokenDataKeyName: `accessToken`,
+  storageExpireAtDataKeyName: `expireAt`,
   registerEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register/admin`,
   kakaoRegisterEndpoint: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register/kakao/admin`,
   storageTokenKeyName: `authorization`,

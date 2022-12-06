@@ -19,7 +19,6 @@ import { useRouter } from 'next/router';
 const UserView = () => {
   const router = useRouter();
   const { accountId } = router.query;
-  console.log('accountId????', accountId);
   const invoiceData: InvoiceType[] = [];
 
   return <UserViewPage accountId={accountId} invoiceData={invoiceData} />;

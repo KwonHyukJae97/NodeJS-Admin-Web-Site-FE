@@ -23,11 +23,19 @@ import {
   UserDataType,
   NaverRegisterParams,
   GoogleRegisterParams,
+  TokenDataType,
+  ExpireAtDataType,
 } from './types';
+import Api from 'src/utils/api';
+import moment from 'moment';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
   user: null,
+  accessToken: null,
+  setAccessToken: () => null,
+  expireAt: null,
+  setExpireAt: () => null,
   loading: true,
   setUser: () => null,
   setLoading: () => Boolean,
@@ -53,6 +61,8 @@ type Props = {
 const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user);
+  const [accessToken, setAccessToken] = useState<TokenDataType | null>(defaultProvider.accessToken);
+  const [expireAt, setExpireAt] = useState<ExpireAtDataType | null>(defaultProvider.expireAt);
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
   const [isInitialized, setIsInitialized] = useState<boolean>(defaultProvider.isInitialized);
 
@@ -75,8 +85,6 @@ const AuthProvider = ({ children }: Props) => {
         await axios
           .get(authConfig.meEndpoint, { withCredentials: true })
           .then(async (response) => {
-            console.log('사용자 정보 조회 성공 시, 응답', response);
-
             const user: UserDataType = {
               accountId: response.data.accountId,
               id: response.data.id,
@@ -114,27 +122,46 @@ const AuthProvider = ({ children }: Props) => {
       });
 
       if (responseData) {
+        console.log('api 호출 전');
         const response = await axios.get(authConfig.meEndpoint, {
           withCredentials: true,
         });
+        console.log('api 호출 후');
         const returnUrl = router.query.returnUrl;
         console.log('returnUrl', returnUrl);
 
-        console.log('사용자 정보 조회 성공 시, 응답', response);
-
         const user: UserDataType = {
-          accountId: response.data.accountId,
-          id: response.data.id,
-          snsId: response.data.snsId,
-          name: response.data.name,
-          email: response.data.email,
-          nickname: response.data.nickname,
+          accountId: response.data.authInfo.accountId,
+          id: response.data.authInfo.id,
+          snsId: response.data.authInfo.snsId,
+          name: response.data.authInfo.name,
+          email: response.data.authInfo.email,
+          nickname: response.data.authInfo.nickname,
           avatar: null,
         };
-
+        const token: TokenDataType = {
+          accessToken: response.data.accessToken,
+        };
+        const expireAt: ExpireAtDataType = {
+          expireAt: response.data.expireAt,
+        };
+        console.log('토오오큰', response);
         setUser(user);
         await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
 
+        //accessToken 로컬스토리지에 저장
+        setAccessToken(token);
+        await window.localStorage.setItem(
+          authConfig.storageTokenDataKeyName,
+          JSON.stringify(token),
+        );
+
+        //expireAt 토큰 만료시간 로컬스토리지에 저장
+        setExpireAt(expireAt);
+        await window.localStorage.setItem(
+          authConfig.storageExpireAtDataKeyName,
+          JSON.stringify(expireAt),
+        );
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
         await router.replace(redirectURL as string);
@@ -209,8 +236,6 @@ const AuthProvider = ({ children }: Props) => {
         const returnUrl = router.query.returnUrl;
         console.log('returnUrl', returnUrl);
 
-        console.log('사용자 정보 조회 성공 시 응답', res);
-
         const user: UserDataType = {
           accountId: res.data.accountId,
           id: res.data.id,
@@ -267,7 +292,6 @@ const AuthProvider = ({ children }: Props) => {
           withCredentials: true,
         });
         const returnUrl = router.query.returnUrl;
-        console.log('네이버 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -324,7 +348,6 @@ const AuthProvider = ({ children }: Props) => {
           withCredentials: true,
         });
         const returnUrl = router.query.returnUrl;
-        console.log('네이버 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -372,6 +395,8 @@ const AuthProvider = ({ children }: Props) => {
     setUser(null);
     setIsInitialized(false);
     window.localStorage.removeItem('userData');
+    window.localStorage.removeItem('accessToken');
+    window.localStorage.removeItem('expireAt');
     window.localStorage.removeItem(authConfig.storageTokenKeyName);
 
     // window.localStorage.clear();
@@ -443,7 +468,6 @@ const AuthProvider = ({ children }: Props) => {
         });
 
         const returnUrl = router.query.returnUrl;
-        console.log('카카오 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -527,7 +551,6 @@ const AuthProvider = ({ children }: Props) => {
         });
 
         const returnUrl = router.query.returnUrl;
-        console.log('네이버 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -580,7 +603,6 @@ const AuthProvider = ({ children }: Props) => {
         });
 
         const returnUrl = router.query.returnUrl;
-        console.log('구글 사용자 정보 조회 성공 시 응답', res);
 
         const user: UserDataType = {
           accountId: res.data.accountId,
@@ -611,6 +633,10 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const values = {
+    accessToken,
+    expireAt,
+    setExpireAt,
+    setAccessToken,
     user,
     loading,
     setUser,
