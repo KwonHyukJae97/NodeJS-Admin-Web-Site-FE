@@ -35,7 +35,7 @@ import { CategoryType, FaqType } from 'src/types/apps/boardTypes';
 import { role } from 'src/pages/notice/list';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
@@ -52,34 +52,44 @@ const EditorControlled = dynamic(
   { ssr: false },
 );
 
-type dataProps = {
-  id: number;
-  categoryApiData: CategoryType[];
+// input 초기값
+const defaultValues = {
+  title: '',
+  categoryName: '',
 };
 
+// props 타입 정의
+interface FaqEditProps {
+  id: number;
+  categoryApiData: CategoryType[];
+}
+
 // FAQ 입력값 타입 정의
-interface FormData {
+interface FaqInputData {
   title: string;
   categoryName: string;
   role: string;
 }
 
+// FAQ 초기값 정의
+const initFaq = {
+  id: 0,
+  boardId: 0,
+  categoryName: '',
+  title: '',
+  content: '',
+  fileList: [],
+  writer: '',
+  regDate: '',
+  viewCnt: 0,
+};
+
 // FAQ 수정 페이지
-const FaqEdit = ({ id, categoryApiData }: dataProps) => {
+const FaqEdit = ({ id, categoryApiData }: FaqEditProps) => {
   // ** State
-  const [data, setData] = useState<FaqType>({
-    boardId: 0,
-    content: '',
-    fileList: [],
-    id: 0,
-    categoryName: '',
-    regDate: '',
-    title: '',
-    viewCnt: 0,
-    writer: '',
-  });
-  const [files, setFiles] = useState<File[]>([]);
-  const [htmlStr, setHtmlStr] = useState<string>('');
+  const [data, setData] = useState<FaqType>(initFaq),
+    [files, setFiles] = useState<File[]>([]),
+    [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Vars
   const schema = yup.object().shape({
@@ -97,11 +107,6 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
     return category;
   });
 
-  const defaultValues = {
-    title: '',
-    categoryName: '',
-  };
-
   // ** Hooks
   const router = useRouter();
   const {
@@ -116,7 +121,7 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
   });
 
   useEffect(() => {
-    getFaqDetail(id);
+    getDetailFaq(id);
   }, [id]);
 
   useEffect(() => {
@@ -124,23 +129,26 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
       setValue('title', data.title);
       setValue('categoryName', data.categoryName);
     }
+
+    // htmlStr에 대한 상태변화가 없을경우, content 수정 없이 patch 요청 시 null 값으로 할당됨
+    setHtmlStr(data.content!);
   }, [data, setValue]);
 
   // FAQ 상세조회 API 호출
-  const getFaqDetail = async (id: number) => {
+  const getDetailFaq = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
         data: { role },
       });
 
       const faqData = {
         boardId: res.data.faqId,
+        categoryName: res.data.category.categoryName,
         title: res.data.faq.board.title,
         content: res.data.faq.board.content,
-        categoryName: res.data.category.categoryName,
-        regDate: getDateTime(res.data.faq.board.regDate),
         writer: res.data.writer,
         fileList: res.data.fileList,
+        regDate: getDateTime(res.data.faq.board.regDate),
       };
       console.log(faqData);
       setData(faqData);
@@ -154,7 +162,7 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
           filePath: string;
         } = res.data.fileList[index];
 
-        const fileResult = await axios.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
+        const fileResult = await Api.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
           responseType: 'blob',
         });
 
@@ -167,8 +175,8 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
     }
   };
 
-  // 수정 버튼 클릭 시, api 요청
-  const onSubmit = async (data: FormData) => {
+  // 수정 버튼 클릭 시 호출
+  const onSubmit = async (data: FaqInputData) => {
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -182,14 +190,14 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
     formData.append('content', htmlStr);
     formData.append('categoryName', data.categoryName);
 
-    await editFaq(formData);
+    await updateFaq(formData);
   };
 
   // FAQ 수정 API 호출
-  const editFaq = async (formData: any) => {
+  const updateFaq = async (formData: any) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/faq/${id}`, formData, {
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/faq/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log('수정 성공', req);
@@ -229,9 +237,6 @@ const FaqEdit = ({ id, categoryApiData }: dataProps) => {
                       inputProps={{ 'aria-label': 'Without label' }}
                       displayEmpty
                       sx={{ mt: 2, mb: 1 }}
-
-                      // labelId="validation-basic-select"
-                      // aria-describedby="validation-basic-select"
                     >
                       <MenuItem disabled value="">
                         분류 선택

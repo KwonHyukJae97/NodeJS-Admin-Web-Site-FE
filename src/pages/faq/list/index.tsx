@@ -23,21 +23,14 @@ import TabsCustomButton from 'src/views/board/list/TabsCustomButton';
 // ** Types Imports
 import { CategoryType, FaqType } from 'src/types/apps/boardTypes';
 import { role } from '../../notice/list';
+import { PageType } from 'src/utils/pageType';
 
 // ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 
-// ** Third Party Imports
-import moment from 'moment';
-
-// 페이지 타입 정의
-interface PageType {
-  currentPage: number;
-  pageSize: number;
-  totalCount: number;
-  totalPage: number;
-}
+// ** Common Util Imports
+import { getDateTime } from 'src/utils/getDateTime';
 
 // 테이블 행 데이터 타입 정의
 interface CellType {
@@ -126,15 +119,6 @@ const columns = [
   },
 ];
 
-// 한국 시간으로 변경하는 메서드
-export const getDateTime = (utcTime: Date) => {
-  const kstTime = moment(utcTime).toDate();
-  kstTime.setHours(kstTime.getHours() + 9);
-
-  // yyyy-mm-dd 형식으로 반환
-  return kstTime.toISOString().replace('T', ' ').substring(0, 11);
-};
-
 // FAQ 목록 페이지
 const FaqList = ({
   apiData,
@@ -142,9 +126,9 @@ const FaqList = ({
   categoryApiData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** State
-  const [pageNo, setPageNo] = useState<number>(1);
-  const [searchWord, setSearchWord] = useState<string>('');
-  const [searchKey, setSearchKey] = useState<string>('');
+  const [pageNo, setPageNo] = useState<number>(1),
+    [searchWord, setSearchWord] = useState<string>(''),
+    [searchKey, setSearchKey] = useState<string>('');
 
   // API로 조회한 데이터 리스트를 타입에 맞게 할당(SSR)
   const faqData: FaqType[] =
@@ -263,7 +247,7 @@ export const getFaq = async (pageNo: number, searchKey: string, searchWord: stri
 };
 
 // Category 조회 API 호출
-export const getCategory = async () => {
+export const getAllCategory = async () => {
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/faq/category`, {
       params: { role },
@@ -282,7 +266,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
   const faqResult = await getFaq(Number(pageNo), searchKey as string, searchWord as string);
-  const categoryResult = await getCategory();
+  const categoryResult = await getAllCategory();
 
   const apiData: FaqType = faqResult === undefined ? null : faqResult.items;
   const pageData: PageType =

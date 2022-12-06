@@ -35,9 +35,9 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { CategoryType } from 'src/types/apps/boardTypes';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
-import { getCategory } from '../list';
+import { getAllCategory } from '../list';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -51,12 +51,13 @@ const EditorControlled = dynamic(
 );
 
 // FAQ 입력값 타입 정의
-interface FormData {
+interface FaqInputType {
   title: string;
   categoryName: string;
   role: string;
 }
 
+// input 초기값
 const defaultValues = {
   title: '',
   categoryName: '',
@@ -65,8 +66,8 @@ const defaultValues = {
 // FAQ 등록 페이지
 const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** State
-  const [files, setFiles] = useState<File[]>([]);
-  const [htmlStr, setHtmlStr] = useState<string>('');
+  const [files, setFiles] = useState<File[]>([]),
+    [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Vars
   const schema = yup.object().shape({
@@ -96,9 +97,8 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
     resolver: yupResolver(schema),
   });
 
-  // 등록 버튼 클릭 시, api 요청
-  const onSubmit = async (data: FormData) => {
-    console.log('category 선택', data.categoryName);
+  // 등록 버튼 클릭 시 호출
+  const onSubmit = async (data: FaqInputType) => {
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -112,14 +112,14 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
     formData.append('content', htmlStr);
     formData.append('categoryName', data.categoryName);
 
-    await registerFaq(formData);
+    await createFaq(formData);
   };
 
   // FAQ 등록 API 호출
-  const registerFaq = async (formData: any) => {
+  const createFaq = async (formData: any) => {
     if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.post(`${apiConfig.apiEndpoint}/faq`, formData, {
+        const req = await Api.post(`${apiConfig.apiEndpoint}/faq`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log('등록 성공', req);
@@ -263,9 +263,9 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
 export const getServerSideProps: GetServerSideProps = async () => {
   // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const categoryResult = await getCategory();
+  const result = await getAllCategory();
 
-  const categoryApiData: CategoryType[] = categoryResult;
+  const categoryApiData: CategoryType[] = result;
 
   return {
     props: {
