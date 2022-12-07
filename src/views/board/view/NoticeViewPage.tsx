@@ -21,7 +21,7 @@ import { role } from 'src/pages/notice/list';
 import { NoticeType } from 'src/types/apps/boardTypes';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Common Util Imports
@@ -63,7 +63,7 @@ const NoticeView = ({ id }: NoticeViewProps) => {
   // 공지사항 상세조회 API 호출
   const getDetailNotice = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
         data: { role },
       });
 
@@ -92,8 +92,9 @@ const NoticeView = ({ id }: NoticeViewProps) => {
   const deleteNotice = async (id: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        await axios.delete(`${apiConfig.apiEndpoint}/notice/${id}`, {
-          params: { role },
+        // @ts-ignore
+        await Api.delete(`${apiConfig.apiEndpoint}/notice/${id}`, {
+          withCredentials: true,
         });
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');

@@ -10,8 +10,8 @@ import {
 import NoticeEditPage from 'src/views/board/edit/NoticeEditPage';
 
 // ** axios
-import axios from 'axios';
 import apiConfig from 'src/configs/api';
+import axios from 'axios';
 
 // ** Types Imports
 import { noticeGrant, role } from '../list';
@@ -38,6 +38,8 @@ export const getAllNotice = async () => {
 // getStaticPaths에서 동적 경로를 할당할 id값들을 지정해줘야, 해당 경로로 접근이 가능하기 때문에 모든 데이터 조회
 export const getStaticPaths: GetStaticPaths = async () => {
   const result = await getAllNotice();
+
+  console.log(result);
 
   const apiData: NoticeType[] = result;
 

@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import { FileDownloadOutline } from 'mdi-material-ui';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // props 타입 정의
@@ -13,7 +13,7 @@ interface AttachedFileListProps {
   fileList: any;
 }
 
-// 첨부파일 목록 UI
+// 첨부파일 목록 UI 컴포넌트
 const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
   // 다운로드 파일 이름을 추출하는 함수
   const extractDownloadFilename = (res: any) => {
@@ -28,7 +28,7 @@ const AttachedFileList = ({ fileList }: AttachedFileListProps) => {
   // 파일 다운로드 API 호출
   const getFileDownload = async (fileId: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/file/${fileId}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/file/${fileId}`, {
         responseType: 'blob',
       });
 

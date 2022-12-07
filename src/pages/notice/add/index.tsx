@@ -36,8 +36,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 // ** axios
-import axios from 'axios';
 import apiConfig from 'src/configs/api';
+import Api from 'src/utils/api';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 const EditorControlled = dynamic(
@@ -105,8 +105,9 @@ const NoticeAdd = () => {
   const createNotice = async (formData: any) => {
     if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.post(`${apiConfig.apiEndpoint}/notice`, formData, {
+        const req = await Api.post(`${apiConfig.apiEndpoint}/notice`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
         });
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');
