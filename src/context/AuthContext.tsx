@@ -5,13 +5,15 @@ import { createContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 
 // ** Axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 
 // ** Config
 import authConfig from 'src/configs/auth';
 
 // ** Config
 import apiConfig from 'src/configs/api';
+
+import { removeCookieAccessToken } from 'src/utils/cookies';
 
 // ** Types
 import {
@@ -26,8 +28,6 @@ import {
   TokenDataType,
   ExpireAtDataType,
 } from './types';
-import Api from 'src/utils/api';
-import moment from 'moment';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -122,7 +122,7 @@ const AuthProvider = ({ children }: Props) => {
 
       if (responseData) {
         console.log('api 호출 전');
-        const response = await Api.get(authConfig.meEndpoint, {
+        const res = await Api.get(authConfig.meEndpoint, {
           withCredentials: true,
         });
         console.log('api 호출 후');
@@ -130,21 +130,21 @@ const AuthProvider = ({ children }: Props) => {
         console.log('returnUrl', returnUrl);
 
         const user: UserDataType = {
-          accountId: response.data.authInfo.accountId,
-          id: response.data.authInfo.id,
-          snsId: response.data.authInfo.snsId,
-          name: response.data.authInfo.name,
-          email: response.data.authInfo.email,
-          nickname: response.data.authInfo.nickname,
+          accountId: res.data.authInfo.accountId,
+          id: res.data.authInfo.id,
+          snsId: res.data.authInfo.snsId,
+          name: res.data.authInfo.name,
+          email: res.data.authInfo.email,
+          nickname: res.data.authInfo.nickname,
           avatar: null,
         };
         const token: TokenDataType = {
-          accessToken: response.data.accessToken,
+          accessToken: res.data.accessToken,
         };
         const expireAt: ExpireAtDataType = {
-          expireAt: response.data.expireAt,
+          expireAt: res.data.expireAt,
         };
-        console.log('토오오큰', response);
+
         setUser(user);
         await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
 
@@ -170,47 +170,6 @@ const AuthProvider = ({ children }: Props) => {
       console.log(errorCallback);
       console.log(err);
     }
-
-    // axios
-    //   .post(authConfig.loginEndpoint, params, { withCredentials: true })
-    //   .then(async (response) => {
-    //     console.log('로그인 성공 시 응답', response);
-    //   })
-    //   .then(() => {
-    //     axios
-    //       .get(authConfig.meEndpoint, {
-    //         withCredentials: true,
-    //       })
-    //       .then(async (response) => {
-    //         const returnUrl = router.query.returnUrl;
-    //         console.log('returnUrl', returnUrl);
-
-    //         console.log('사용자 정보 조회 성공 시, 응답', response);
-
-    //         const user: UserDataType = {
-    //           accountId: response.data.accountId,
-    //           id: response.data.id,
-    //           snsId: response.data.snsId,
-    //           name: response.data.name,
-    //           email: response.data.email,
-    //           nickname: response.data.nickname,
-    //           avatar: null,
-    //         };
-
-    //         setUser(user);
-    //         await window.localStorage.setItem(
-    //           authConfig.storageUserDataKeyName,
-    //           JSON.stringify(user),
-    //         );
-
-    //         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
-
-    //         await router.replace(redirectURL as string);
-    //       });
-    //   })
-    //   .catch((err) => {
-    //     if (errorCallback) errorCallback(err);
-    //   });
   };
 
   //카카오 로그인 요청 시 실행
@@ -245,8 +204,29 @@ const AuthProvider = ({ children }: Props) => {
           avatar: null,
         };
 
+        const token: TokenDataType = {
+          accessToken: res.data.accessToken,
+        };
+        const expireAt: ExpireAtDataType = {
+          expireAt: res.data.expireAt,
+        };
+
         setUser(user);
         await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        //accessToken 로컬스토리지에 저장
+        setAccessToken(token);
+        await window.localStorage.setItem(
+          authConfig.storageTokenDataKeyName,
+          JSON.stringify(token),
+        );
+
+        //expireAt 토큰 만료시간 로컬스토리지에 저장
+        setExpireAt(expireAt);
+        await window.localStorage.setItem(
+          authConfig.storageExpireAtDataKeyName,
+          JSON.stringify(expireAt),
+        );
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
@@ -302,8 +282,29 @@ const AuthProvider = ({ children }: Props) => {
           avatar: null,
         };
 
+        const token: TokenDataType = {
+          accessToken: res.data.accessToken,
+        };
+        const expireAt: ExpireAtDataType = {
+          expireAt: res.data.expireAt,
+        };
+
         setUser(user);
         await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        //accessToken 로컬스토리지에 저장
+        setAccessToken(token);
+        await window.localStorage.setItem(
+          authConfig.storageTokenDataKeyName,
+          JSON.stringify(token),
+        );
+
+        //expireAt 토큰 만료시간 로컬스토리지에 저장
+        setExpireAt(expireAt);
+        await window.localStorage.setItem(
+          authConfig.storageExpireAtDataKeyName,
+          JSON.stringify(expireAt),
+        );
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
@@ -359,8 +360,29 @@ const AuthProvider = ({ children }: Props) => {
           avatar: null,
         };
 
+        const token: TokenDataType = {
+          accessToken: res.data.accessToken,
+        };
+        const expireAt: ExpireAtDataType = {
+          expireAt: res.data.expireAt,
+        };
+
         setUser(user);
         await window.localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+
+        //accessToken 로컬스토리지에 저장
+        setAccessToken(token);
+        await window.localStorage.setItem(
+          authConfig.storageTokenDataKeyName,
+          JSON.stringify(token),
+        );
+
+        //expireAt 토큰 만료시간 로컬스토리지에 저장
+        setExpireAt(expireAt);
+        await window.localStorage.setItem(
+          authConfig.storageExpireAtDataKeyName,
+          JSON.stringify(expireAt),
+        );
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
@@ -394,12 +416,13 @@ const AuthProvider = ({ children }: Props) => {
   const handleLogout = () => {
     setUser(null);
     setIsInitialized(false);
-    window.localStorage.removeItem('userData');
-    window.localStorage.removeItem('accessToken');
-    window.localStorage.removeItem('expireAt');
-    window.localStorage.removeItem(authConfig.storageTokenKeyName);
+    window.localStorage.clear();
+    removeCookieAccessToken();
 
-    // window.localStorage.clear();
+    // window.localStorage.removeItem('userData');
+    // window.localStorage.removeItem('accessToken');
+    // window.localStorage.removeItem('expireAt');
+    // window.localStorage.removeItem(authConfig.storageTokenKeyName);
     router.push('/login');
   };
 
