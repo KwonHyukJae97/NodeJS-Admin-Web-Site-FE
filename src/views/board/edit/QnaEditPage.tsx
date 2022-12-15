@@ -28,10 +28,9 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
 import { QnaType } from 'src/types/apps/boardTypes';
-import { role } from 'src/pages/notice/list';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
@@ -41,42 +40,47 @@ import * as yup from 'yup';
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
 
-type dataProps = {
-  id: number;
+// input 초기값
+const defaultValues = {
+  title: '',
+  content: '',
 };
 
+// props 타입 정의
+interface QnaEditProps {
+  id: number;
+}
+
 // QnA 입력값 타입 정의
-interface FormData {
+interface QnaInputData {
   title: string;
   content: string;
 }
 
+// Qna 초기값 정의
+const initQna = {
+  id: 0,
+  boardId: 0,
+  title: '',
+  content: '',
+  fileList: [],
+  isComment: false,
+  writer: '',
+  regDate: '',
+  viewCnt: 0,
+};
+
 // QnA 수정 페이지
-const QnaEdit = ({ id }: dataProps) => {
+const QnaEdit = ({ id }: QnaEditProps) => {
   // ** State
-  const [data, setData] = useState<QnaType>({
-    boardId: 0,
-    content: '',
-    fileList: [],
-    id: 0,
-    isComment: false,
-    regDate: '',
-    title: '',
-    viewCnt: 0,
-    writer: '',
-  });
-  const [files, setFiles] = useState<File[]>([]);
+  const [data, setData] = useState<QnaType>(initQna),
+    [files, setFiles] = useState<File[]>([]);
 
   // ** Vars
   const schema = yup.object().shape({
     title: yup.string().required(),
     content: yup.string().required(),
   });
-
-  const defaultValues = {
-    title: '',
-    content: '',
-  };
 
   // ** Hooks
   const router = useRouter();
@@ -92,7 +96,7 @@ const QnaEdit = ({ id }: dataProps) => {
   });
 
   useEffect(() => {
-    getQnaDetail(id);
+    getDetailQna(id);
   }, [id]);
 
   useEffect(() => {
@@ -103,10 +107,10 @@ const QnaEdit = ({ id }: dataProps) => {
   }, [data, setValue]);
 
   // QnA 상세조회 API 호출
-  const getQnaDetail = async (id: number) => {
+  const getDetailQna = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/qna/${id}`, {
-        data: { role },
+      const res = await Api.get(`${apiConfig.apiEndpoint}/qna/${id}`, {
+        withCredentials: true,
       });
 
       const qnaData = {
@@ -114,9 +118,9 @@ const QnaEdit = ({ id }: dataProps) => {
         title: res.data.qna.title,
         content: res.data.qna.content,
         isComment: res.data.qna.isComment,
-        regDate: getDateTime(res.data.qna.regDate),
         writer: res.data.qna.writer,
         fileList: res.data.qna.fileList,
+        regDate: getDateTime(res.data.qna.regDate),
       };
       console.log(qnaData);
       setData(qnaData);
@@ -130,7 +134,7 @@ const QnaEdit = ({ id }: dataProps) => {
           filePath: string;
         } = res.data.qna.fileList[index];
 
-        const fileResult = await axios.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
+        const fileResult = await Api.get(`${apiConfig.apiEndpoint}/file/${file.boardFileId}`, {
           responseType: 'blob',
         });
 
@@ -143,8 +147,8 @@ const QnaEdit = ({ id }: dataProps) => {
     }
   };
 
-  // 수정 버튼 클릭 시, api 요청
-  const onSubmit = async (data: FormData) => {
+  // 수정 버튼 클릭 시 호출
+  const onSubmit = async (data: QnaInputData) => {
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -156,15 +160,16 @@ const QnaEdit = ({ id }: dataProps) => {
     formData.append('title', data.title);
     formData.append('content', data.content);
 
-    await editFaq(formData);
+    await updateFaq(formData);
   };
 
   // QnA 수정 API 호출
-  const editFaq = async (formData: any) => {
+  const updateFaq = async (formData: any) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/qna/${id}`, formData, {
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/qna/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
         });
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');

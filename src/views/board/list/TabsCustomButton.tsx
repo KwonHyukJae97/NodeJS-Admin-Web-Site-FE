@@ -14,13 +14,6 @@ import Box from '@mui/material/Box';
 // ** Types
 import { CategoryType } from 'src/types/apps/boardTypes';
 
-interface Props {
-  categoryList: CategoryType[];
-  searchKey: string;
-  setSearchKey: (value: string) => void;
-  setSearchWord: (value: string) => void;
-}
-
 // Styled TabList component
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   '& .MuiTabs-indicator': {
@@ -41,7 +34,16 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   },
 }));
 
-const TabsCustomButton = (props: Props) => {
+// props 타입 정의
+interface TabsCustomButtonProps {
+  categoryList: CategoryType[];
+  searchKey: string;
+  setSearchKey: (value: string) => void;
+  setSearchWord: (value: string) => void;
+}
+
+// Tab 버튼 컴포넌트
+const TabsCustomButton = (props: TabsCustomButtonProps) => {
   const { categoryList, searchKey, setSearchKey, setSearchWord } = props;
 
   // ** State
@@ -56,6 +58,7 @@ const TabsCustomButton = (props: Props) => {
     setSearchWord('');
   }, [searchKey]);
 
+  // 탭 버튼 클릭 시 호출
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setSearchKey(newValue);
   };

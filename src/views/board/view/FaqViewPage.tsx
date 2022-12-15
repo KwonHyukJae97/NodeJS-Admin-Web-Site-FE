@@ -14,38 +14,42 @@ import Box from '@mui/material/Box';
 // ** Custom Components Imports
 import BoardLeftInHeader from '../BoardLeftInHeader';
 import AttachedFileList from './AttachedFileList';
+import BoardViewInfo from '../BoardViewInfo';
 
 // ** Types Imports
 import { role } from 'src/pages/notice/list';
 import { FaqType } from 'src/types/apps/boardTypes';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
-import BoardViewInfo from '../BoardViewInfo';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
 
-type dataProps = {
+// props 타입 정의
+interface FaqViewProps {
   id: number;
+}
+
+// FAQ 초기값 정의
+const initFaq = {
+  id: 0,
+  boardId: 0,
+  categoryName: '',
+  title: '',
+  content: '',
+  fileList: [],
+  writer: '',
+  regDate: '',
+  viewCnt: 0,
 };
 
 // FAQ 상세 페이지
-const FaqView = ({ id }: dataProps) => {
+const FaqView = ({ id }: FaqViewProps) => {
   // ** State
-  const [data, setData] = useState<FaqType>({
-    boardId: 0,
-    content: '',
-    fileList: [],
-    id: 0,
-    categoryName: '',
-    regDate: '',
-    title: '',
-    viewCnt: 0,
-    writer: '',
-  });
-  const [htmlStr, setHtmlStr] = useState<string>('');
+  const [data, setData] = useState<FaqType>(initFaq),
+    [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Ref
   const viewContentRef = useRef<HTMLDivElement>(null);
@@ -53,26 +57,25 @@ const FaqView = ({ id }: dataProps) => {
   // ** Hooks
   const router = useRouter();
   useEffect(() => {
-    getFaqDetail(id);
+    getDetailFaq(id);
   }, [id]);
 
   // FAQ 상세조회 API 호출
-  const getFaqDetail = async (id: number) => {
+  const getDetailFaq = async (id: number) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
         data: { role },
+        withCredentials: true,
       });
-
-      console.log(res);
 
       const faqData = {
         boardId: res.data.faqId,
+        categoryName: res.data.category.categoryName,
         title: res.data.faq.board.title,
         content: res.data.faq.board.content,
-        categoryName: res.data.category.categoryName,
-        regDate: getDateTime(res.data.faq.board.regDate),
         writer: res.data.writer,
         fileList: res.data.fileList,
+        regDate: getDateTime(res.data.faq.board.regDate),
       };
 
       console.log(faqData);
@@ -90,8 +93,8 @@ const FaqView = ({ id }: dataProps) => {
   const deleteFaq = async (id: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        await axios.delete(`${apiConfig.apiEndpoint}/faq/${id}`, {
-          params: { role },
+        await Api.delete(`${apiConfig.apiEndpoint}/faq/${id}`, {
+          withCredentials: true,
         });
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');
@@ -104,6 +107,7 @@ const FaqView = ({ id }: dataProps) => {
     }
   };
 
+  // 삭제 버튼 클릭 시 호출
   const handleDeleteFaq = (id: number) => {
     deleteFaq(id);
   };

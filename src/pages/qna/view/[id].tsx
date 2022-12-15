@@ -6,12 +6,12 @@ import {
   InferGetStaticPropsType,
 } from 'next/types';
 
-// ** Third Party Imports
+// ** axios
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 
 // ** Types
-import { BoardType } from 'src/types/apps/userTypes';
+import { QnaType } from 'src/types/apps/boardTypes';
 
 // ** Demo Components Imports
 import QnaViewPage from 'src/views/board/view/QnaViewPage';
@@ -22,7 +22,7 @@ const QnaView = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
 };
 
 // QnA 조회 API 호출
-export const getQna = async () => {
+export const getAllQna = async () => {
   // 작성자만 본인의 내역 조회가 가능하기 때문에 임시값 할당
   const accountId = 27;
 
@@ -39,9 +39,9 @@ export const getQna = async () => {
 
 // getStaticPaths에서 동적 경로를 할당할 id값들을 지정해줘야, 해당 경로로 접근이 가능하기 때문에 모든 데이터 조회
 export const getStaticPaths: GetStaticPaths = async () => {
-  const result = await getQna();
+  const result = await getAllQna();
 
-  const apiData: BoardType[] = result;
+  const apiData: QnaType[] = result;
 
   const paths = apiData.map((item: any) => ({
     params: { id: `${item.qnaId}` },

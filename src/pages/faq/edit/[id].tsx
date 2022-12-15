@@ -6,14 +6,14 @@ import {
   InferGetStaticPropsType,
 } from 'next/types';
 
-// ** Third Party Imports
-import axios from 'axios';
-import { getCategory } from '../list';
+// ** axios
+import { getAllCategory } from '../list';
 import apiConfig from 'src/configs/api';
+import axios from 'axios';
 
 // ** Types
 import { role } from '../../notice/list';
-import { BoardType } from 'src/types/apps/userTypes';
+import { FaqType } from 'src/types/apps/boardTypes';
 import { CategoryType } from 'src/types/apps/boardTypes';
 
 // ** Demo Components Imports
@@ -25,7 +25,7 @@ const FaqEdit = ({ id, categoryApiData }: InferGetStaticPropsType<typeof getStat
 };
 
 // FAQ 조회 API 호출
-export const getFaq = async () => {
+export const getAllFaq = async () => {
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/faq`, {
       data: { role, pageNo: 1, pageSize: 10, totalData: true },
@@ -37,24 +37,11 @@ export const getFaq = async () => {
   }
 };
 
-// FAQ 상세조회 API 호출
-export const getFaqDetail = async (id: number) => {
-  try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
-      data: { role },
-    });
-
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 // getStaticPaths에서 동적 경로를 할당할 id값들을 지정해줘야, 해당 경로로 접근이 가능하기 때문에 모든 데이터 조회
 export const getStaticPaths: GetStaticPaths = async () => {
-  const result = await getFaq();
+  const result = await getAllFaq();
 
-  const apiData: BoardType[] = result;
+  const apiData: FaqType[] = result;
 
   const paths = apiData.map((item: any) => ({
     params: { id: `${item.faqId}` },
@@ -67,9 +54,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const categoryResult = await getCategory();
+  const result = await getAllCategory();
 
-  const categoryApiData: CategoryType[] = categoryResult;
+  const categoryApiData: CategoryType[] = result;
 
   return {
     props: {
