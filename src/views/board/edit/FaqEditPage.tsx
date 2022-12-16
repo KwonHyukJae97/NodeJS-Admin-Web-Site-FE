@@ -61,7 +61,6 @@ const defaultValues = {
 // props 타입 정의
 interface FaqEditProps {
   id: number;
-  categoryApiData: CategoryType[];
 }
 
 // FAQ 입력값 타입 정의
@@ -84,10 +83,20 @@ const initFaq = {
   viewCnt: 0,
 };
 
+// Category 초기값 정의
+const initCategory = [
+  {
+    categoryId: 0,
+    categoryName: '',
+    isUse: false,
+  },
+];
+
 // FAQ 수정 페이지
-const FaqEdit = ({ id, categoryApiData }: FaqEditProps) => {
+const FaqEdit = ({ id }: FaqEditProps) => {
   // ** State
   const [data, setData] = useState<FaqType>(initFaq),
+    [categoryData, setCategoryData] = useState<CategoryType[]>(initCategory),
     [files, setFiles] = useState<File[]>([]),
     [htmlStr, setHtmlStr] = useState<string>('');
 
@@ -97,15 +106,15 @@ const FaqEdit = ({ id, categoryApiData }: FaqEditProps) => {
     categoryName: yup.string().required(),
   });
 
-  const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
-    const category: CategoryType = {
-      categoryId: data.categoryId,
-      categoryName: data.categoryName,
-      isUse: data.isUse,
-    };
-
-    return category;
-  });
+  // const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
+  //   const category: CategoryType = {
+  //     categoryId: data.categoryId,
+  //     categoryName: data.categoryName,
+  //     isUse: data.isUse,
+  //   };
+  //
+  //   return category;
+  // });
 
   // ** Hooks
   const router = useRouter();
@@ -122,6 +131,7 @@ const FaqEdit = ({ id, categoryApiData }: FaqEditProps) => {
 
   useEffect(() => {
     getDetailFaq(id);
+    getAllCategory();
   }, [id]);
 
   useEffect(() => {
@@ -133,6 +143,30 @@ const FaqEdit = ({ id, categoryApiData }: FaqEditProps) => {
     // htmlStr에 대한 상태변화가 없을경우, content 수정 없이 patch 요청 시 null 값으로 할당됨
     setHtmlStr(data.content!);
   }, [data, setValue]);
+
+  // Category 조회 API 호출
+  const getAllCategory = async () => {
+    try {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/category`, {
+        params: { role },
+      });
+
+      const categoryApiData = res.data;
+
+      categoryApiData.map((data: any) => {
+        const category: CategoryType = {
+          categoryId: data.categoryId,
+          categoryName: data.categoryName,
+          isUse: data.isUse,
+        };
+
+        return category;
+      });
+      setCategoryData(categoryApiData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // FAQ 상세조회 API 호출
   const getDetailFaq = async (id: number) => {
