@@ -1,75 +1,13 @@
-// ** Next Import
-import {
-  GetStaticPaths,
-  GetStaticProps,
-  GetStaticPropsContext,
-  InferGetStaticPropsType,
-} from 'next/types';
-
-// ** Third Party Imports
-import axios from 'axios';
-import apiConfig from 'src/configs/api';
-
-// ** Types
-import { BoardType } from 'src/types/apps/userTypes';
-
 // ** Demo Components Imports
 import QnaEditPage from 'src/views/board/edit/QnaEditPage';
+import { useRouter } from 'next/router';
 
 // QnA 수정 페이지
-const QnaEdit = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  return <QnaEditPage id={id} />;
-};
+const QnaEdit = () => {
+  const router = useRouter();
+  const { id } = router.query;
 
-// QnA 조회 API 호출
-export const getQna = async () => {
-  // 작성자만 본인의 내역 조회가 가능하기 때문에 임시값 할당
-  const accountId = 27;
-
-  try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/qna`, {
-      data: { accountId, pageNo: 1, pageSize: 10, totalData: true },
-    });
-
-    return res.data.items;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-// QnA 상세조회 API 호출
-export const getQnaDetail = async (id: number) => {
-  try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/qna/${id}`);
-
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-// getStaticPaths에서 동적 경로를 할당할 id값들을 지정해줘야, 해당 경로로 접근이 가능하기 때문에 모든 데이터 조회
-export const getStaticPaths: GetStaticPaths = async () => {
-  const result = await getQna();
-
-  const apiData: BoardType[] = result;
-
-  const paths = apiData.map((item: any) => ({
-    params: { id: `${item.qnaId}` },
-  }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  return {
-    props: {
-      id: params?.id,
-    },
-  };
+  return <QnaEditPage id={Number(id)} />;
 };
 
 export default QnaEdit;

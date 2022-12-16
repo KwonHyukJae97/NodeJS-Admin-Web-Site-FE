@@ -408,12 +408,12 @@ const LoginPage = () => {
                   control={<Checkbox />}
                   sx={{ '& .MuiFormControlLabel-label': { color: 'text.primary' } }}
                 /> */}
-                <Link passHref href="/forgot-id">
+                <Link passHref href="/forgotId">
                   <Typography component={MuiLink} variant="body2" sx={{ color: 'primary.main' }}>
                     아이디를 잊으셨나요?
                   </Typography>
                 </Link>
-                <Link passHref href="/forgot-password">
+                <Link passHref href="/forgotPassword">
                   <Typography component={MuiLink} variant="body2" sx={{ color: 'primary.main' }}>
                     비밀번호를 잊으셨나요?
                   </Typography>

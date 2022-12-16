@@ -27,7 +27,7 @@ import BoardLeftInHeader from 'src/views/board/BoardLeftInHeader';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** axios
-import axios from 'axios';
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Third Party Imports
@@ -35,11 +35,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 // QnA 입력값 타입 정의
-interface FormData {
+interface QnaInputData {
   title: string;
   content: string;
 }
 
+// input 초기값
 const defaultValues = {
   title: '',
   content: '',
@@ -68,8 +69,8 @@ const QnaAdd = () => {
     resolver: yupResolver(schema),
   });
 
-  // 등록 버튼 클릭 시, api 요청
-  const onSubmit = async (data: FormData) => {
+  // 등록 버튼 클릭 시 호출
+  const onSubmit = async (data: QnaInputData) => {
     const formData = new FormData();
 
     if (files.length !== 0) {
@@ -81,15 +82,16 @@ const QnaAdd = () => {
     formData.append('title', data.title);
     formData.append('content', data.content);
 
-    await registerNotice(formData);
+    await createQna(formData);
   };
 
   // QnA 등록 API 호출
-  const registerNotice = async (formData: any) => {
+  const createQna = async (formData: any) => {
     if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.post(`${apiConfig.apiEndpoint}/qna`, formData, {
+        const req = await Api.post(`${apiConfig.apiEndpoint}/qna`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
         });
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');

@@ -23,24 +23,16 @@ import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 import AddBoardButton from 'src/views/board/add/AddBoardButton';
 
 // ** Types Imports
-import { BoardType } from 'src/types/apps/userTypes';
 import { QnaType } from 'src/types/apps/boardTypes';
-import { role } from '../../notice/list';
+import { PageType } from 'src/utils/pageType';
 
 // ** axios
+import Api from 'src/utils/api';
 import axios from 'axios';
 import apiConfig from 'src/configs/api';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
-
-// 페이지 타입 정의
-interface PageType {
-  currentPage: number;
-  pageSize: number;
-  totalCount: number;
-  totalPage: number;
-}
 
 // 테이블 행 데이터 타입 정의
 interface CellType {
@@ -51,8 +43,8 @@ interface CellType {
 const deleteQna = async (id: number) => {
   if (confirm('삭제 하시겠습니까?')) {
     try {
-      await axios.delete(`${apiConfig.apiEndpoint}/qna/${id}`, {
-        params: { role },
+      await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`, {
+        withCredentials: true,
       });
       console.log('삭제 성공');
       alert('삭제가 완료되었습니다.');
@@ -64,6 +56,7 @@ const deleteQna = async (id: number) => {
   }
 };
 
+// 삭제 버튼 클릭 시 호출
 const handleDeleteQna = (id: number) => {
   deleteQna(id);
 };
@@ -210,8 +203,8 @@ const QnaList = ({ apiData, pageData }: InferGetServerSidePropsType<typeof getSe
           const qna: QnaType = {
             id: pageData.totalCount - pageData.pageSize * (pageData.currentPage - 1) - idx,
             boardId: data.qnaId,
-            isComment: data.isComment,
             title: data.title,
+            isComment: data.isComment,
             viewCnt: data.viewCount,
             regDate: getDateTime(data.regDate),
           };
@@ -278,7 +271,7 @@ const QnaList = ({ apiData, pageData }: InferGetServerSidePropsType<typeof getSe
 };
 
 // QnA 조회 API 호출
-export const getQna = async (pageNo: number, accountId: number) => {
+export const getAllQna = async (pageNo: number, accountId: number) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/qna`, {
@@ -300,9 +293,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
   // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const result = await getQna(Number(pageNo), accountId);
+  const result = await getAllQna(Number(pageNo), accountId);
 
-  const apiData: BoardType = result === undefined ? null : result.items;
+  const apiData: QnaType = result === undefined ? null : result.items;
   const pageData: PageType =
     result === undefined
       ? {

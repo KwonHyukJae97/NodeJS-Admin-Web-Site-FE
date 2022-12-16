@@ -7,9 +7,10 @@ import Button from '@mui/material/Button';
 import { Plus } from 'mdi-material-ui';
 import Typography from '@mui/material/Typography';
 
-type AddBoardButtonProps = {
+// props 타입 정의
+interface AddBoardButtonProps {
   pageName: string;
-};
+}
 
 // 게시글 등록 버튼 UI 컴포넌트
 const AddBoardButton = ({ pageName }: AddBoardButtonProps) => {

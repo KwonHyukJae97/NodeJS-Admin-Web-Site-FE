@@ -17,59 +17,70 @@ import Icon from '@mdi/react';
 // ** Types Imports
 import { CommentType } from 'src/types/apps/boardTypes';
 
-// ** axios Imports
+// ** axios
+import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
-import axios from 'axios';
 
-type CommentCardProps = {
+// props 타입 정의
+interface CommentCardProps {
   qnaId: number;
   commentData: CommentType[];
-};
+}
 
 // Comment 입력값 타입 정의
-interface FormData {
+interface CommentInputType {
   commentId: number;
   comment: string;
   newComment: string;
 }
 
+// input 초기값
 const defaultValues = {
   commentId: 0,
   comment: '',
   newComment: '',
 };
 
-type EditState = {
+// 수정 상태 입력값 타입 정의
+interface EditState {
   commentId: number;
   isEdit: boolean;
-};
+}
 
 // 답변 정보 UI 컴포넌트
 const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
+  // ** State
+  const [editState, setEditState] = useState<EditState>({ commentId: 0, isEdit: false });
+
+  // ** Hooks
   const { control, handleSubmit, setValue } = useForm({
     defaultValues,
     mode: 'onBlur',
   });
 
-  const [editState, setEditState] = useState<EditState>({ commentId: 0, isEdit: false });
-
-  // 등록 버튼 클릭 시, api 요청
-  const onSubmit = async (data: FormData) => {
-    await registerComment(data, qnaId);
+  // 등록 버튼 클릭 시 호출
+  const onSubmit = async (data: CommentInputType) => {
+    await createComment(data, qnaId);
   };
 
-  // 수정 버튼 클릭 시, api 요청
-  const onEdit = async (data: FormData) => {
-    await editComment(data);
+  // 수정 버튼 클릭 시 호출
+  const onEdit = async (data: CommentInputType) => {
+    await updateComment(data);
   };
 
   // Comment 등록 API 호출
-  const registerComment = async (data: FormData, qnaId: number) => {
+  const createComment = async (data: CommentInputType, qnaId: number) => {
     if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.post(`${apiConfig.apiEndpoint}/comment/${qnaId}`, {
-          comment: data.comment,
-        });
+        const req = await Api.post(
+          `${apiConfig.apiEndpoint}/comment/${qnaId}`,
+          {
+            comment: data.comment,
+          },
+          {
+            withCredentials: true,
+          },
+        );
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');
         window.location.reload();
@@ -81,13 +92,18 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
   };
 
   // Comment 수정 API 호출
-  const editComment = async (data: FormData) => {
-    console.log('data', data.newComment);
+  const updateComment = async (data: CommentInputType) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/comment/${data.commentId}`, {
-          comment: data.newComment,
-        });
+        const req = await Api.patch(
+          `${apiConfig.apiEndpoint}/comment/${data.commentId}`,
+          {
+            comment: data.newComment,
+          },
+          {
+            withCredentials: true,
+          },
+        );
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');
         window.location.reload();

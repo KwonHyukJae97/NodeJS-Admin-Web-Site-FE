@@ -27,9 +27,10 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
-import axios from 'axios';
 
+// ** axios
 import apiConfig from 'src/configs/api';
+import Api from 'src/utils/api';
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -74,23 +75,22 @@ const TypographyStyled = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: { marginTop: theme.spacing(8) },
 }));
 
+//비밀번호 찾기 페이지
 const ForgotPassword = () => {
   // ** Hooks
   const theme = useTheme();
   const { settings } = useSettings();
-
   const [email, setEmail] = useState<string>('');
 
   const inputChangeEmail = (e: any) => {
     setEmail(e.target.value);
-    // console.log(email);
   };
 
   //임시 비밀번호 발급 메소드
   const temporaryPassword = async () => {
     if (confirm('회원님의 메일로 임시 비밀번호를 보낼까요?')) {
       try {
-        await axios.post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
+        await Api.post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
           email: email,
         });
         alert(
@@ -99,6 +99,7 @@ const ForgotPassword = () => {
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
+
         return alert(message);
       }
     }
@@ -107,10 +108,6 @@ const ForgotPassword = () => {
   // ** Vars
   const { skin } = settings;
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
-
-  // const handleSubmit = (e: SyntheticEvent) => {
-  //   e.preventDefault();
-  // };
 
   const imageSource =
     skin === 'bordered'
@@ -251,12 +248,8 @@ const ForgotPassword = () => {
             </Box>
             <Box sx={{ mb: 6 }}>
               <TypographyStyled variant="h5">비밀번호를 잊으셨나요?🔒</TypographyStyled>
-              {/* <Typography variant="body2">
-                Enter your email and we&prime;ll send you instructions to reset your password
-              </Typography> */}
               <Typography variant="body2">가입 시 등록한 이메일 주소를 입력해주세요.</Typography>
             </Box>
-            {/* <form noValidate autoComplete="off" onSubmit={handleSubmit}> */}
             <form>
               <TextField
                 autoFocus
