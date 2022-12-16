@@ -4,21 +4,17 @@ import BlankLayout from 'src/@core/layouts/BlankLayout';
 import { useAuth } from 'src/hooks/useAuth';
 import qs from 'qs';
 
+// 리다이렉트 될 화면 (인가코드 받음) / 네이버 로그인 처리 진행시 보여질 화면
 const OauthRedirect = () => {
   const auth = useAuth();
 
   useEffect(() => {
-    console.log('naver 리다이렉트 테스트');
+    //네이버 인가코드
     const code = new URL(window.location.href).searchParams.get('code');
-    console.log('네이버 인가 코드 값', code);
 
     async function getTest() {
-      console.log('get Body Test');
       const body = getBody(code);
-      console.log(body);
-
       const naverAccessToken = await getNaverToken(body);
-      console.log('네이버 토큰 값', naverAccessToken);
 
       if (naverAccessToken) {
         await getNaverUserInfo(naverAccessToken);
@@ -27,9 +23,8 @@ const OauthRedirect = () => {
     getTest();
   });
 
-
+  //토큰 요청에 필요한 body값 정의
   const getBody = (code: any) => {
-
     const body = qs.stringify({
       grant_type: 'authorization_code',
       client_id: `${process.env.NEXT_PUBLIC_NAVER_CLIENT_ID}`,
@@ -47,6 +42,7 @@ const OauthRedirect = () => {
       'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
     };
 
+    //응답받은 인가코드로 네이버 서버에 토큰 발급 요청
     const response = await axios({
       method: 'POST',
       url: '/nid_naver/oauth2.0/token',
@@ -70,6 +66,7 @@ const OauthRedirect = () => {
       Authorization: 'Bearer ' + naverAccessToken,
     };
 
+    // 응답 받은 토큰으로 네이버서버에 유저 정보 요청
     const responseUserInfo = await axios({
       method: 'GET',
       url: '/openapi_naver/v1/nid/me',
@@ -93,33 +90,6 @@ const OauthRedirect = () => {
         naverAccount: responseUserInfo.data.response,
         resNaverAccessToken: naverAccessToken,
       };
-      const {
-        discrimination,
-        nickname,
-        name,
-        snsId,
-        gender,
-        age,
-        birthday,
-        profileImages,
-        birthyear,
-        phone,
-        resNaverAccessToken,
-        naverAccount,
-      } = naverUserInfo;
-
-      console.log('네이버 식별정보', discrimination);
-      console.log('네이버 닉네임', nickname);
-      console.log('네이버 이름', name);
-      console.log('네이버 이메일', snsId);
-      console.log('네이버 성별', gender);
-      console.log('네이버 연령대', age);
-      console.log('네이버 생일', birthday);
-      console.log('네이버 이미지', profileImages);
-      console.log('네이버 출생년도', birthyear);
-      console.log('네이버 전화번호', phone);
-      console.log('네이버 정보 전체', naverAccount);
-      console.log('네이버 토큰', resNaverAccessToken);
 
       auth.naverLogin(naverUserInfo);
     }

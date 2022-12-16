@@ -44,80 +44,37 @@ import DialogContentText from '@mui/material/DialogContentText';
 import CustomAvatar from 'src/@core/components/mui/avatar';
 
 // ** Types
-import { ThemeColor } from 'src/@core/layouts/types';
 import { UsersType } from 'src/types/apps/userTypes';
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials';
-import axios from 'axios';
 
 import apiConfig from 'src/configs/api';
 import Button from '@mui/material/Button';
 import Api from 'src/utils/api';
 
+//수정 데이터 타입 정의
 interface Props {
   data: UsersType;
 }
 
-// interface ColorsType {
-//   [key: string]: ThemeColor;
-// }
-
-// ** Styled <sup> component
-// const Sup = styled('sup')(({ theme }) => ({
-//   top: '0.2rem',
-//   left: '-0.6rem',
-//   position: 'absolute',
-//   color: theme.palette.primary.main,
-// }));
-
-// ** Styled <sub> component
-// const Sub = styled('sub')({
-//   fontWeight: 400,
-//   fontSize: '.875rem',
-//   lineHeight: '1.25rem',
-//   alignSelf: 'flex-end',
-// });
-
-// const roleColors: ColorsType = {
-//   admin: 'error',
-//   editor: 'info',
-//   author: 'warning',
-//   maintainer: 'success',
-//   subscriber: 'primary',
-// };
-
-// const statusColors: ColorsType = {
-//   active: 'success',
-//   pending: 'warning',
-//   inactive: 'secondary',
-// };
-
-//우리형식에 맞게 수정하여 나타내기
-
+//내정보 페이지
 const UserViewLeft = ({ data }: Props) => {
-  const [email, setEmail] = useState<string>(data.email);
-  const [phone, setPhone] = useState<string>(data.phone);
-  const [nickname, setNickname] = useState<string>(data.nickname);
-
-  // const [email, setEmail] = useState<string>(data.email);
-  // const [phone, setPhone] = useState<string>(data.phone);
-  // const [nickname, setNickname] = useState<string>(data.nickname);
-
   // ** States
-  const [openEditEmail, setOpenEditEmail] = useState<boolean>(false);
-  const [openEditPhone, setOpenEditPhone] = useState<boolean>(false);
-  const [openEditNickname, setOpenEditNickname] = useState<boolean>(false);
-
-  // const [openPlans, setOpenPlans] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>(data.email),
+    [phone, setPhone] = useState<string>(data.phone),
+    [nickname, setNickname] = useState<string>(data.nickname),
+    [openEditEmail, setOpenEditEmail] = useState<boolean>(false),
+    [openEditPhone, setOpenEditPhone] = useState<boolean>(false),
+    [openEditNickname, setOpenEditNickname] = useState<boolean>(false);
 
   // Handle Edit dialog
-  const handleEditClickOpenEmail = () => setOpenEditEmail(true);
-  const handleEditClickOpenPhone = () => setOpenEditPhone(true);
-  const handleEditClickOpenNickname = () => setOpenEditNickname(true);
-  const handleEditClickCloseEmail = () => setOpenEditEmail(false);
-  const handleEditClickClosePhone = () => setOpenEditPhone(false);
-  const handleEditClickCloseNickname = () => setOpenEditNickname(false);
+  const handleEditClickOpenEmail = () => setOpenEditEmail(true),
+    handleEditClickOpenPhone = () => setOpenEditPhone(true),
+    handleEditClickOpenNickname = () => setOpenEditNickname(true),
+    handleEditClickCloseEmail = () => setOpenEditEmail(false),
+    handleEditClickClosePhone = () => setOpenEditPhone(false),
+    handleEditClickCloseNickname = () => setOpenEditNickname(false);
 
   //이메일 수정 메소드
   const editEmail = async () => {
@@ -131,6 +88,7 @@ const UserViewLeft = ({ data }: Props) => {
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
+
         return alert(message);
       }
     }
@@ -140,7 +98,7 @@ const UserViewLeft = ({ data }: Props) => {
   const editPhone = async () => {
     if (confirm('연락처를 수정하시겠습니까?')) {
       try {
-        await axios.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+        await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
           phone: phone,
         });
         location.reload();
@@ -148,6 +106,7 @@ const UserViewLeft = ({ data }: Props) => {
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
+
         return alert(message);
       }
     }
@@ -157,7 +116,7 @@ const UserViewLeft = ({ data }: Props) => {
   const editNickname = async () => {
     if (confirm('닉네임을 수정하시겠습니까?')) {
       try {
-        await axios.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+        await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
           nickname: nickname,
         });
         location.reload();
@@ -165,39 +124,11 @@ const UserViewLeft = ({ data }: Props) => {
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
+
         return alert(message);
       }
     }
   };
-
-  // const inputChangeEmail = (e: any) => {
-  //   setEmail(e.target.value);
-  //   data.email = e.target.value;
-
-  //   // console.log(email);
-  // };
-  // const inputChangePhone = (e: any) => {
-  //   setPhone(e.target.value);
-  //   data.phone = e.target.value;
-
-  //   // console.log(email);
-  // };
-  // const inputChangeNickname = (e: any) => {
-  //   setNickname(e.target.value);
-  //   data.nickname = e.target.value;
-
-  //   // console.log(email);
-  // };
-
-  // const inputChange = (e) => {
-  //   // setEmail(e.target.value);
-  //   data.email = e.target.value;
-  //   // console.log(email);
-  // };
-
-  // Handle Upgrade Plan dialog
-  // const handlePlansClickOpen = () => setOpenPlans(true);
-  // const handlePlansClose = () => setOpenPlans(false);
 
   const renderUserAvatar = () => {
     if (data) {
@@ -205,7 +136,6 @@ const UserViewLeft = ({ data }: Props) => {
         return (
           <CustomAvatar
             alt="User Image"
-            // src={data.avatar}
             variant="rounded"
             sx={{ width: 120, height: 120, mb: 4 }}
           />
@@ -215,7 +145,6 @@ const UserViewLeft = ({ data }: Props) => {
           <CustomAvatar
             skin="light"
             variant="rounded"
-            // color={data.avatarColor as ThemeColor}
             sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
           >
             {getInitials(data.nickname)}
@@ -432,6 +361,7 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
+
                         // defaultValue={data.email}
                         // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}

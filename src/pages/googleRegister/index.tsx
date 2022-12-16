@@ -44,30 +44,6 @@ import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
 import { useRouter } from 'next/router';
 import { FormLabel, Radio, RadioGroup } from '@mui/material';
 
-// const defaultValues = {
-//   //카카오에서 가져옴
-//   name: '',
-//   phone: '',
-//   //카카오에서 가져옴
-//   nickname: '',
-//   birth: '',
-//   //카카오에서 가져옴
-//   gender: '',
-//   //카카오에서 가져옴
-//   snsId: '',
-//   terms: false,
-//   snsType: '',
-//   snsToken: '',
-//   division: '',
-// };
-
-// interface FormData {
-//   id: string
-//   terms: boolean
-//   username: string
-//   password: string
-// }
-
 // ** Styled Components
 const RegisterIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   padding: theme.spacing(20),
@@ -119,7 +95,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   },
 }));
 
-//카카오 2차 정보 추가
+//구글 2차 정보 입력값 타입 정의
 interface FormData {
   name: string;
   phone: string;
@@ -133,21 +109,15 @@ interface FormData {
   redio: string;
   companyCode: number;
   businessNumber: string;
-
-  // division: boolean;
 }
 
-// const GoogleRegister = (params: any) => {
+//구글 2차가입정보 입력페이지
 const GoogleRegister = () => {
-  // ** States
-  // const [showPassword, setShowPassword] = useState<boolean>(false);
-
   const router = useRouter();
-
-  //   const { name, nickname, gender, snsId } = router.query;
 
   const { snsId, snsToken } = router.query;
 
+  //input 초기값
   const defaultValues = {
     name: '',
     phone: '',
@@ -155,8 +125,6 @@ const GoogleRegister = () => {
     birth: '',
     gender: '',
     snsId: snsId,
-
-    // terms: false,
     snsToken: snsToken,
     companyName: '',
     businessNumber: '',
@@ -166,10 +134,7 @@ const GoogleRegister = () => {
 
   // ** Hooks
   const theme = useTheme();
-
   const auth = useAuth();
-
-  // const { register } = useAuth()
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -184,8 +149,6 @@ const GoogleRegister = () => {
     snsId: yup.string().min(1).required(),
     companyName: yup.string().min(1).required(),
     companyCode: yup.number().min(1).required(),
-
-    // terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
   });
 
   const {
@@ -199,7 +162,7 @@ const GoogleRegister = () => {
     resolver: yupResolver(schema),
   });
 
-  //화면 넘기기까지 완료 -> 데이터 입력후 가입 버튼 누르면 동작을 안하는데 동작하게끔 해야함. 동작만 하면 처리 과정 콘솔찍고 확인하기
+  //2차 가입 정보 입력 데이터 넘기기
   const onSubmit = (data: FormData) => {
     const {
       name,
@@ -403,8 +366,6 @@ const GoogleRegister = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.snsId)}
-
-                      // placeholder="user"
                     />
                   )}
                 />
@@ -426,8 +387,6 @@ const GoogleRegister = () => {
                       onBlur={onBlur}
                       label="이름"
                       onChange={onChange}
-
-                      // placeholder="01012345678"
                       error={Boolean(errors.name)}
                     />
                   )}
@@ -472,8 +431,6 @@ const GoogleRegister = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.nickname)}
-
-                      // placeholder="user"
                     />
                   )}
                 />
@@ -508,29 +465,6 @@ const GoogleRegister = () => {
                   )}
                 />
               </FormControl>
-
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="gender"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      label="성별"
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      error={Boolean(errors.gender)}
-                      // placeholder="user"
-                    />
-                  )}
-                />
-                {errors.gender && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.gender.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name="birth"
@@ -627,145 +561,6 @@ const GoogleRegister = () => {
                   )}
                 />
               </FormControl>
-
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="companyCode"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      label="회원사코드"
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      error={Boolean(errors.companyCode)}
-                      placeholder="ex) 기업일 경우 1, 기관일 경우 2"
-                    />
-                  )}
-                />
-                {errors.companyCode && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.companyCode.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="snsType"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      onBlur={onBlur}
-                      label="snsType"
-                      onChange={onChange}
-                      // placeholder="01012345678"
-                      error={Boolean(errors.snsType)}
-                    />
-                  )}
-                />
-                {errors.snsType && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.snsType.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="snsToken"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      onBlur={onBlur}
-                      label="SnsToken"
-                      onChange={onChange}
-                      // placeholder="01012345678"
-                      error={Boolean(errors.snsToken)}
-                    />
-                  )}
-                />
-                {errors.snsToken && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.snsToken.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
-              {/* <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name="division"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      onBlur={onBlur}
-                      label="division"
-                      onChange={onChange}
-                      // placeholder="01012345678"
-                      error={Boolean(errors.division)}
-                    />
-                  )}
-                />
-                {errors.division && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.division.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
-              {/* <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
-                <Controller
-                  name="terms"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => {
-                    return (
-                      <FormControlLabel
-                        sx={{
-                          ...(errors.terms ? { color: 'error.main' } : null),
-                          '& .MuiFormControlLabel-label': { fontSize: '0.875rem' },
-                        }}
-                        control={
-                          <Checkbox
-                            checked={value}
-                            onChange={onChange}
-                            sx={errors.terms ? { color: 'error.main' } : null}
-                          />
-                        }
-                        label={
-                          <Fragment>
-                            <Typography
-                              variant="body2"
-                              component="span"
-                              sx={{ color: errors.terms ? 'error.main' : '' }}
-                            >
-                              I agree to{' '}
-                            </Typography>
-                            <Link href="/" passHref>
-                              <Typography
-                                variant="body2"
-                                component={MuiLink}
-                                sx={{ color: 'primary.main' }}
-                                onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                              >
-                                privacy policy & terms
-                              </Typography>
-                            </Link>
-                          </Fragment>
-                        }
-                      />
-                    );
-                  }}
-                />
-                {errors.terms && (
-                  <FormHelperText sx={{ mt: 0, color: 'error.main' }}>
-                    {errors.terms.message}
-                  </FormHelperText>
-                )}
-              </FormControl> */}
               <Button fullWidth size="large" type="submit" variant="contained" sx={{ mb: 7 }}>
                 Sign up
               </Button>

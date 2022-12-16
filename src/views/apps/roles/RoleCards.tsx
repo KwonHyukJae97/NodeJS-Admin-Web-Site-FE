@@ -38,10 +38,10 @@ import { Controller, useForm } from 'react-hook-form';
 import apiConfig from 'src/configs/api';
 
 // ** axios Imports
-import axios from 'axios';
+import Api from 'src/utils/api';
 
 // 역할 리스트 타입 정의
-interface CardDataType {
+interface RoleType {
   roleId: number;
   title: string;
   avatars: string[];
@@ -60,8 +60,19 @@ interface permissionType {
 }
 const arr: permissionType[] = [];
 
+// 권한 체크박스 컴포넌트 타입 정의
+interface FormGrantLabelType {
+  label: string;
+  value: string;
+  isChecked: boolean;
+  isDisabled: boolean;
+}
+
 // 권한에 따른 체크 박스 컴포넌트
-const FormGrantLabel = ({ label, value, isChecked, isDisabled }: any) => {
+const FormGrantLabel = (props: FormGrantLabelType) => {
+  // ** Props
+  const { label, value, isChecked, isDisabled } = props;
+
   return (
     <FormControlLabel
       control={
@@ -117,18 +128,18 @@ const RolesCards = () => {
   const handleClickOpen = (action: string, roleId: number) => {
     setOpen(true);
     if (action === '수정') {
-      getPermissionData();
-      getRoleView(roleId, '');
+      getDetailPermission();
+      getDetailRole(roleId, '');
     }
     if (action === '보기') {
-      getRoleView(roleId, '');
+      getDetailRole(roleId, '');
     }
     if (action === '등록') {
-      getPermissionData();
+      getDetailPermission();
     }
     if (action === '사용자보기') {
       setGetAdminInfo('Y');
-      getRoleView(roleId, 'Y');
+      getDetailRole(roleId, 'Y');
     }
   };
 
@@ -211,7 +222,7 @@ const RolesCards = () => {
     } else {
       if (dialogTitle == '등록') {
         getRoleName = data.roleName;
-        registerRole(roleData);
+        createRole(roleData);
       } else if (dialogTitle == '수정') {
         updateRole(roleData, roleId);
       }
@@ -219,10 +230,42 @@ const RolesCards = () => {
     handleClose();
   };
 
-  // 화면 이름(권한) 데이터 조회 API호출
-  const getPermissionData = async () => {
+  // 역할 리스트 조회 API호출
+  const getAllRole = async () => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/permission`);
+      const res = await Api.get(`${apiConfig.apiEndpoint}/role`);
+      const roleMap = new Map<number, RoleType>();
+
+      res.data.forEach((role: { roleName: string; adminCount: number; roleId: any }) => {
+        if (!roleMap.has(role.roleId)) {
+          const card: RoleType = {
+            roleId: role.roleId,
+            title: role.roleName,
+            avatars: ['3.png'],
+            totalUsers: role.adminCount,
+          };
+          roleMap.set(role.roleId, card);
+          setTitle(role.roleName);
+        } else {
+          const card = roleMap.get(role.roleId)!;
+          card.avatars.push('4.png');
+          card.totalUsers++;
+        }
+      });
+      const cardDataList: RoleType[] = [];
+      roleMap.forEach((value) => {
+        cardDataList.push(value);
+      });
+      setCardData(cardDataList);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 화면 이름(권한) 데이터 조회 API호출
+  const getDetailPermission = async () => {
+    try {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/permission`);
       const permissionMap = new Map<number, permissionType>();
       res.data.forEach((permission: { displayName: string; permissionId: number }) => {
         if (!permissionMap.has(permission.permissionId)) {
@@ -249,11 +292,11 @@ const RolesCards = () => {
   };
 
   // 역할 등록 API호출
-  const registerRole = async (roleData: any) => {
+  const createRole = async (roleData: any) => {
     setErrMessage('');
     if (confirm('등록 하시겠습니까?')) {
       try {
-        const req = await axios.post(`${apiConfig.apiEndpoint}/role`, {
+        const req = await Api.post(`${apiConfig.apiEndpoint}/role`, {
           roleName: roleData.roleName,
           roleDto: roleData.roleDto,
 
@@ -273,7 +316,7 @@ const RolesCards = () => {
   const updateRole = async (roleData: any, roleId: number) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await axios.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, roleData);
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, roleData);
         alert('수정이 완료 되었습니다.');
         location.reload();
       } catch (err: any) {
@@ -285,10 +328,10 @@ const RolesCards = () => {
 
   // 역할 삭제 API호출
   // To Do : 추후 권한 처리 적용 후 삭제 권한자만 보일 수 있도록 수정해야함
-  const handleDeleteClick = async (roleId: number) => {
+  const deleteRole = async (roleId: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        await axios.delete(`${apiConfig.apiEndpoint}/role/${roleId}`);
+        await Api.delete(`${apiConfig.apiEndpoint}/role/${roleId}`);
         alert('삭제가 완료 되었습니다.');
         location.reload();
       } catch (err) {
@@ -298,9 +341,9 @@ const RolesCards = () => {
   };
 
   // 역할 상세 정보 조회 API호출
-  const getRoleView = async (roleId: number, getInfo: string) => {
+  const getDetailRole = async (roleId: number, getInfo: string) => {
     try {
-      const res = await axios.get(`${apiConfig.apiEndpoint}/role/${roleId}`, {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/role/${roleId}`, {
         params: { getInfo: getInfo },
       });
       setViewData(res.data);
@@ -322,41 +365,13 @@ const RolesCards = () => {
     return filterLength > 0;
   };
 
-  //역할 리스트 조회 API호출
+  // Role List 불러오기
   useEffect(() => {
-    axios
-      .get(`${apiConfig.apiEndpoint}/role`)
-      .then((res) => {
-        const roleMap = new Map<number, CardDataType>();
-        res.data.forEach((role: { roleName: string; adminCount: number; roleId: any }) => {
-          if (!roleMap.has(role.roleId)) {
-            const card: CardDataType = {
-              roleId: role.roleId,
-              title: role.roleName,
-              avatars: ['3.png'],
-              totalUsers: role.adminCount,
-            };
-            roleMap.set(role.roleId, card);
-            setTitle(role.roleName);
-          } else {
-            const card = roleMap.get(role.roleId)!;
-            card.avatars.push('4.png');
-            card.totalUsers++;
-          }
-        });
-
-        const cardDataList: CardDataType[] = [];
-        roleMap.forEach((value) => {
-          cardDataList.push(value);
-        });
-        setCardData(cardDataList);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    getAllRole();
   }, []);
 
   // useState 비동기 문제 해결을 위한 useEffect 사용
+
   useEffect(() => {}, [roleId]);
   useEffect(() => {}, [title]);
   useEffect(() => {}, [viewData]);
@@ -423,7 +438,7 @@ const RolesCards = () => {
               <IconButton
                 size="small"
                 onClick={() => {
-                  handleDeleteClick(item.roleId);
+                  deleteRole(item.roleId);
                 }}
               >
                 <DeleteOutline />
