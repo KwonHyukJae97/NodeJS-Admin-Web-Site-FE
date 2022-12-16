@@ -9,19 +9,22 @@ import TextField from '@mui/material/TextField';
 import { auto } from '@popperjs/core';
 import Magnify from 'mdi-material-ui/Magnify';
 import { useRouter } from 'next/router';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 
+// props 타입 정의
 interface TableSearchHeaderProps {
   searchWord: string;
   setSearchWord: (value: string) => void;
   pageNo: number;
   setPageNo: (value: number) => void;
+  searchKey?: string | null;
+  pageName: string;
 }
 
 // company 테이블 헤더 컴포넌트 (검색창)
 const TableSearchHeader = (props: TableSearchHeaderProps) => {
   // ** Props
-  const { searchWord, setSearchWord, pageNo, setPageNo } = props;
+  const { searchWord, setSearchWord, pageNo, setPageNo, pageName } = props;
 
   // ** Hooks
   const router = useRouter();
@@ -32,11 +35,16 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
   };
 
   // 검색 버튼 클릭 시, searchAction 상태 변경하는 함수
-  // 해당 함수를 탈 때마다 company/list의 useEffect 실행됨
   const handleSearchKeyword = () => {
     setPageNo(1);
-    router.push(`/company/list/?pageNo=${pageNo}&searchWord=${searchWord}`);
+    router.push(`/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}`);
   };
+
+  // 검색 후 페이지 번호 상태가 바뀔 때마다 요청
+  useEffect(() => {
+    router.push(`/${pageName}/list/?pageNo=${pageNo}&searchWord=${searchWord}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageNo]);
 
   return (
     <Box
@@ -60,18 +68,13 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
             width: 360,
             '& .MuiInputBase-root': { borderTopRightRadius: 0, borderBottomRightRadius: 0 },
           }}
-          placeholder="검색어를 입력해주세요."
+          placeholder="회원사명을 입력해주세요."
           onChange={(e) => handleChangeKeyword(e)}
         />
         <Button
           sx={{
             mb: 2,
             padding: '0.55rem 0.2rem 0.55rem 0.8rem',
-
-            // pt: 2.5,
-            // pb: 2,
-            // pl: 4,
-            // pr: 1,
             border: '1px solid lightGrey',
             borderRadius: 1,
             borderTopLeftRadius: 0,

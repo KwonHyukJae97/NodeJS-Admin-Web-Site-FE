@@ -27,8 +27,10 @@ import { useSettings } from 'src/@core/hooks/useSettings';
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2';
-import axios from 'axios';
+
+// ** axios
 import apiConfig from 'src/configs/api';
+import Api from 'src/utils/api';
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -73,6 +75,7 @@ const TypographyStyled = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: { marginTop: theme.spacing(8) },
 }));
 
+//아이디 찾기 페이지
 const ForgotId = () => {
   // ** Hooks
   const theme = useTheme();
@@ -92,7 +95,7 @@ const ForgotId = () => {
   const forgotId = async () => {
     if (confirm('아이디를 찾으시겠습니까?')) {
       try {
-        const resData = axios.post(`${apiConfig.apiEndpoint}/auth/find_id`, {
+        const resData = await Api.post(`${apiConfig.apiEndpoint}/auth/find_id`, {
           name: name,
           phone: phone,
         });
@@ -110,10 +113,6 @@ const ForgotId = () => {
   // ** Vars
   const { skin } = settings;
   const hidden = useMediaQuery(theme.breakpoints.down('md'));
-
-  //   const handleSubmit = (e: SyntheticEvent) => {
-  //     e.preventDefault();
-  //   };
 
   const imageSource =
     skin === 'bordered'
@@ -255,11 +254,7 @@ const ForgotId = () => {
             <Box sx={{ mb: 6 }}>
               <TypographyStyled variant="h5">아이디를 잊으셨나요?</TypographyStyled>
               <Typography variant="body2">가입 시 등록한 이름과 연락처를 입력하세요</Typography>
-              {/* <Typography variant="body2">
-                Enter your email and we&prime;ll send you instructions to reset your password
-              </Typography> */}
             </Box>
-            {/* <form noValidate autoComplete="off" onSubmit={handleSubmit}> */}
             <form>
               <TextField
                 autoFocus
@@ -276,9 +271,6 @@ const ForgotId = () => {
                 onChange={inputChangePhone}
                 sx={{ display: 'flex', mb: 4 }}
               />
-              {/* <Button fullWidth size="large" type="submit" variant="contained" sx={{ mb: 5.25 }}>
-                찾기
-              </Button> */}
               <Button
                 fullWidth
                 size="large"
