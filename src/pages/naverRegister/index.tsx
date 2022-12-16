@@ -402,7 +402,7 @@ const NaverRegister = () => {
                       onBlur={onBlur}
                       label="전화번호"
                       onChange={onChange}
-                      placeholder="ex) 01012345678"
+                      placeholder="ex) 010-1234-5678"
                       error={Boolean(errors.phone)}
                     />
                   )}

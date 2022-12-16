@@ -31,7 +31,6 @@ const Home = () => {
     if (auth.user) {
       router.replace('/dashboards/crm');
       console.log('auth.user 정보', auth.user);
-      console.log('auth.user 토큰정보', auth.accessToken?.accessToken);
     } else {
       router.replace('/login');
     }

@@ -9,7 +9,9 @@ export type UserLayoutType = {
 
 export type UsersType = {
   accountId: number;
-  id: number;
+
+  // id: number;
+  id: string;
   role: string;
   email: string;
   status: string;
