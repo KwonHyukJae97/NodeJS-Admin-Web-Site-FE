@@ -1,4 +1,4 @@
-import View from 'src/views/apps/company/view/view';
+import View from 'src/views/apps/company/view/companyViewPage';
 import { useRouter } from 'next/router';
 
 const CompanyView = () => {
