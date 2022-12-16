@@ -83,6 +83,7 @@ const ForgotPassword = () => {
 
   const inputChangeEmail = (e: any) => {
     setEmail(e.target.value);
+
     // console.log(email);
   };
 
@@ -99,6 +100,7 @@ const ForgotPassword = () => {
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
+
         return alert(message);
       }
     }

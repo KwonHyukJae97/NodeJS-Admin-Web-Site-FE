@@ -101,6 +101,7 @@ const ForgotId = () => {
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
+
         return alert(message);
       }
     }
