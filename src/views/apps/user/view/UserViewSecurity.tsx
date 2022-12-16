@@ -65,6 +65,7 @@ const UserViewSecurity = () => {
   const resData = JSON.parse(userData);
   const [values, setValues] = useState<State>({
     newPassword: '',
+    
     showNewPassword: false,
     confirmNewPassword: '',
     showConfirmNewPassword: false,

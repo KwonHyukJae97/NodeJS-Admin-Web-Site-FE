@@ -52,6 +52,7 @@ import { getInitials } from 'src/@core/utils/get-initials';
 import apiConfig from 'src/configs/api';
 import Button from '@mui/material/Button';
 import Api from 'src/utils/api';
+import moment from 'moment';
 
 //수정 데이터 타입 정의
 interface Props {
@@ -75,6 +76,18 @@ const UserViewLeft = ({ data }: Props) => {
     handleEditClickCloseEmail = () => setOpenEditEmail(false),
     handleEditClickClosePhone = () => setOpenEditPhone(false),
     handleEditClickCloseNickname = () => setOpenEditNickname(false);
+
+  const birthDate = moment(data.birth).format('YYYY-MM-DD');
+  const phoneNumber = data.phone.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+  if (data.id == null) {
+    data.id = '---정보 없음---';
+  }
+  if (data.email == null) {
+    data.email = '---정보 없음---';
+  }
+  if (data.snsId == null) {
+    data.snsId = '---정보 없음---';
+  }
 
   //이메일 수정 메소드
   const editEmail = async () => {
@@ -232,14 +245,30 @@ const UserViewLeft = ({ data }: Props) => {
                     이&nbsp;&nbsp;메&nbsp;&nbsp;일 :
                   </Typography>
                   <Typography variant="body2">{data.email}</Typography>
-                  <Button onClick={handleEditClickOpenEmail}>수정</Button>
+                  &emsp;
+                  <Button
+                    onClick={handleEditClickOpenEmail}
+                    size={'small'}
+                    color={'primary'}
+                    variant={'outlined'}
+                  >
+                    수정
+                  </Button>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
                     연&nbsp;&nbsp;락&nbsp;&nbsp;처 :
                   </Typography>
-                  <Typography variant="body2">{data.phone}</Typography>
-                  <Button onClick={handleEditClickOpenPhone}>수정</Button>
+                  <Typography variant="body2">{phoneNumber}</Typography>
+                  &emsp;
+                  <Button
+                    onClick={handleEditClickOpenPhone}
+                    size={'small'}
+                    color={'primary'}
+                    variant={'outlined'}
+                  >
+                    수정
+                  </Button>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
@@ -247,13 +276,20 @@ const UserViewLeft = ({ data }: Props) => {
                   </Typography>
                   <Typography variant="body2">{data.nickname}</Typography>
                   &emsp;
-                  <Button onClick={handleEditClickOpenNickname}>수정</Button>
+                  <Button
+                    onClick={handleEditClickOpenNickname}
+                    size={'small'}
+                    color={'primary'}
+                    variant={'outlined'}
+                  >
+                    수정
+                  </Button>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
                     생 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일 :
                   </Typography>
-                  <Typography variant="body2">{data.birth}</Typography>
+                  <Typography variant="body2">{birthDate}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
@@ -361,7 +397,6 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
-
                         // defaultValue={data.email}
                         // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}

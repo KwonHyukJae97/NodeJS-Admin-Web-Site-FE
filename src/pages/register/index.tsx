@@ -147,7 +147,7 @@ const Register = () => {
   // ** Vars
   const { skin } = settings;
   const schema = yup.object().shape({
-    id: yup.string().min(8).required(),
+    id: yup.string().min(5).required(),
     password: yup.string().min(8).required(),
     confirmPassword: yup.string().min(8).required(),
     name: yup.string().min(3).required(),
@@ -481,7 +481,6 @@ const Register = () => {
                           <IconButton
                             edge="end"
                             onMouseDown={(e) => e.preventDefault()}
-
                             // onClick={() => setShowPassword(!showPassword)}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           >
@@ -555,7 +554,7 @@ const Register = () => {
                       onBlur={onBlur}
                       label="전화번호"
                       onChange={onChange}
-                      placeholder="ex) 01012345678"
+                      placeholder="ex) 010-1234-5678"
                       error={Boolean(errors.phone)}
                     />
                   )}
@@ -745,7 +744,6 @@ const Register = () => {
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
                   src="/images/avatars/kakao.png"
-
                   // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                   width="190"
                 />

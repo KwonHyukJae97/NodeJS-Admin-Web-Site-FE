@@ -1,8 +1,8 @@
 import React, { ReactNode, useEffect } from 'react';
+import axios from 'axios';
 import { useAuth } from 'src/hooks/useAuth';
 import BlankLayout from 'src/@core/layouts/BlankLayout';
 import qs from 'qs';
-import Api from 'src/utils/api';
 
 // 리다이렉트 될 화면 (인가코드 받음) / 로그인 처리 진행시 보여질 화면
 const OauthRedirect = () => {
@@ -41,7 +41,7 @@ const OauthRedirect = () => {
     };
 
     //응답받은 인가코드로 카카오서버에 토큰 발급 요청
-    const response = await Api({
+    const response = await axios({
       method: 'POST',
       url: 'https://kauth.kakao.com/oauth/token',
       timeout: 30000,
@@ -65,7 +65,7 @@ const OauthRedirect = () => {
     };
 
     // 응답 받은 토큰으로 카카오서버에 유저 정보 요청
-    const responseUserInfo = await Api({
+    const responseUserInfo = await axios({
       method: 'GET',
       url: 'https://kapi.kakao.com/v2/user/me',
       timeout: 30000,

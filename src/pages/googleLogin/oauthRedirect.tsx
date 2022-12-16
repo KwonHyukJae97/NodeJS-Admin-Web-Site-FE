@@ -1,8 +1,8 @@
+import axios from 'axios';
 import { ReactNode, useEffect } from 'react';
 import BlankLayout from 'src/@core/layouts/BlankLayout';
 import { useAuth } from 'src/hooks/useAuth';
 import qs from 'qs';
-import Api from 'src/utils/api';
 
 // 리다이렉트 될 화면 (인가코드 받음) / 구글 로그인 처리 진행시 보여질 화면
 const OauthRedirect = () => {
@@ -43,7 +43,7 @@ const OauthRedirect = () => {
     };
 
     //응답받은 인가코드로 구글서버에 토큰 요청
-    const response = await Api({
+    const response = await axios({
       method: 'POST',
       url: 'https://oauth2.googleapis.com/token',
       timeout: 30000,
@@ -67,7 +67,7 @@ const OauthRedirect = () => {
     };
 
     //응답받은 토큰으로 구글 서버에 유저 정보 요청
-    const responseUserInfo = await Api({
+    const responseUserInfo = await axios({
       method: 'POST',
       url: 'https://www.googleapis.com/oauth2/v3/userinfo',
       headers: headerUserInfo,
