@@ -29,7 +29,8 @@ import ChartDonut from 'mdi-material-ui/ChartDonut'
 import CartOutline from 'mdi-material-ui/CartOutline'
 import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
 import AccountGroup from 'mdi-material-ui/AccountGroup'
-import CalendarBlank from 'mdi-material-ui/CalendarBlank'
+
+// import CalendarBlank from 'mdi-material-ui/CalendarBlank'
 import CalendarRange from 'mdi-material-ui/CalendarRange'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import ViewGridOutline from 'mdi-material-ui/ViewGridOutline'
@@ -111,11 +112,11 @@ const defaultSuggestionsData: DefaultSuggestionsType[] = [
   {
     category: 'Apps & Pages',
     suggestions: [
-      {
-        suggestion: 'Calendar',
-        link: '/apps/calendar/',
-        icon: <CalendarBlank fontSize='small' sx={{ mr: 2.5, color: 'text.primary' }} />
-      },
+      // {
+      //   suggestion: 'Calendar',
+      //   link: '/apps/calendar/',
+      //   icon: <CalendarBlank fontSize='small' sx={{ mr: 2.5, color: 'text.primary' }} />
+      // },
       {
         suggestion: 'Invoice List',
         link: '/apps/invoice/list/',

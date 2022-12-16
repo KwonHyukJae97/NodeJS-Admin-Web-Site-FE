@@ -1,58 +1,59 @@
 // ** MUI Imports
-import { styled } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import Grid, { GridProps } from '@mui/material/Grid'
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import Grid, { GridProps } from '@mui/material/Grid';
 
 // ** Custom Components Imports
-import CardSnippet from 'src/@core/components/card-snippet'
+import CardSnippet from 'src/@core/components/card-snippet';
 
 // ** Demo Components Imports
-import PaginationSizes from 'src/views/components/pagination/PaginationSizes'
-import PaginationSimple from 'src/views/components/pagination/PaginationSimple'
-import PaginationRanges from 'src/views/components/pagination/PaginationRanges'
-import PaginationRounded from 'src/views/components/pagination/PaginationRounded'
-import PaginationButtons from 'src/views/components/pagination/PaginationButtons'
-import PaginationOutlined from 'src/views/components/pagination/PaginationOutlined'
-import PaginationDisabled from 'src/views/components/pagination/PaginationDisabled'
-import PaginationControlled from 'src/views/components/pagination/PaginationControlled'
+import PaginationSizes from 'src/views/components/pagination/PaginationSizes';
+
+// import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
+import PaginationRanges from 'src/views/components/pagination/PaginationRanges';
+import PaginationRounded from 'src/views/components/pagination/PaginationRounded';
+import PaginationButtons from 'src/views/components/pagination/PaginationButtons';
+import PaginationOutlined from 'src/views/components/pagination/PaginationOutlined';
+import PaginationDisabled from 'src/views/components/pagination/PaginationDisabled';
+import PaginationControlled from 'src/views/components/pagination/PaginationControlled';
 
 // ** Source code imports
-import * as source from 'src/views/components/pagination/PaginationSourceCode'
+import * as source from 'src/views/components/pagination/PaginationSourceCode';
 
 // Styled component for Grid container
 const GridContainer = styled(Grid)<GridProps>(({ theme }) => ({
   '& .demo-space-y > *': {
     marginBottom: theme.spacing(5.2),
     '&:last-of-type': {
-      marginBottom: 0
-    }
-  }
-}))
+      marginBottom: 0,
+    },
+  },
+}));
 
 const Pagination = () => {
   return (
-    <GridContainer container spacing={6} className='match-height'>
+    <GridContainer container spacing={6} className="match-height">
       <Grid item xs={12} md={6}>
         <CardSnippet
-          title='Simple Pagination'
+          title="Simple Pagination"
           code={{
             tsx: source.PaginationSimpleTSXCode,
-            jsx: source.PaginationSimpleJSXCode
+            jsx: source.PaginationSimpleJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
-            Use the following props with <code>Pagination</code> component: <code>count</code> prop for number of page
-            items and <code>color</code> prop for different colored pagination.
+            Use the following props with <code>Pagination</code> component: <code>count</code> prop
+            for number of page items and <code>color</code> prop for different colored pagination.
           </Typography>
-          <PaginationSimple />
+          {/*<PaginationSimple />*/}
         </CardSnippet>
       </Grid>
       <Grid item xs={12} md={6}>
         <CardSnippet
-          title='Outlined Pagination'
+          title="Outlined Pagination"
           code={{
             tsx: source.PaginationOutlinedTSXCode,
-            jsx: source.PaginationOutlinedJSXCode
+            jsx: source.PaginationOutlinedJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
@@ -63,24 +64,25 @@ const Pagination = () => {
       </Grid>
       <Grid item xs={12} md={6}>
         <CardSnippet
-          title='Disabled Pagination'
+          title="Disabled Pagination"
           code={{
             tsx: source.PaginationDisabledTSXCode,
-            jsx: source.PaginationDisabledJSXCode
+            jsx: source.PaginationDisabledJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
-            Use <code>disabled</code> prop with <code>Pagination</code> component to disable the whole pagination.
+            Use <code>disabled</code> prop with <code>Pagination</code> component to disable the
+            whole pagination.
           </Typography>
           <PaginationDisabled />
         </CardSnippet>
       </Grid>
       <Grid item xs={12} md={6}>
         <CardSnippet
-          title='Rounded Pagination'
+          title="Rounded Pagination"
           code={{
             tsx: source.PaginationRoundedTSXCode,
-            jsx: source.PaginationRoundedJSXCode
+            jsx: source.PaginationRoundedJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
@@ -91,10 +93,10 @@ const Pagination = () => {
       </Grid>
       <Grid item xs={12} md={6}>
         <CardSnippet
-          title='Sizes'
+          title="Sizes"
           code={{
             tsx: source.PaginationSizesTSXCode,
-            jsx: source.PaginationSizesJSXCode
+            jsx: source.PaginationSizesJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
@@ -105,26 +107,26 @@ const Pagination = () => {
       </Grid>
       <Grid item xs={12} md={6}>
         <CardSnippet
-          title='Buttons'
+          title="Buttons"
           code={{
             tsx: source.PaginationButtonsTSXCode,
-            jsx: source.PaginationButtonsJSXCode
+            jsx: source.PaginationButtonsJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
-            Use <code>showFirstButton</code> & <code>showLastButton</code> props to show first-page and last-page
-            buttons and <code>hidePrevButton</code> & <code>hideNextButton</code> props to hide previous-page and
-            next-page buttons.
+            Use <code>showFirstButton</code> & <code>showLastButton</code> props to show first-page
+            and last-page buttons and <code>hidePrevButton</code> & <code>hideNextButton</code>{' '}
+            props to hide previous-page and next-page buttons.
           </Typography>
           <PaginationButtons />
         </CardSnippet>
       </Grid>
       <Grid item xs={12}>
         <CardSnippet
-          title='Controlled Pagination'
+          title="Controlled Pagination"
           code={{
             tsx: source.PaginationControlledTSXCode,
-            jsx: source.PaginationControlledJSXCode
+            jsx: source.PaginationControlledJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
@@ -135,21 +137,22 @@ const Pagination = () => {
       </Grid>
       <Grid item xs={12}>
         <CardSnippet
-          title='Pagination Ranges'
+          title="Pagination Ranges"
           code={{
             tsx: source.PaginationRangesTSXCode,
-            jsx: source.PaginationRangesJSXCode
+            jsx: source.PaginationRangesJSXCode,
           }}
         >
           <Typography sx={{ mb: 4 }}>
-            You can specify how many digits to display either side of current page with the <code>siblingRange</code>{' '}
-            prop, and adjacent to the start and end page number with the <code>boundaryRange</code> prop.
+            You can specify how many digits to display either side of current page with the{' '}
+            <code>siblingRange</code> prop, and adjacent to the start and end page number with the{' '}
+            <code>boundaryRange</code> prop.
           </Typography>
           <PaginationRanges />
         </CardSnippet>
       </Grid>
     </GridContainer>
-  )
-}
+  );
+};
 
-export default Pagination
+export default Pagination;

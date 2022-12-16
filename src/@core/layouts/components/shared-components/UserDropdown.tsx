@@ -1,36 +1,39 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { useState, SyntheticEvent, Fragment } from 'react';
 
 // ** Next Import
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Menu from '@mui/material/Menu'
-import Badge from '@mui/material/Badge'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box';
+import Menu from '@mui/material/Menu';
+import Badge from '@mui/material/Badge';
+import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 // ** Icons Imports
-import CogOutline from 'mdi-material-ui/CogOutline'
-import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
-import EmailOutline from 'mdi-material-ui/EmailOutline'
-import LogoutVariant from 'mdi-material-ui/LogoutVariant'
-import AccountOutline from 'mdi-material-ui/AccountOutline'
-import MessageOutline from 'mdi-material-ui/MessageOutline'
-import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
+import CogOutline from 'mdi-material-ui/CogOutline';
+import CurrencyUsd from 'mdi-material-ui/CurrencyUsd';
+import EmailOutline from 'mdi-material-ui/EmailOutline';
+import LogoutVariant from 'mdi-material-ui/LogoutVariant';
+import AccountOutline from 'mdi-material-ui/AccountOutline';
+import MessageOutline from 'mdi-material-ui/MessageOutline';
+import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline';
 
 // ** Context
-import { useAuth } from 'src/hooks/useAuth'
+import { useAuth } from 'src/hooks/useAuth';
 
 // ** Type Imports
-import { Settings } from 'src/@core/context/settingsContext'
+import { Settings } from 'src/@core/context/settingsContext';
+
+// ** Config
+import authConfig from 'src/configs/auth';
 
 interface Props {
-  settings: Settings
+  settings: Settings;
 }
 
 // ** Styled Components
@@ -39,33 +42,44 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
   height: 8,
   borderRadius: '50%',
   backgroundColor: theme.palette.success.main,
-  boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
-}))
+  boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+}));
 
 const UserDropdown = (props: Props) => {
+  //로그인 한 사용자 이름 가져오기
+  const userData = window.localStorage.getItem(authConfig.storageUserDataKeyName)!;
+  const resData = JSON.parse(userData);
+
   // ** Props
-  const { settings } = props
+  const { settings } = props;
 
   // ** States
-  const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
   // ** Hooks
-  const router = useRouter()
-  const { logout } = useAuth()
+  const router = useRouter();
+  const { logout } = useAuth();
 
   // ** Vars
-  const { direction } = settings
+  const { direction } = settings;
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleDropdownClose = (url?: string) => {
     if (url) {
-      router.push(url)
+      // router.push(url);
+      router.replace({
+        pathname: url,
+        query: {
+          accountId: resData.accountId,
+        },
+      });
+      console.log('urlurlurl', url);
     }
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const styles = {
     py: 2,
@@ -77,32 +91,32 @@ const UserDropdown = (props: Props) => {
     textDecoration: 'none',
     '& svg': {
       fontSize: '1.375rem',
-      color: 'text.secondary'
-    }
-  }
+      color: 'text.secondary',
+    },
+  };
 
   const handleLogout = () => {
-    logout()
-    handleDropdownClose()
-  }
+    logout();
+    handleDropdownClose();
+  };
 
   return (
     <Fragment>
       <Badge
-        overlap='circular'
+        overlap="circular"
         onClick={handleDropdownOpen}
         sx={{ ml: 2, cursor: 'pointer' }}
         badgeContent={<BadgeContentSpan />}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right'
+          horizontal: 'right',
         }}
       >
         <Avatar
-          alt='John Doe'
+          alt="John Doe"
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-          src='/images/avatars/1.png'
+          src="/images/avatars/1.png"
         />
       </Badge>
       <Menu
@@ -116,25 +130,34 @@ const UserDropdown = (props: Props) => {
         <Box sx={{ pt: 2, pb: 3, px: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Badge
-              overlap='circular'
+              overlap="circular"
               badgeContent={<BadgeContentSpan />}
               anchorOrigin={{
                 vertical: 'bottom',
-                horizontal: 'right'
+                horizontal: 'right',
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar
+                alt="John Doe"
+                src="/images/avatars/1.png"
+                sx={{ width: '2.5rem', height: '2.5rem' }}
+              />
             </Badge>
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
-              <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
+              {/* 프로필 이름 위치 */}
+              {/* <Typography sx={{ fontWeight: 600 }}>John Doe</Typography> */}
+              <Typography sx={{ fontWeight: 600 }}>{resData.name}</Typography>
+              <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
                 Admin
               </Typography>
             </Box>
           </Box>
         </Box>
         <Divider sx={{ mt: 0, mb: 1 }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/apps/user/view/12')}>
+        <MenuItem
+          sx={{ p: 0 }}
+          onClick={() => handleDropdownClose(`/apps/user/view/${resData.accountId}`)}
+        >
           <Box sx={styles}>
             <AccountOutline sx={{ mr: 2 }} />
             Profile
@@ -178,7 +201,7 @@ const UserDropdown = (props: Props) => {
         </MenuItem>
       </Menu>
     </Fragment>
-  )
-}
+  );
+};
 
-export default UserDropdown
+export default UserDropdown;

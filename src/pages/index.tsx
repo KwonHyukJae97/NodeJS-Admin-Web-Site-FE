@@ -1,39 +1,42 @@
 // ** React Imports
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 // ** Next Imports
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 // ** Spinner Import
-import Spinner from 'src/@core/components/spinner'
+import Spinner from 'src/@core/components/spinner';
 
 // ** Hook Imports
-import { useAuth } from 'src/hooks/useAuth'
+import { useAuth } from 'src/hooks/useAuth';
 
 /**
  *  Set Home URL based on User Roles
  */
-export const getHomeRoute = (role: string) => {
-  if (role === 'client') return '/acl'
-  else return '/dashboards/crm'
-}
+// export const getHomeRoute = () => {
+//   // if (role === 'client') return '/acl'
+//   // else return '/dashboards/crm'
+//   return '/dashboards/crm'
+//
 
+// 홈 화면 실행
 const Home = () => {
   // ** Hooks
-  const auth = useAuth()
-  const router = useRouter()
+
+  const auth = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    if (auth.user && auth.user.role) {
-      const homeRoute = getHomeRoute(auth.user.role)
-
-      // Redirect user to Home URL
-      router.replace(homeRoute)
+    // 사용자 정보가 있을 경우, 페이지 이동 처리
+    if (auth.user) {
+      router.replace('/dashboards/crm');
+      console.log('auth.user 정보', auth.user);
+    } else {
+      router.replace('/login');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
-  return <Spinner />
-}
+  return <Spinner />;
+};
 
-export default Home
+export default Home;

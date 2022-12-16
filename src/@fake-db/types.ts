@@ -28,6 +28,25 @@ export type FaqType = {
   qAndA: FaqQAndAType[]
 }
 
+// FAQ 카테고리 타입 정의
+export type FaqCategory = {
+  id: string
+
+  // icon: string
+  categoryName: string
+  isUse: boolean
+  faq: Faq[]
+}
+
+// FAQ 게시글 타입 정의
+export type Faq = {
+  id: string
+  title: string
+  content: string
+}
+
+
+
 // Types for Knowledge Base
 export type KnowledgeBaseData = {
   desc: string

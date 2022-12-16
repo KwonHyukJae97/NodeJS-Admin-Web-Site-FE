@@ -4,6 +4,8 @@ import mock from 'src/@fake-db/mock'
 // ** Types
 import { FaqType } from 'src/@fake-db/types'
 
+// FAQ Get 요청에 대한 API
+// 응답 시, FaqType의 리스트 반환
 const data: FaqType[] = [
   {
     id: 'common',

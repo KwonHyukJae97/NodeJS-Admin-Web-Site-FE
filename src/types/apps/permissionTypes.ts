@@ -1,6 +1,6 @@
 export type PermissionRowType = {
-  id: number
-  name: string
-  createdDate: string
-  assignedTo: string[]
-}
+  permissionId: number;
+  menuName: string;
+  regDate: string;
+  assignedTo: string[];
+};

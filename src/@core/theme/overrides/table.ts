@@ -7,7 +7,8 @@ const Table = (theme: Theme) => {
       styleOverrides: {
         root: {
           boxShadow: theme.shadows[0],
-          borderTopColor: theme.palette.divider
+          borderTopColor: theme.palette.divider,
+          borderTop: `1.5px solid ${theme.palette.divider}`,
         }
       }
     },
@@ -16,10 +17,14 @@ const Table = (theme: Theme) => {
         root: {
           textTransform: 'uppercase',
           '& .MuiTableCell-head': {
+            paddingLeft: '0px',
             fontWeight: 500,
-            fontSize: '0.75rem',
-            lineHeight: '1.959rem',
-            letterSpacing: '0.17px'
+            fontSize: '1rem',
+            lineHeight: '1.35rem',
+            letterSpacing: '0.17px',
+
+            // backgroundColor: 'red',
+            textAlign: 'center'
           }
         }
       }
@@ -28,8 +33,10 @@ const Table = (theme: Theme) => {
       styleOverrides: {
         root: {
           '& .MuiTableCell-body': {
+            // backgroundColor: 'orange',
+            paddingLeft: '0px',
             fontWeight: 400,
-            fontSize: '0.875rem',
+            fontSize: '1rem',
             lineHeight: '1.358rem',
             letterSpacing: '0.15px',
             '&:not(.MuiTableCell-sizeSmall):not(.MuiTableCell-paddingCheckbox):not(.MuiTableCell-paddingNone)': {
@@ -44,10 +51,12 @@ const Table = (theme: Theme) => {
       styleOverrides: {
         root: {
           '& .MuiTableCell-head:first-child, & .MuiTableCell-root:first-child ': {
-            paddingLeft: theme.spacing(5)
+            paddingLeft: theme.spacing(10),
+
+            // paddingRight: theme.spacing(15)
           },
           '& .MuiTableCell-head:last-child, & .MuiTableCell-root:last-child': {
-            paddingRight: theme.spacing(5)
+            paddingRight: theme.spacing(15)
           }
         }
       }
@@ -55,14 +64,15 @@ const Table = (theme: Theme) => {
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottom: `1px solid ${theme.palette.divider}`,
+          // padding: '16px 16px 0 16px',
+          borderBottom: `1.5px solid ${theme.palette.divider}`,
           '& .MuiButton-root': {
             textTransform: 'uppercase',
             color: theme.palette.text.secondary
           }
         },
         stickyHeader: {
-          backgroundColor: theme.palette.customColors.tableHeaderBg
+          backgroundColor: theme.palette.customColors.tableHeaderBg,
         }
       }
     },
