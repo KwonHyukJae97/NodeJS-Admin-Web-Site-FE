@@ -17,7 +17,6 @@ import AttachedFileList from './AttachedFileList';
 import BoardViewInfo from '../BoardViewInfo';
 
 // ** Types Imports
-import { role } from 'src/pages/notice/list';
 import { NoticeType } from 'src/types/apps/boardTypes';
 
 // ** axios
@@ -63,9 +62,7 @@ const NoticeView = ({ id }: NoticeViewProps) => {
   // 공지사항 상세조회 API 호출
   const getDetailNotice = async (id: number) => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
-        data: { role },
-      });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/notice/${id}`);
 
       const noticeData = {
         boardId: res.data.notice.boardId,
