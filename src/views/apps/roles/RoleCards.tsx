@@ -36,6 +36,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 // ** Config
 import apiConfig from 'src/configs/api';
+import authConfig from 'src/configs/auth';
 
 // ** axios Imports
 import Api from 'src/utils/api';
@@ -116,6 +117,10 @@ const RolesCards = () => {
     { value: '3', type: '삭제' },
   ];
 
+  //로그인 한 사용자 아이디 가져오기
+  const userData = window.localStorage.getItem(authConfig.storageUserDataKeyName)!;
+  const resData = JSON.parse(userData);
+
   // ** Hooks
   const {
     control,
@@ -176,6 +181,7 @@ const RolesCards = () => {
     }
     const roleData: any = {
       roleName: getRoleName,
+      userId: resData.id,
       roleDto: [],
     };
 
@@ -299,6 +305,7 @@ const RolesCards = () => {
         const req = await Api.post(`${apiConfig.apiEndpoint}/role`, {
           roleName: roleData.roleName,
           roleDto: roleData.roleDto,
+          regBy: roleData.userId,
 
           // TO DO : companyId 필터링적용 후 수정 필요
           companyId: 3,
@@ -316,7 +323,11 @@ const RolesCards = () => {
   const updateRole = async (roleData: any, roleId: number) => {
     if (confirm('수정 하시겠습니까?')) {
       try {
-        const req = await Api.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, roleData);
+        const req = await Api.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, {
+          roleName: roleData.roleName,
+          roleDto: roleData.roleDto,
+          updateBy: roleData.userId,
+        });
         alert('수정이 완료 되었습니다.');
         location.reload();
       } catch (err: any) {
