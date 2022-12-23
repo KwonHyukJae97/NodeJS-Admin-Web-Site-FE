@@ -22,12 +22,12 @@ import TabsCustomButton from 'src/views/board/list/TabsCustomButton';
 
 // ** Types Imports
 import { CategoryType, FaqType } from 'src/types/apps/boardTypes';
-import { role } from '../../notice/list';
 import { PageType } from 'src/utils/pageType';
 
 // ** axios
-import axios from 'axios';
+import { ApiSSR } from 'src/utils/api';
 import apiConfig from 'src/configs/api';
+import axios from 'axios';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
@@ -149,15 +149,18 @@ const FaqList = ({
         })
       : null;
 
-  const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
-    const category: CategoryType = {
-      categoryId: data.categoryId,
-      categoryName: data.categoryName,
-      isUse: data.isUse,
-    };
+  const categoryData: CategoryType[] =
+    categoryApiData !== null
+      ? categoryApiData.map((data: any) => {
+          const category: CategoryType = {
+            categoryId: data.categoryId,
+            categoryName: data.categoryName,
+            isUse: data.isUse,
+          };
 
-    return category;
-  });
+          return category;
+        })
+      : null;
 
   // 게시글이 없을 경우 처리하는 컴포넌트
   const renderNoResult = (
@@ -171,7 +174,7 @@ const FaqList = ({
       }}
     >
       <AlertCircleOutline sx={{ mr: 2 }} />
-      <Typography variant="h6">해당 검색에 대한 게시글이 없습니다.</Typography>
+      <Typography variant="h6">관련 게시글이 없습니다.</Typography>
     </Box>
   );
 
@@ -236,8 +239,9 @@ const FaqList = ({
 export const getAllFaq = async (pageNo: number, searchKey: string, searchWord: string) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/faq`, {
-      data: { role, searchKey, searchWord, pageNo: page, pageSize: 10, totalData: false },
+    const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/faq`, {
+      data: { searchKey, searchWord, pageNo: page, pageSize: 10, totalData: false },
+      withCredentials: true,
     });
 
     return res.data;
@@ -249,8 +253,8 @@ export const getAllFaq = async (pageNo: number, searchKey: string, searchWord: s
 // Category 조회 API 호출
 export const getAllCategory = async () => {
   try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/faq/category`, {
-      params: { role },
+    const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/faq/category`, {
+      withCredentials: true,
     });
 
     return res.data;
@@ -260,11 +264,13 @@ export const getAllCategory = async () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // console.log('ctx', context.query);
+  const cookie = context.req.headers.cookie;
+
+  // @ts-ignore
+  axios.defaults.headers.Cookie = cookie;
+
   const { pageNo, searchKey, searchWord } = context.query;
 
-  // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
-  // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
   const faqResult = await getAllFaq(Number(pageNo), searchKey as string, searchWord as string);
   const categoryResult = await getAllCategory();
 
@@ -283,7 +289,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           totalCount: faqResult.totalCount,
           totalPage: faqResult.totalPage,
         };
-  const categoryApiData: CategoryType[] = categoryResult;
+  const categoryApiData: CategoryType[] = categoryResult === undefined ? null : categoryResult;
 
   return {
     props: {

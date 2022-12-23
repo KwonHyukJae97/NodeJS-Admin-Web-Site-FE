@@ -1,11 +1,10 @@
 // ** React Imports
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 // ** Next Import
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
 import dynamic from 'next/dynamic';
 
 // ** MUI Imports
@@ -37,7 +36,6 @@ import { CategoryType } from 'src/types/apps/boardTypes';
 // ** axios
 import Api from 'src/utils/api';
 import apiConfig from 'src/configs/api';
-import { getAllCategory } from '../list';
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -54,7 +52,6 @@ const EditorControlled = dynamic(
 interface FaqInputType {
   title: string;
   categoryName: string;
-  role: string;
 }
 
 // input 초기값
@@ -64,25 +61,16 @@ const defaultValues = {
 };
 
 // FAQ 등록 페이지
-const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const FaqAdd = () => {
   // ** State
-  const [files, setFiles] = useState<File[]>([]),
+  const [categoryData, setCategoryData] = useState<CategoryType[]>([]),
+    [files, setFiles] = useState<File[]>([]),
     [htmlStr, setHtmlStr] = useState<string>('');
 
   // ** Vars
   const schema = yup.object().shape({
     title: yup.string().required(),
     categoryName: yup.string().required(),
-  });
-
-  const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
-    const category: CategoryType = {
-      categoryId: data.categoryId,
-      categoryName: data.categoryName,
-      isUse: data.isUse,
-    };
-
-    return category;
   });
 
   // ** Hooks
@@ -97,6 +85,32 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    getAllCategory();
+  }, []);
+
+  // Category 조회 API 호출
+  const getAllCategory = async () => {
+    try {
+      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/category`);
+
+      const categoryApiData = res.data;
+
+      categoryApiData.map((data: any) => {
+        const category: CategoryType = {
+          categoryId: data.categoryId,
+          categoryName: data.categoryName,
+          isUse: data.isUse,
+        };
+
+        return category;
+      });
+      setCategoryData(categoryApiData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // 등록 버튼 클릭 시 호출
   const onSubmit = async (data: FaqInputType) => {
     const formData = new FormData();
@@ -107,7 +121,6 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
       });
     }
 
-    formData.append('role', '본사 관리자');
     formData.append('title', data.title);
     formData.append('content', htmlStr);
     formData.append('categoryName', data.categoryName);
@@ -121,7 +134,6 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
       try {
         const req = await Api.post(`${apiConfig.apiEndpoint}/faq`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
         });
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');
@@ -167,13 +179,15 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
                       <MenuItem disabled value="">
                         분류 선택
                       </MenuItem>
-                      {categoryData.map((category) => {
-                        return (
-                          <MenuItem value={category.categoryName} key={category.categoryId}>
-                            {category.categoryName}
-                          </MenuItem>
-                        );
-                      })}
+                      {categoryData !== null
+                        ? categoryData.map((category) => {
+                            return (
+                              <MenuItem value={category.categoryName} key={category.categoryId}>
+                                {category.categoryName}
+                              </MenuItem>
+                            );
+                          })
+                        : null}
                     </Select>
                   )}
                 />
@@ -259,20 +273,6 @@ const FaqAdd = ({ categoryApiData }: InferGetServerSidePropsType<typeof getServe
       </Grid>
     </Grid>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
-  // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const result = await getAllCategory();
-
-  const categoryApiData: CategoryType[] = result;
-
-  return {
-    props: {
-      categoryApiData,
-    },
-  };
 };
 
 export default FaqAdd;
