@@ -65,7 +65,7 @@ const UserViewSecurity = () => {
   const resData = JSON.parse(userData);
   const [values, setValues] = useState<State>({
     newPassword: '',
-    
+
     showNewPassword: false,
     confirmNewPassword: '',
     showConfirmNewPassword: false,
@@ -73,16 +73,33 @@ const UserViewSecurity = () => {
 
   //비밀번호 수정 메소드
   const editPassword = async () => {
-    if (password !== confirmPassword) {
-      return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
-    }
     if (confirm('비밀번호를 수정하시겠습니까?')) {
       try {
-        await Api.patch(`${apiConfig.apiEndpoint}/auth/update_password/${resData.accountId}`, {
-          password: password,
-        });
-        location.reload();
-        alert('비밀번호를 수정하였습니다.');
+        if (password !== confirmPassword) {
+          return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
+        }
+
+        const pw = password;
+        const clsl = pw.search(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,20}/,
+        );
+        if (pw.length < 8 || pw.length > 16) {
+          alert('8자리 ~ 16자리 이내로 입력해주세요.');
+          return false;
+        } else if (pw.search(/\s/) != -1) {
+          alert('비밀번호는 공백 없이 입력해주세요.');
+          return false;
+        } else if (clsl < 0) {
+          alert('영문 대, 소문자, 숫자, 특수문자를 혼합하여 입력해주세요.');
+          return false;
+        } else {
+          await Api.patch(`${apiConfig.apiEndpoint}/auth/update_password/${resData.accountId}`, {
+            password: password,
+            confirmPassword: confirmPassword,
+          });
+          location.reload();
+          alert('비밀번호를 수정하였습니다.');
+        }
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;

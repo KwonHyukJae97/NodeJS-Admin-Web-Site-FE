@@ -90,12 +90,21 @@ const ForgotPassword = () => {
   const temporaryPassword = async () => {
     if (confirm('회원님의 메일로 임시 비밀번호를 보낼까요?')) {
       try {
-        await Api.post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
-          email: email,
-        });
-        alert(
-          '메일 전송 완료했습니다. 임시 비밀번호를 이용하여 로그인 후 비밀번호 수정을 권장 드립니다.',
+        const em = email;
+        const emailTest = em.search(
+          /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
         );
+        if (emailTest < 0) {
+          alert('이메일 형식에 맞게 다시 입력해주세요.');
+          return false;
+        } else {
+          await Api.post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {
+            email: email,
+          });
+          alert(
+            '메일 전송 완료했습니다. 임시 비밀번호를 이용하여 로그인 후 비밀번호 수정을 권장 드립니다.',
+          );
+        }
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;

@@ -93,16 +93,26 @@ const UserViewLeft = ({ data }: Props) => {
   const editEmail = async () => {
     if (confirm('이메일을 수정하시겠습니까?')) {
       try {
-        await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
-          email: email,
-        });
-        location.reload();
-        alert('이메일 수정이 완료되었습니다.');
+        //이메일형식 검사
+        const em = email;
+        const emailTest = em.search(
+          /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+        );
+        if (emailTest < 0) {
+          alert('이메일 형식에 맞게 다시 입력해주세요.');
+          return false;
+        } else {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+            email: email,
+          });
+          location.reload();
+          alert('이메일 수정이 완료되었습니다.');
+        }
       } catch (err: any) {
         console.log(err);
-        const message = err.response.data.message;
-
-        return alert(message);
+        if (err.response.data.message == 'email must be an email') {
+          return alert('이메일 형식에 맞게 다시 입력해주세요.');
+        }
       }
     }
   };
@@ -111,11 +121,19 @@ const UserViewLeft = ({ data }: Props) => {
   const editPhone = async () => {
     if (confirm('연락처를 수정하시겠습니까?')) {
       try {
-        await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
-          phone: phone,
-        });
-        location.reload();
-        alert('연락처 수정이 완료되었습니다.');
+        //전화번호 형식 검사
+        const phn = phone;
+        const phnTest = phn.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
+        if (phnTest < 0) {
+          alert('전화번호 형식을 확인하여 다시 입력해주세요.');
+          return false;
+        } else {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+            phone: phone,
+          });
+          location.reload();
+          alert('연락처 수정이 완료되었습니다.');
+        }
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
@@ -129,11 +147,18 @@ const UserViewLeft = ({ data }: Props) => {
   const editNickname = async () => {
     if (confirm('닉네임을 수정하시겠습니까?')) {
       try {
-        await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
-          nickname: nickname,
-        });
-        location.reload();
-        alert('닉네임 수정이 완료되었습니다.');
+        const nick = nickname;
+        const nickTest = nick.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
+        if (nickTest < 0) {
+          alert('한글, 영문, 숫자만 입력해주세요.');
+          return false;
+        } else {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+            nickname: nickname,
+          });
+          location.reload();
+          alert('닉네임 수정이 완료되었습니다.');
+        }
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;

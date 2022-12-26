@@ -138,12 +138,14 @@ const NaverRegister = () => {
   const { skin } = settings;
   const schema = yup.object().shape({
     name: yup.string().min(1).required(),
-    phone: yup.string().min(1).required(),
+    phone: yup.string().min(13).required(),
     nickname: yup.string().min(1).required(),
-    birth: yup.string().min(1).required(),
     snsId: yup.string().min(1).required(),
-    snsType: yup.string().min(1).required(),
-    companyCode: yup.number().min(1).required(),
+    birth: yup.string().min(10).required(),
+    gender: yup.string().required(),
+    companyName: yup.string().min(1).required(),
+    companyCode: yup.number().required(),
+    businessNumber: yup.string().min(12).max(12).required(),
   });
 
   const {
