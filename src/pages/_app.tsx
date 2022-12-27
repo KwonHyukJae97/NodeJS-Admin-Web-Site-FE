@@ -173,7 +173,6 @@ App.getInitialProps = async (context: any) => {
 
   // SSR 환경일 때만 쿠키 넣어주기
   if (ctx.req && cookie) {
-    // @ts-ignore
     axios.defaults.headers.Cookie = cookie;
   }
 
