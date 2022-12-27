@@ -62,6 +62,9 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 // ** Global css styles
 import '../../styles/globals.css';
 
+// ** axios
+import axios from 'axios';
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage;
@@ -158,6 +161,28 @@ const App = (props: ExtendedAppProps) => {
       </CacheProvider>
     </Provider>
   );
+};
+
+// 백서버에서 받아온 토큰 쿠키 전역 세팅
+App.getInitialProps = async (context: any) => {
+  const { ctx, Component } = context;
+  let pageProps = {};
+
+  // SSR 환경일 때 쿠키 불러오기
+  const cookie = ctx.req ? ctx.req.headers.cookie : '';
+
+  // SSR 환경일 때만 쿠키 넣어주기
+  if (ctx.req && cookie) {
+    // @ts-ignore
+    axios.defaults.headers.Cookie = cookie;
+  }
+
+  // SSR가 있는 컴포넌트에 해당 설정 반영 후 props로 전달
+  if (Component.getServerSideProps) {
+    pageProps = await Component.getServerSideProps(ctx);
+  }
+
+  return { pageProps };
 };
 
 export default App;
