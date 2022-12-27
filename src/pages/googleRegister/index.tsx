@@ -140,16 +140,6 @@ const GoogleRegister = () => {
 
   // ** Vars
   const { skin } = settings;
-  // const schema = yup.object().shape({
-  //   name: yup.string().min(1).required(),
-  //   phone: yup.string().min(1).required(),
-  //   nickname: yup.string().min(1).required(),
-  //   birth: yup.string().min(1).required(),
-  //   gender: yup.number().min(1).required(),
-  //   snsId: yup.string().min(1).required(),
-  //   companyName: yup.string().min(1).required(),
-  //   companyCode: yup.number().min(1).required(),
-  // });
 
   const schema = yup.object().shape({
     name: yup.string().min(1).required(),

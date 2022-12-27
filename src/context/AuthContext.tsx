@@ -28,7 +28,6 @@ import {
   TokenDataType,
   ExpireAtDataType,
 } from './types';
-import axios from 'axios';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -346,7 +345,7 @@ const AuthProvider = ({ children }: Props) => {
         const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
           withCredentials: true,
         });
-        console.log('네이버 데이터ㅏ', res);
+        console.log('네이버 데이터', res);
         const returnUrl = router.query.returnUrl;
 
         const user: UserDataType = {
@@ -432,63 +431,71 @@ const AuthProvider = ({ children }: Props) => {
   // 회원가입 요청 시 실행
   const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
     console.log('companyName 추가', params);
-
-    try {
-      if (params.password !== params.confirmPassword) {
-        return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
-      }
-
-      //회원가입 데이터 검증
-      const pw = params.password;
-      const clsl = pw.search(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,20}/,
-      );
-      const phone = params.phone;
-      const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
-      const birth = params.birth;
-      const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
-      const businessNumber = params.businessNumber;
-      const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
-      const nickname = params.nickname;
-      const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
-
-      if (pw.length < 8 || pw.length > 16) {
-        alert('8자리 ~ 16자리 이내로 입력해주세요.');
-        return false;
-      } else if (pw.search(/\s/) != -1) {
-        alert('비밀번호는 공백 없이 입력해주세요.');
-        return false;
-      } else if (clsl < 0) {
-        alert('영문 대, 소문자, 숫자, 특수문자를 혼합하여 입력해주세요.');
-        return false;
-      } else if (phn < 0) {
-        alert('전화번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bir < 0) {
-        alert('생년월일 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bus < 0) {
-        alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (nick < 0) {
-        alert('한글, 영문, 숫자만 입력해주세요.');
-        return false;
-      } else {
-        const res = await Api.post(authConfig.registerEndpoint, params);
-
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error);
-        } else {
-          alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
-          router.push('/login');
+    if (confirm('회원가입을 하시겠습니까?')) {
+      try {
+        if (params.password !== params.confirmPassword) {
+          return alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요!');
         }
-      }
-    } catch (err: any) {
-      console.log(errorCallback);
-      console.log(err.response.data.message);
-      const message = err.response.data.message;
 
-      return alert(message);
+        //회원가입 데이터 검증
+        const pw = params.password;
+        const clsl = pw.search(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,20}/,
+        );
+        const phone = params.phone;
+        const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
+        const birth = params.birth;
+        const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
+        const businessNumber = params.businessNumber;
+        const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
+        const nickname = params.nickname;
+        const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
+
+        if (pw.length < 8 || pw.length > 16) {
+          alert('8자리 ~ 16자리 이내로 입력해주세요.');
+
+          return false;
+        } else if (pw.search(/\s/) != -1) {
+          alert('비밀번호는 공백 없이 입력해주세요.');
+
+          return false;
+        } else if (clsl < 0) {
+          alert('영문 대, 소문자, 숫자, 특수문자를 혼합하여 입력해주세요.');
+
+          return false;
+        } else if (phn < 0) {
+          alert('전화번호 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (bir < 0) {
+          alert('생년월일 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (bus < 0) {
+          alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (nick < 0) {
+          alert('한글, 영문, 숫자만 입력해주세요.');
+
+          return false;
+        } else {
+          const res = await Api.post(authConfig.registerEndpoint, params);
+
+          if (res.data.error) {
+            if (errorCallback) errorCallback(res.data.error);
+          } else {
+            alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
+            router.push('/login');
+          }
+        }
+      } catch (err: any) {
+        console.log(errorCallback);
+        console.log(err.response.data.message);
+        const message = err.response.data.message;
+
+        return alert(message);
+      }
     }
   };
 
@@ -497,99 +504,104 @@ const AuthProvider = ({ children }: Props) => {
     params: KakaoRegisterParams,
     errorCallback?: ErrCallbackType,
   ) => {
-    try {
-      //회원가입 데이터 검증
-      const phone = params.phone;
-      const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
-      const birth = params.birth;
-      const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
-      const businessNumber = params.businessNumber;
-      const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
-      const nickname = params.nickname;
-      const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
+    if (confirm('회원가입을 하시겠습니까?')) {
+      try {
+        //회원가입 데이터 검증
+        const phone = params.phone;
+        const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
+        const birth = params.birth;
+        const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
+        const businessNumber = params.businessNumber;
+        const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
+        const nickname = params.nickname;
+        const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
 
-      if (phn < 0) {
-        alert('전화번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bir < 0) {
-        alert('생년월일 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bus < 0) {
-        alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (nick < 0) {
-        alert('한글, 영문, 숫자만 입력해주세요.');
-        return false;
-      } else {
-        await Api.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params, {
-          withCredentials: true,
-        });
-        const responseData = await Api.post(
-          `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
-          params,
-          {
-            withCredentials: true,
-          },
-        );
+        if (phn < 0) {
+          alert('전화번호 형식을 확인하여 다시 입력해주세요.');
 
-        if (responseData.data.loginSuccess == true) {
-          const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          return false;
+        } else if (bir < 0) {
+          alert('생년월일 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (bus < 0) {
+          alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (nick < 0) {
+          alert('한글, 영문, 숫자만 입력해주세요.');
+
+          return false;
+        } else {
+          await Api.post(`${apiConfig.apiEndpoint}/auth/register/kakao/admin`, params, {
             withCredentials: true,
           });
-
-          const returnUrl = router.query.returnUrl;
-
-          const user: UserDataType = {
-            accountId: res.data.accountId,
-            id: res.data.id,
-            snsId: res.data.snsId,
-            name: res.data.name,
-            email: res.data.email,
-            nickname: res.data.nickname,
-            avatar: null,
-          };
-
-          const token: TokenDataType = {
-            accessToken: res.data.accessToken,
-          };
-          const expireAt: ExpireAtDataType = {
-            expireAt: res.data.expireAt,
-          };
-
-          setUser(user);
-          await window.localStorage.setItem(
-            authConfig.storageUserDataKeyName,
-            JSON.stringify(user),
+          const responseData = await Api.post(
+            `${apiConfig.apiEndpoint}/auth/login/admin/kakao`,
+            params,
+            {
+              withCredentials: true,
+            },
           );
 
-          //accessToken 로컬스토리지에 저장
-          setAccessToken(token);
-          await window.localStorage.setItem(
-            authConfig.storageTokenDataKeyName,
-            JSON.stringify(token),
-          );
+          if (responseData.data.loginSuccess == true) {
+            const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
+              withCredentials: true,
+            });
 
-          //expireAt 토큰 만료시간 로컬스토리지에 저장
-          setExpireAt(expireAt);
-          await window.localStorage.setItem(
-            authConfig.storageExpireAtDataKeyName,
-            JSON.stringify(expireAt),
-          );
+            const returnUrl = router.query.returnUrl;
 
-          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+            const user: UserDataType = {
+              accountId: res.data.authInfo.accountId,
+              id: res.data.authInfo.id,
+              snsId: res.data.authInfo.snsId,
+              name: res.data.authInfo.name,
+              email: res.data.authInfo.email,
+              nickname: res.data.authInfo.nickname,
+              avatar: null,
+            };
 
-          await router.replace(redirectURL as string);
-          location.reload();
+            const token: TokenDataType = {
+              accessToken: res.data.accessToken,
+            };
+            const expireAt: ExpireAtDataType = {
+              expireAt: res.data.expireAt,
+            };
+
+            setUser(user);
+            await window.localStorage.setItem(
+              authConfig.storageUserDataKeyName,
+              JSON.stringify(user),
+            );
+
+            //accessToken 로컬스토리지에 저장
+            setAccessToken(token);
+            await window.localStorage.setItem(
+              authConfig.storageTokenDataKeyName,
+              JSON.stringify(token),
+            );
+
+            //expireAt 토큰 만료시간 로컬스토리지에 저장
+            setExpireAt(expireAt);
+            await window.localStorage.setItem(
+              authConfig.storageExpireAtDataKeyName,
+              JSON.stringify(expireAt),
+            );
+
+            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+            await router.replace(redirectURL as string);
+          }
         }
+      } catch (err: any) {
+        console.log(errorCallback);
+
+        // console.log(err);
+        console.log(err.response.data.message);
+        const message = err.response.data.message;
+
+        return alert(message);
       }
-    } catch (err: any) {
-      console.log(errorCallback);
-
-      // console.log(err);
-      console.log(err.response.data.message);
-      const message = err.response.data.message;
-
-      return alert(message);
     }
   };
 
@@ -598,99 +610,107 @@ const AuthProvider = ({ children }: Props) => {
     params: NaverRegisterParams,
     errorCallback?: ErrCallbackType,
   ) => {
-    try {
-      //회원가입 데이터 검증
-      const phone = params.phone;
-      const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
-      const birth = params.birth;
-      const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
-      const businessNumber = params.businessNumber;
-      const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
-      const nickname = params.nickname;
-      const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
+    if (confirm('회원가입을 하시겠습니까?')) {
+      try {
+        //회원가입 데이터 검증
+        const phone = params.phone;
+        const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
+        const birth = params.birth;
+        const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
+        const businessNumber = params.businessNumber;
+        const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
+        const nickname = params.nickname;
+        const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
 
-      if (phn < 0) {
-        alert('전화번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bir < 0) {
-        alert('생년월일 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bus < 0) {
-        alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (nick < 0) {
-        alert('한글, 영문, 숫자만 입력해주세요.');
-        return false;
-      } else {
-        await Api.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params, {
-          withCredentials: true,
-        });
-        const responseData = await Api.post(
-          `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
-          params,
-          {
-            withCredentials: true,
-          },
-        );
+        if (phn < 0) {
+          alert('전화번호 형식을 확인하여 다시 입력해주세요.');
 
-        if (responseData.data.loginSuccess == true) {
-          const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          return false;
+        } else if (bir < 0) {
+          alert('생년월일 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (bus < 0) {
+          alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (nick < 0) {
+          alert('한글, 영문, 숫자만 입력해주세요.');
+
+          return false;
+        } else {
+          await Api.post(`${apiConfig.apiEndpoint}/auth/register/naver/admin`, params, {
             withCredentials: true,
           });
-
-          const returnUrl = router.query.returnUrl;
-
-          const user: UserDataType = {
-            accountId: res.data.accountId,
-            id: res.data.id,
-            snsId: res.data.snsId,
-            name: res.data.name,
-            email: res.data.email,
-            nickname: res.data.nickname,
-            avatar: null,
-          };
-
-          const token: TokenDataType = {
-            accessToken: res.data.accessToken,
-          };
-          const expireAt: ExpireAtDataType = {
-            expireAt: res.data.expireAt,
-          };
-
-          setUser(user);
-          await window.localStorage.setItem(
-            authConfig.storageUserDataKeyName,
-            JSON.stringify(user),
+          const responseData = await Api.post(
+            `${apiConfig.apiEndpoint}/auth/login/admin/naver`,
+            params,
+            {
+              withCredentials: true,
+            },
           );
 
-          //accessToken 로컬스토리지에 저장
-          setAccessToken(token);
-          await window.localStorage.setItem(
-            authConfig.storageTokenDataKeyName,
-            JSON.stringify(token),
-          );
+          if (responseData.data.loginSuccess == true) {
+            const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
+              withCredentials: true,
+            });
 
-          //expireAt 토큰 만료시간 로컬스토리지에 저장
-          setExpireAt(expireAt);
-          await window.localStorage.setItem(
-            authConfig.storageExpireAtDataKeyName,
-            JSON.stringify(expireAt),
-          );
+            const returnUrl = router.query.returnUrl;
 
-          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+            const user: UserDataType = {
+              accountId: res.data.authInfo.accountId,
+              id: res.data.authInfo.id,
+              snsId: res.data.authInfo.snsId,
+              name: res.data.authInfo.name,
+              email: res.data.authInfo.email,
+              nickname: res.data.authInfo.nickname,
+              avatar: null,
+            };
+            console.log('네이버 회원가입 시 데이터 불러오기', user);
+            console.log('네이버 회원가입 시 데이터 불러오기', res);
+            console.log('네이버 회원가입 시 데이터 불러오기', res.data.snsId);
 
-          await router.replace(redirectURL as string);
-          location.reload();
+            const token: TokenDataType = {
+              accessToken: res.data.accessToken,
+            };
+            const expireAt: ExpireAtDataType = {
+              expireAt: res.data.expireAt,
+            };
+
+            setUser(user);
+            await window.localStorage.setItem(
+              authConfig.storageUserDataKeyName,
+              JSON.stringify(user),
+            );
+
+            //accessToken 로컬스토리지에 저장
+            setAccessToken(token);
+            await window.localStorage.setItem(
+              authConfig.storageTokenDataKeyName,
+              JSON.stringify(token),
+            );
+
+            //expireAt 토큰 만료시간 로컬스토리지에 저장
+            setExpireAt(expireAt);
+            await window.localStorage.setItem(
+              authConfig.storageExpireAtDataKeyName,
+              JSON.stringify(expireAt),
+            );
+
+            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+            await router.replace(redirectURL as string);
+          }
         }
+      } catch (err: any) {
+        console.log(errorCallback);
+
+        // console.log(err);
+        console.log(err.response.data.message);
+        const message = err.response.data.message;
+
+        return alert(message);
       }
-    } catch (err: any) {
-      console.log(errorCallback);
-
-      // console.log(err);
-      console.log(err.response.data.message);
-      const message = err.response.data.message;
-
-      return alert(message);
     }
   };
 
@@ -699,99 +719,104 @@ const AuthProvider = ({ children }: Props) => {
     params: GoogleRegisterParams,
     errorCallback?: ErrCallbackType,
   ) => {
-    try {
-      //회원가입 데이터 검증
-      const phone = params.phone;
-      const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
-      const birth = params.birth;
-      const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
-      const businessNumber = params.businessNumber;
-      const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
-      const nickname = params.nickname;
-      const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
+    if (confirm('회원가입을 하시겠습니까?')) {
+      try {
+        //회원가입 데이터 검증
+        const phone = params.phone;
+        const phn = phone.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
+        const birth = params.birth;
+        const bir = birth.search(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/);
+        const businessNumber = params.businessNumber;
+        const bus = businessNumber.search(/^[0-9]{3}-[0-9]{2}-[0-9]{5}/);
+        const nickname = params.nickname;
+        const nick = nickname.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
 
-      if (phn < 0) {
-        alert('전화번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bir < 0) {
-        alert('생년월일 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (bus < 0) {
-        alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
-        return false;
-      } else if (nick < 0) {
-        alert('한글, 영문, 숫자만 입력해주세요.');
-        return false;
-      } else {
-        await Api.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params, {
-          withCredentials: true,
-        });
-        const responseData = await Api.post(
-          `${apiConfig.apiEndpoint}/auth/login/admin/google`,
-          params,
-          {
-            withCredentials: true,
-          },
-        );
+        if (phn < 0) {
+          alert('전화번호 형식을 확인하여 다시 입력해주세요.');
 
-        if (responseData.data.loginSuccess == true) {
-          const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
+          return false;
+        } else if (bir < 0) {
+          alert('생년월일 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (bus < 0) {
+          alert('사업자 번호 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else if (nick < 0) {
+          alert('한글, 영문, 숫자만 입력해주세요.');
+
+          return false;
+        } else {
+          await Api.post(`${apiConfig.apiEndpoint}/auth/register/google/admin`, params, {
             withCredentials: true,
           });
-
-          const returnUrl = router.query.returnUrl;
-
-          const user: UserDataType = {
-            accountId: res.data.accountId,
-            id: res.data.id,
-            snsId: res.data.snsId,
-            name: res.data.name,
-            email: res.data.email,
-            nickname: res.data.nickname,
-            avatar: null,
-          };
-
-          const token: TokenDataType = {
-            accessToken: res.data.accessToken,
-          };
-          const expireAt: ExpireAtDataType = {
-            expireAt: res.data.expireAt,
-          };
-
-          setUser(user);
-          await window.localStorage.setItem(
-            authConfig.storageUserDataKeyName,
-            JSON.stringify(user),
+          const responseData = await Api.post(
+            `${apiConfig.apiEndpoint}/auth/login/admin/google`,
+            params,
+            {
+              withCredentials: true,
+            },
           );
 
-          //accessToken 로컬스토리지에 저장
-          setAccessToken(token);
-          await window.localStorage.setItem(
-            authConfig.storageTokenDataKeyName,
-            JSON.stringify(token),
-          );
+          if (responseData.data.loginSuccess == true) {
+            const res = await Api.get(`${apiConfig.apiEndpoint}/auth/me`, {
+              withCredentials: true,
+            });
 
-          //expireAt 토큰 만료시간 로컬스토리지에 저장
-          setExpireAt(expireAt);
-          await window.localStorage.setItem(
-            authConfig.storageExpireAtDataKeyName,
-            JSON.stringify(expireAt),
-          );
+            const returnUrl = router.query.returnUrl;
 
-          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+            const user: UserDataType = {
+              accountId: res.data.authInfo.accountId,
+              id: res.data.authInfo.id,
+              snsId: res.data.authInfo.snsId,
+              name: res.data.authInfo.name,
+              email: res.data.authInfo.email,
+              nickname: res.data.authInfo.nickname,
+              avatar: null,
+            };
 
-          await router.replace(redirectURL as string);
-          location.reload();
+            const token: TokenDataType = {
+              accessToken: res.data.accessToken,
+            };
+            const expireAt: ExpireAtDataType = {
+              expireAt: res.data.expireAt,
+            };
+
+            setUser(user);
+            await window.localStorage.setItem(
+              authConfig.storageUserDataKeyName,
+              JSON.stringify(user),
+            );
+
+            //accessToken 로컬스토리지에 저장
+            setAccessToken(token);
+            await window.localStorage.setItem(
+              authConfig.storageTokenDataKeyName,
+              JSON.stringify(token),
+            );
+
+            //expireAt 토큰 만료시간 로컬스토리지에 저장
+            setExpireAt(expireAt);
+            await window.localStorage.setItem(
+              authConfig.storageExpireAtDataKeyName,
+              JSON.stringify(expireAt),
+            );
+
+            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
+
+            await router.replace(redirectURL as string);
+          }
         }
+      } catch (err: any) {
+        console.log(errorCallback);
+
+        // console.log(err);
+        console.log(err.response.data.message);
+        const message = err.response.data.message;
+
+        return alert(message);
       }
-    } catch (err: any) {
-      console.log(errorCallback);
-
-      // console.log(err);
-      console.log(err.response.data.message);
-      const message = err.response.data.message;
-
-      return alert(message);
     }
   };
 

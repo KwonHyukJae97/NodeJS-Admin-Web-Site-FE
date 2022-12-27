@@ -96,6 +96,7 @@ const ForgotPassword = () => {
         );
         if (emailTest < 0) {
           alert('이메일 형식에 맞게 다시 입력해주세요.');
+
           return false;
         } else {
           await Api.post(`${apiConfig.apiEndpoint}/auth/temporary_password/`, {

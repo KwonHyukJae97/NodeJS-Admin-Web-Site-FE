@@ -100,7 +100,8 @@ const UserViewLeft = ({ data }: Props) => {
         );
         if (emailTest < 0) {
           alert('이메일 형식에 맞게 다시 입력해주세요.');
-          return false;
+          
+return false;
         } else {
           await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
             email: email,
@@ -126,7 +127,8 @@ const UserViewLeft = ({ data }: Props) => {
         const phnTest = phn.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
         if (phnTest < 0) {
           alert('전화번호 형식을 확인하여 다시 입력해주세요.');
-          return false;
+          
+return false;
         } else {
           await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
             phone: phone,
@@ -151,7 +153,8 @@ const UserViewLeft = ({ data }: Props) => {
         const nickTest = nick.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
         if (nickTest < 0) {
           alert('한글, 영문, 숫자만 입력해주세요.');
-          return false;
+          
+return false;
         } else {
           await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
             nickname: nickname,
@@ -422,6 +425,7 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
+
                         // defaultValue={data.email}
                         // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}

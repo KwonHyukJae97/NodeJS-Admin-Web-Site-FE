@@ -100,6 +100,7 @@ const ForgotId = () => {
 
         if (phnTest < 0) {
           alert('전화번호 형식을 확인하여 다시 입력해주세요.');
+
           return false;
         } else {
           const resData = await Api.post(`${apiConfig.apiEndpoint}/auth/find_id`, {
