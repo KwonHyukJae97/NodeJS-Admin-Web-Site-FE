@@ -4,8 +4,7 @@ import apiConfig from 'src/configs/api';
 import authConfig from 'src/configs/auth';
 import { ExpireAtDataType, TokenDataType, UserDataType } from 'src/context/types';
 
-//withCredentials: true 설정 추가하기
-
+//SSR 방식도 사용가능한 상태로 수정.
 const tokenAuth = async (config: any): Promise<AxiosRequestConfig> => {
   const accessToken = window.localStorage.getItem(authConfig.storageTokenDataKeyName)!;
   const expireAt = window.localStorage.getItem(authConfig.storageExpireAtDataKeyName)!;
@@ -14,9 +13,11 @@ const tokenAuth = async (config: any): Promise<AxiosRequestConfig> => {
     const exp = JSON.parse(expireAt).expireAt;
 
     // const expDate = moment(exp).subtract(2, 'h').format('YYYY-MM-DD HH:mm:ss');
+    //토큰 만료시간
     const expDate = moment(exp).format('YYYY-MM-DD HH:mm:ss');
 
     // const momentDate = moment().add(24, 'milliseconds').format('YYYY-MM-DD HH:mm:ss');
+    //현재시간
     const momentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
     console.log('토큰 만료', expDate);
@@ -49,21 +50,24 @@ const tokenAuth = async (config: any): Promise<AxiosRequestConfig> => {
       localStorage.setItem(authConfig.storageTokenDataKeyName, JSON.stringify(newAccessToken));
       localStorage.setItem(authConfig.storageExpireAtDataKeyName, JSON.stringify(newExpireAt));
     } else {
-      const res = await axios.get(authConfig.meEndpoint, {
-        withCredentials: true,
-      });
+      console.log('토큰 갱신 필요 없음');
+      // 만료시간이 남아있을 경우 유저데이터 조회할 필요없음.
+      // const res = await axios.get(authConfig.meEndpoint, {
+      //   withCredentials: true,
+      // });
 
-      const user: UserDataType = {
-        accountId: res.data.authInfo.accountId,
-        id: res.data.authInfo.id,
-        snsId: res.data.authInfo.snsId,
-        name: res.data.authInfo.name,
-        email: res.data.authInfo.email,
-        nickname: res.data.authInfo.nickname,
-        avatar: null,
-      };
+      // // accessToken 미완료시에는 유저정보 조회 필요 X
+      // const user: UserDataType = {
+      //   accountId: res.data.authInfo.accountId,
+      //   id: res.data.authInfo.id,
+      //   snsId: res.data.authInfo.snsId,
+      //   name: res.data.authInfo.name,
+      //   email: res.data.authInfo.email,
+      //   nickname: res.data.authInfo.nickname,
+      //   avatar: null,
+      // };
 
-      localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
+      // localStorage.setItem(authConfig.storageUserDataKeyName, JSON.stringify(user));
     }
   }
 

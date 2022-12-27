@@ -95,12 +95,21 @@ const ForgotId = () => {
   const forgotId = async () => {
     if (confirm('아이디를 찾으시겠습니까?')) {
       try {
-        const resData = await Api.post(`${apiConfig.apiEndpoint}/auth/find_id`, {
-          name: name,
-          phone: phone,
-        });
-        const resID = JSON.stringify(await (await resData).data.id);
-        alert(`회원님의 아이디는 ${resID.replace(/\"/gi, '')} 입니다.`);
+        const phn = phone;
+        const phnTest = phn.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
+
+        if (phnTest < 0) {
+          alert('전화번호 형식을 확인하여 다시 입력해주세요.');
+
+          return false;
+        } else {
+          const resData = await Api.post(`${apiConfig.apiEndpoint}/auth/find_id`, {
+            name: name,
+            phone: phone,
+          });
+          const resID = JSON.stringify(await (await resData).data.id);
+          alert(`회원님의 아이디는 ${resID.replace(/\"/gi, '')} 입니다.`);
+        }
       } catch (err: any) {
         console.log(err);
         const message = err.response.data.message;
@@ -270,6 +279,7 @@ const ForgotId = () => {
                 label="연락처"
                 onChange={inputChangePhone}
                 sx={{ display: 'flex', mb: 4 }}
+                placeholder=" ex) 010-1234-1234 형식으로 입력해주세요."
               />
               <Button
                 fullWidth

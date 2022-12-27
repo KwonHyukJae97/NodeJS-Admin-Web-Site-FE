@@ -147,19 +147,21 @@ const Register = () => {
   // ** Vars
   const { skin } = settings;
   const schema = yup.object().shape({
-    id: yup.string().min(5).required(),
-    password: yup.string().min(8).required(),
+    id: yup.string().min(5).max(20).required(),
+    password: yup.string().min(8).max(16).required(),
     confirmPassword: yup.string().min(8).required(),
     name: yup.string().min(3).required(),
     email: yup.string().email().required(),
-    phone: yup.string().min(11).required(),
-    nickname: yup.string().min(3).required(),
-    birth: yup.string().min(3).required(),
+    phone: yup.string().min(13).required(),
+    nickname: yup.string().min(1).max(20).required(),
+    birth: yup.string().min(10).required(),
     gender: yup.string().required(),
     companyName: yup.string().required(),
     companyCode: yup.number().required(),
+    businessNumber: yup.string().min(12).required(),
   });
 
+  //"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}"
   const {
     control,
     setError,
@@ -481,7 +483,6 @@ const Register = () => {
                           <IconButton
                             edge="end"
                             onMouseDown={(e) => e.preventDefault()}
-                            // onClick={() => setShowPassword(!showPassword)}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           >
                             {showConfirmPassword ? <EyeOutline /> : <EyeOffOutline />}
@@ -744,7 +745,6 @@ const Register = () => {
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
                   src="/images/avatars/kakao.png"
-                  // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                   width="190"
                 />
               </Box>
