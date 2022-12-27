@@ -96,9 +96,10 @@ const UserDropdown = (props: Props) => {
   };
 
   const handleLogout = () => {
-    alert('로그아웃 하시겠습니까?');
-    logout();
-    handleDropdownClose();
+    if (confirm('로그아웃 하시겠습니까?')) {
+      logout();
+      handleDropdownClose();
+    }
   };
 
   return (
