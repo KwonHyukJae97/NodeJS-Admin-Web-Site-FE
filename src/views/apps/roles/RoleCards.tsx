@@ -98,9 +98,11 @@ const FormGrantLabel = (props: FormGrantLabelType) => {
 const RolesCards = () => {
   // ** States
   const [open, setOpen] = useState<boolean>(false),
-    [getData, setGetData] = useState<boolean>(true),
+    [dialogRoleViewOpen, setDialogRoleViewOpen] = useState<boolean>(false),
+    [dialogRoleRegisterOpen, setDialogRoleRegisterOpen] = useState<boolean>(false),
+    [dialogRoleUserViewOpen, setDialogRoleUserViewOpen] = useState<boolean>(false),
+    [dialogRoleUpdateOpen, setDialogRoleUpdateOpen] = useState<boolean>(false),
     [isChecked, setIsChecked] = useState<boolean>(false),
-    [getAdminInfo, setGetAdminInfo] = useState<string>(''),
     [errMessage, setErrMessage] = useState<string>(''),
     [dialogTitle, setDialogTitle] = useState<'등록' | '수정' | '보기'>('등록'),
     [cardData, setCardData] = useState<any[]>([]),
@@ -109,7 +111,7 @@ const RolesCards = () => {
     [roleId, setRoleId] = useState(0),
     [title, setTitle] = useState('');
 
-  // 권한 데이터 정의
+  // 권한(grantType) 데이터 정의
   const dataList = [
     { value: '0', type: '등록' },
     { value: '1', type: '조회' },
@@ -131,28 +133,32 @@ const RolesCards = () => {
 
   // 버튼 열기
   const handleClickOpen = (action: string, roleId: number) => {
-    setOpen(true);
     if (action === '수정') {
       getDetailPermission();
       getDetailRole(roleId, '');
+      setDialogRoleUpdateOpen(true);
     }
     if (action === '보기') {
       getDetailRole(roleId, '');
+      setDialogRoleViewOpen(true);
     }
     if (action === '등록') {
       getDetailPermission();
+      setDialogRoleRegisterOpen(true);
     }
     if (action === '사용자보기') {
-      setGetAdminInfo('Y');
       getDetailRole(roleId, 'Y');
+      setDialogRoleUserViewOpen(true);
     }
   };
 
   // 버튼 닫기
   const handleClose = () => {
-    setOpen(false);
+    setDialogRoleViewOpen(false);
+    setDialogRoleRegisterOpen(false);
+    setDialogRoleUserViewOpen(false);
+    setDialogRoleUpdateOpen(false);
     setValue('roleName', '');
-    setGetAdminInfo('');
     setViewData([]);
     setIsChecked(false);
     setErrMessage('');
@@ -173,6 +179,7 @@ const RolesCards = () => {
     }
   };
 
+  // 권한 (grantType) 체크박스 선택 시 value 지정 및 체크박스, 역할 이름 존재 여부 체크
   const onSubmit = (data: any) => {
     let getRoleName = data.roleName;
 
@@ -358,22 +365,205 @@ const RolesCards = () => {
         params: { getInfo: getInfo },
       });
       setViewData(res.data);
-      setGetData(true);
     } catch (err) {
       if (err) {
         console.log('message:', err);
-        setGetData(false);
       }
     }
   };
 
   // 권한에 따른 역할 상세정보 체크박스 활성화 표시
-  const isCheckedGrantType = (receiveGrantTypeList: [], grantType: string) => {
-    const filterLength = receiveGrantTypeList.filter((receiveGrantType: { grant_type: string }) => {
+  const isCheckedGrantType = (
+    permissionId: number,
+    grant_permissionId: number,
+    receiveGrantTypeList: [],
+    grantType: string,
+  ) => {
+    const filter = receiveGrantTypeList.filter((receiveGrantType: { grant_type: string }) => {
       return receiveGrantType.grant_type == grantType;
-    }).length;
+    });
+    if (dialogTitle === '수정' && permissionId == grant_permissionId) {
+      console.log('filter', filter.length);
+    }
 
-    return filterLength > 0;
+    return filter.length > 0;
+  };
+
+  // 모달 타이틀 컴포넌트
+  const modalTitle = (modalTitleName: string) => {
+    return (
+      <DialogTitle sx={{ textAlign: 'center', mt: 5 }}>
+        <Typography variant="h4" component="span">
+          {modalTitleName}
+        </Typography>
+      </DialogTitle>
+    );
+  };
+
+  // 모달 버튼 컴포넌트
+  const modalButton = (action: string) => {
+    return (
+      <DialogActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
+        <Box className="demo-space-x">
+          {action == 'submit' ? (
+            <>
+              <Button size="large" type="submit" variant="contained">
+                등록
+              </Button>
+              <Button size="large" color="secondary" variant="outlined" onClick={handleClose}>
+                취소
+              </Button>
+            </>
+          ) : (
+            <Button size="large" variant="outlined" onClick={handleClose}>
+              확인
+            </Button>
+          )}
+        </Box>
+      </DialogActions>
+    );
+  };
+
+  // 역할 이름 입력창 컴포넌트
+  const grantNameInput = (label: string, rules: boolean, error: boolean | undefined) => {
+    return (
+      <FormControl>
+        <Controller
+          name="roleName"
+          control={control}
+          rules={{ required: rules }}
+          render={({ field: { value, onChange } }) => (
+            <TextField value={value} label={label} onChange={onChange} error={error} />
+          )}
+        />
+        {errors.roleName && (
+          <FormHelperText sx={{ color: 'error.main' }}>역할 이름을 입력해 주세요.</FormHelperText>
+        )}
+      </FormControl>
+    );
+  };
+
+  // 역할 등록/수정 테이블 컴포넌트
+  const grantInputTablebody = () => {
+    return (
+      <>
+        <TableContainer>
+          <Table size="small">
+            <TableBody>
+              {permissionData.map((permission, index: number) => {
+                return (
+                  <TableRow key={index} sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 600,
+                        color: (theme) => `${theme.palette.text.primary} !important`,
+                      }}
+                    >
+                      {permission.displayName}
+                    </TableCell>
+
+                    {/* 역할 수정 */}
+                    <TableCell key={index} colSpan={4}>
+                      {viewData.map((data: any, index: number) => {
+                        {
+                          dialogTitle === '수정' && (
+                            <TableCell key={index} colSpan={4}>
+                              {dataList.map((list: any, index: any) => (
+                                <FormGrantLabel
+                                  key={index}
+                                  label={list.type}
+                                  value={list.value}
+                                  isChecked={isCheckedGrantType(
+                                    permission.permissionId,
+                                    data.permission_id,
+                                    data.grant_type_list,
+                                    list.value,
+                                  )}
+                                  isDisabled={true}
+                                />
+                              ))}
+                            </TableCell>
+                          );
+                        }
+                      })}
+
+                      {/* 역할 등록 */}
+                      {dataList.map((list) => (
+                        <FormControlLabel
+                          name="grantType"
+                          control={
+                            <Checkbox
+                              size="small"
+                              onChange={(e) =>
+                                onCheckedType(e.target.checked, e.target.value, permission)
+                              }
+                            />
+                          }
+                          key={list.value}
+                          label={list.type}
+                          value={list.value}
+                          sx={{ paddingInline: 3, marginInlineStart: 3 }}
+                        />
+                      ))}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box>
+          <Typography variant="body1" pt={3} sx={{ color: 'error.main' }}>
+            {' '}
+            {errMessage}
+          </Typography>
+        </Box>
+      </>
+    );
+  };
+
+  // 역할 보기 테이블 컴포넌트
+  const grantTablebody = (viewData: any, dataList: any) => {
+    return (
+      <>
+        <TableHead>
+          <TableRow sx={{ pl: '2rem' }}>
+            <TableCell align="center">
+              <Box
+                sx={{
+                  fontSize: '1.0rem',
+                  alignItems: 'center',
+                  textTransform: 'capitalize',
+                }}
+              >
+                권한 이름
+              </Box>
+            </TableCell>
+            <TableCell colSpan={4}>권한 종류</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {viewData.map((data: any, index: number) => {
+            return (
+              <TableRow key={index} sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
+                <TableCell align="center">{data.display_name}</TableCell>
+
+                {dataList.map((list: any, dataListIndex: any) => (
+                  <TableCell align="center" key={dataListIndex}>
+                    <FormGrantLabel
+                      label={list.type}
+                      value={list.value}
+                      isChecked={isCheckedGrantType(0, 0, data.grant_type_list, list.value)}
+                      isDisabled={true}
+                    />
+                  </TableCell>
+                ))}
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </>
+    );
   };
 
   // Role List 불러오기
@@ -382,7 +572,6 @@ const RolesCards = () => {
   }, []);
 
   // useState 비동기 문제 해결을 위한 useEffect 사용
-
   useEffect(() => {}, [roleId]);
   useEffect(() => {}, [title]);
   useEffect(() => {}, [viewData]);
@@ -400,7 +589,6 @@ const RolesCards = () => {
                 variant="body2"
                 sx={{ cursor: 'pointer' }}
                 onClick={() => {
-                  setGetAdminInfo('Y');
                   setDialogTitle('보기');
                   handleClickOpen('사용자보기', item.roleId);
                 }}
@@ -506,201 +694,97 @@ const RolesCards = () => {
           </Grid>
         </Card>
       </Grid>
-      <Dialog fullWidth maxWidth="md" scroll="body" onClose={handleClose} open={open}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle sx={{ textAlign: 'center', mt: 5 }}>
-            {getAdminInfo === 'Y' ? (
-              <Typography variant="h4" component="span">
-                {`사용자 ${dialogTitle}`}
-              </Typography>
-            ) : (
-              <Typography variant="h4" component="span">
-                {`역할 ${dialogTitle}`}
-              </Typography>
-            )}
-          </DialogTitle>
-          <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
-            <Box sx={{ my: 4 }}>
-              <FormControl>
-                {dialogTitle === '수정' ? (
-                  <Controller
-                    name="roleName"
-                    control={control}
-                    rules={{ required: false }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label={`${title}`}
-                        onChange={onChange}
-                        error={Boolean()}
-                      />
-                    )}
-                  />
-                ) : dialogTitle === '등록' ? (
-                  <Controller
-                    name="roleName"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label={'역할 이름'}
-                        onChange={onChange}
-                        error={Boolean(errors.roleName)}
-                      />
-                    )}
-                  />
-                ) : (dialogTitle === '보기' && getAdminInfo === 'Y') ||
-                  dialogTitle === '보기' ||
-                  dialogTitle === '수정' ? (
-                  <Typography variant="h6">{title}</Typography>
-                ) : null}
-                {dialogTitle === '등록' && errors.roleName && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    역할 이름을 입력해 주세요.
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Box>
 
+      {/* 사용자 보기 modal */}
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        scroll="body"
+        onClose={handleClose}
+        open={dialogRoleUserViewOpen}
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {modalTitle('사용자 보기')}
+          <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
             <TableContainer>
               <Table size="small">
-                {dialogTitle === '보기' && getData === true && getAdminInfo === '' ? (
-                  <TableHead>
-                    <TableRow sx={{ pl: '2rem' }}>
-                      <TableCell align="center">
-                        <Box
-                          sx={{
-                            fontSize: '1.0rem',
-                            alignItems: 'center',
-                            textTransform: 'capitalize',
-                          }}
-                        >
-                          권한 이름
-                        </Box>
-                      </TableCell>
-                      <TableCell colSpan={4}>권한 종류</TableCell>
-                    </TableRow>
-                  </TableHead>
-                ) : dialogTitle === '보기' && getAdminInfo === 'Y' ? (
-                  <TableHead>
-                    <TableRow>
-                      <TableCell> 번호 </TableCell>
-                      <TableCell> 사용자 ID </TableCell>
-                      <TableCell> 사용자 이름 </TableCell>
-                    </TableRow>
-                  </TableHead>
-                ) : null}
-
-                {dialogTitle === '보기' && getData === true && getAdminInfo === '' ? (
-                  <TableBody>
-                    {viewData.map((data: any, index: number) => {
-                      return (
-                        <TableRow
-                          key={index}
-                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
-                        >
-                          <TableCell align="center">{data.display_name}</TableCell>
-
-                          {dataList.map((list, dataListIndex) => (
-                            <TableCell align="center" key={dataListIndex}>
-                              <FormGrantLabel
-                                label={list.type}
-                                value={list.value}
-                                isChecked={isCheckedGrantType(data.grant_type_list, list.value)}
-                                isDisabled={true}
-                              />
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                ) : dialogTitle === '보기' && getAdminInfo === 'Y' ? (
-                  <TableBody>
-                    {viewData.map((data: any, index: number) => {
-                      return (
-                        <TableRow
-                          key={index}
-                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: -1 } }}
-                        >
-                          <TableCell align="center">{index + 1}</TableCell>
-                          <TableCell align="center">{data.id}</TableCell>
-                          <TableCell align="center">{data.adminName}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                ) : null}
-
-                {dialogTitle === '등록' || dialogTitle === '수정' ? (
-                  <TableBody>
-                    {permissionData.map((permission, index: number) => {
-                      return (
-                        <TableRow
-                          key={index}
-                          sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}
-                        >
-                          <TableCell
-                            sx={{
-                              fontWeight: 600,
-                              color: (theme) => `${theme.palette.text.primary} !important`,
-                            }}
-                          >
-                            {permission.displayName}
-                          </TableCell>
-
-                          <TableCell key={index} colSpan={4}>
-                            {dataList.map((list) => (
-                              <FormControlLabel
-                                name="grantType"
-                                control={
-                                  <Checkbox
-                                    size="small"
-                                    onChange={(e) =>
-                                      onCheckedType(e.target.checked, e.target.value, permission)
-                                    }
-                                  />
-                                }
-                                key={list.value}
-                                label={list.type}
-                                value={list.value}
-                                sx={{ paddingInline: 3, marginInlineStart: 3 }}
-                              />
-                            ))}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                ) : null}
+                <TableHead>
+                  <TableRow>
+                    <TableCell> 번호 </TableCell>
+                    <TableCell> 사용자 ID </TableCell>
+                    <TableCell> 사용자 이름 </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {viewData.map((data: any, index: number) => {
+                    return (
+                      <TableRow
+                        key={index}
+                        sx={{ '& .MuiTableCell-root:first-of-type': { pl: -1 } }}
+                      >
+                        <TableCell align="center">{index + 1}</TableCell>
+                        <TableCell align="center">{data.id}</TableCell>
+                        <TableCell align="center">{data.adminName}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
               </Table>
             </TableContainer>
-            <Box>
-              <Typography variant="body1" pt={3} sx={{ color: 'error.main' }}>
-                {' '}
-                {errMessage}
-              </Typography>
-            </Box>
           </DialogContent>
-          <DialogActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
-            {dialogTitle != '보기' ? (
-              <Box className="demo-space-x">
-                <Button size="large" type="submit" variant="contained">
-                  등록
-                </Button>
-                <Button size="large" color="secondary" variant="outlined" onClick={handleClose}>
-                  취소
-                </Button>
-              </Box>
-            ) : (
-              <Box className="demo-space-x">
-                <Button size="large" variant="outlined" onClick={handleClose}>
-                  확인
-                </Button>
-              </Box>
-            )}
-          </DialogActions>
+          {modalButton('confirm')}
+        </form>
+      </Dialog>
+
+      {/* 역할 보기 modal */}
+      <Dialog fullWidth maxWidth="md" scroll="body" onClose={handleClose} open={dialogRoleViewOpen}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {modalTitle('역할 보기')}
+          <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
+            <Box sx={{ my: 4 }}>
+              <Typography variant="h6">{title}</Typography>
+            </Box>
+            <TableContainer>
+              <Table size="small">{dialogRoleViewOpen && grantTablebody(viewData, dataList)}</Table>
+            </TableContainer>
+          </DialogContent>
+          {modalButton('confirm')}
+        </form>
+      </Dialog>
+
+      {/* 역할 등록 modal */}
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        scroll="body"
+        onClose={handleClose}
+        open={dialogRoleRegisterOpen}
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {modalTitle('역할 등록')}
+          <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
+            <Box sx={{ my: 4 }}>{grantNameInput('역할 이름', true, Boolean(errors.roleName))}</Box>
+            {grantInputTablebody()}
+          </DialogContent>
+          {modalButton('submit')}
+        </form>
+      </Dialog>
+
+      {/* 역할 수정 modal */}
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        scroll="body"
+        onClose={handleClose}
+        open={dialogRoleUpdateOpen}
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {modalTitle('역할 수정')}
+          <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
+            <Box sx={{ my: 4 }}>{grantNameInput(`${title}`, false, Boolean())}</Box>
+            {grantInputTablebody()}
+          </DialogContent>
+          {modalButton('submit')}
         </form>
       </Dialog>
     </Grid>
