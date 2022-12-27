@@ -202,7 +202,6 @@ export const getAllNotice = async (pageNo: number, searchWord: string) => {
   try {
     const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/notice`, {
       data: { noticeGrant, searchWord, pageNo: page, pageSize: 10, totalData: false },
-      withCredentials: true,
     });
 
     return res.data;
@@ -212,11 +211,6 @@ export const getAllNotice = async (pageNo: number, searchWord: string) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cookie = context.req.headers.cookie;
-
-  // @ts-ignore
-  axios.defaults.headers.Cookie = cookie;
-
   const { pageNo, searchWord } = context.query;
 
   const result = await getAllNotice(Number(pageNo), searchWord as string);

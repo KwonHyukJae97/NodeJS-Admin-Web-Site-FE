@@ -481,7 +481,6 @@ const Register = () => {
                           <IconButton
                             edge="end"
                             onMouseDown={(e) => e.preventDefault()}
-                            // onClick={() => setShowPassword(!showPassword)}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           >
                             {showConfirmPassword ? <EyeOutline /> : <EyeOffOutline />}
@@ -744,7 +743,6 @@ const Register = () => {
                   onClick={() => loginWithKakao()}
                   alt={'kakao-login'}
                   src="/images/avatars/kakao.png"
-                  // src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                   width="190"
                 />
               </Box>

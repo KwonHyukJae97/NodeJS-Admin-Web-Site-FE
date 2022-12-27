@@ -241,7 +241,6 @@ export const getAllFaq = async (pageNo: number, searchKey: string, searchWord: s
   try {
     const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/faq`, {
       data: { searchKey, searchWord, pageNo: page, pageSize: 10, totalData: false },
-      withCredentials: true,
     });
 
     return res.data;
@@ -253,9 +252,7 @@ export const getAllFaq = async (pageNo: number, searchKey: string, searchWord: s
 // Category 조회 API 호출
 export const getAllCategory = async () => {
   try {
-    const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/faq/category`, {
-      withCredentials: true,
-    });
+    const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/faq/category`);
 
     return res.data;
   } catch (err) {
@@ -264,11 +261,6 @@ export const getAllCategory = async () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cookie = context.req.headers.cookie;
-
-  // @ts-ignore
-  axios.defaults.headers.Cookie = cookie;
-
   const { pageNo, searchKey, searchWord } = context.query;
 
   const faqResult = await getAllFaq(Number(pageNo), searchKey as string, searchWord as string);

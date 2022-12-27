@@ -73,13 +73,13 @@ const QnaView = ({ id }: QnaViewProps) => {
       };
 
       const commentData: CommentType[] =
-        res.data.comment !== null
-          ? res.data.comment.map((data: any) => {
+        res.data.commentList !== null
+          ? res.data.commentList.map((data: any) => {
               const comment: CommentType = {
                 commentId: data.commentId,
                 adminId: data.adminId,
                 comment: data.comment,
-                writer: data.writer,
+                commenter: data.commenter,
                 regDate: getDateTime(data.regDate),
               };
 
@@ -87,7 +87,7 @@ const QnaView = ({ id }: QnaViewProps) => {
             })
           : null;
 
-      console.log(qnaData);
+      console.log(commentData);
       setData(qnaData);
       setComment(commentData);
     } catch (err) {
@@ -99,9 +99,7 @@ const QnaView = ({ id }: QnaViewProps) => {
   const deleteQna = async (id: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`, {
-          withCredentials: true,
-        });
+        await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`);
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');
 
@@ -151,11 +149,17 @@ const QnaView = ({ id }: QnaViewProps) => {
             >
               삭제
             </Button>
-            <Link href={'/qna/list'} passHref>
-              <Button variant="outlined" color="secondary">
-                목록
-              </Button>
-            </Link>
+            {/*<Link href={'/qna/list'} passHref>*/}
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => {
+                router.back();
+              }}
+            >
+              목록
+            </Button>
+            {/*</Link>*/}
           </Box>
         </Card>
 
