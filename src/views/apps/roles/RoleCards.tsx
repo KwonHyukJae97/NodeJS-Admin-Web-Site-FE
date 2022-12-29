@@ -91,6 +91,7 @@ const RolesCards = () => {
     [dialogRoleUserViewOpen, setDialogRoleUserViewOpen] = useState<boolean>(false),
     [dialogRoleUpdateOpen, setDialogRoleUpdateOpen] = useState<boolean>(false),
     [isChecked, setIsChecked] = useState<boolean>(false),
+    [isDataChange, setIsDataChange] = useState<boolean>(false),
     [errMessage, setErrMessage] = useState<string>(''),
     [dialogTitle, setDialogTitle] = useState<'등록' | '수정' | '보기'>('등록'),
     [cardData, setCardData] = useState<any[]>([]),
@@ -389,11 +390,10 @@ const RolesCards = () => {
 
   // 권한 타입 checkBox 처리
   const onCheckedType = (isChecked: boolean, value: string, permission: permissionType) => {
-    console.log(isChecked);
-
     setErrMessage('');
 
     permission.dataChange = true;
+    setIsDataChange(true);
 
     const grantTypeList = permission.grantTypeList.map((grantItem: { grant_type: any }) => {
       return grantItem.grant_type;
@@ -439,12 +439,11 @@ const RolesCards = () => {
     setViewData([]);
     setIsChecked(false);
     setErrMessage('');
+    setIsDataChange(false);
   };
 
   // 권한 (grantType) 체크박스 선택 시 value 지정 및 체크박스, 역할 이름 존재 여부 체크
   const onSubmit = (data: any) => {
-    console.log(viewData);
-
     let getRoleName = data.roleName;
 
     if (getRoleName === '') {
@@ -457,21 +456,27 @@ const RolesCards = () => {
     };
 
     viewData.forEach((value: any) => {
-      if (value.dataChange != true) {
+      if (!value.dataChange) {
         return;
       }
-
+      if (value.grantTypeList.length == 0) {
+        // 데이터 수정 내역은 있으나 체크박스 값이 없을 경우 grantType값을 4로 전송하여 데이터 삭제할 수 있도록 함.
+        roleData.roleDto.push({ permissionId: value.permissionId, grantType: '4' });
+      }
       const changeGrantTypeList = value.grantTypeList.map((grant: any) => {
         return {
           permissionId: value.permissionId,
           grantType: grant.grant_type,
         };
       });
-
       roleData.roleDto.push(...changeGrantTypeList);
     });
-    if (dialogTitle === '등록' && isChecked == false) {
+    if (dialogTitle === '등록' && isDataChange == false) {
       setErrMessage('역할을 한개 이상 체크해주세요.');
+
+      return false;
+    } else if (dialogTitle === '수정' && isDataChange == false) {
+      setErrMessage('수정된 사항이 없습니다.');
 
       return false;
     }
@@ -488,22 +493,6 @@ const RolesCards = () => {
         getRoleName = data.roleName;
         createRole(roleData);
       } else if (dialogTitle == '수정') {
-        // viewData.map((item: any) => {
-        //   const checkedValues = {
-        //     permissionId: item.permissionId,
-        //     grantType: item.grantTypeList,
-        //   };
-        //   checkedValues.grantType.map((value: any) => {
-        //     roleData.roleDto.push({
-        //       permissionId: checkedValues.permissionId,
-        //       grantType: value.grant_type,
-        //     });
-
-        //     return value.grant_type;
-        //   });
-        // });
-
-        console.log('updateRoleData', roleData);
         updateRole(roleData, roleId);
       }
     }
