@@ -51,6 +51,8 @@ interface RoleType {
 
 // 권한 타입 정의
 interface permissionType {
+  grantTypeList: any;
+  dataChange: boolean;
   permissionId: number;
   displayName: string;
   isWrite: boolean;
@@ -67,8 +69,10 @@ interface FormGrantLabelType {
   value: string;
   isChecked: boolean;
   isDisabled: boolean;
+  displayPermission: any;
 }
 
+// 역할 TableBody 컴포넌트 타입 정의
 interface FormGrantTableRowType {
   index: number;
   displayPermission: any;
@@ -80,127 +84,9 @@ interface FormGrantTableRowType {
   isDialogShow: boolean;
 }
 
-// 권한에 따른 체크 박스 컴포넌트
-const FormGrantLabel = (props: FormGrantLabelType) => {
-  // ** Props
-  const { label, value, isChecked, isDisabled } = props;
-
-  return (
-    <FormControlLabel
-      control={
-        <Checkbox
-          size="small"
-          checked={isChecked}
-          disabled={isDisabled}
-          sx={{
-            color: blue[400],
-            '&.Mui-checked': {
-              color: blue[400],
-            },
-          }}
-        />
-      }
-      label={label}
-      value={value}
-    />
-  );
-};
-
-const FormGrantTableRow = (props: FormGrantTableRowType) => {
-  // ** Props
-  const {
-    index,
-    displayPermission,
-    checkedPermissionDataList,
-    dataList,
-    isShowOnlyChecked,
-    isChecked,
-    isDisabled,
-    isDialogShow,
-  } = props;
-
-  if (!isDialogShow) {
-    return null;
-  }
-
-  const selectPermissionList = checkedPermissionDataList.filter((value: any) => {
-    return value.permissionId == displayPermission.permissionId;
-  });
-
-  // isShowOnlyChecked 옵션은 권한을 설정한 리스트만 모달에 표시할지 여부
-  if (selectPermissionList.length == 0 && isShowOnlyChecked) {
-    return null;
-  }
-
-  let selectPermission = displayPermission;
-  if (selectPermissionList.length > 0) {
-    selectPermission = selectPermissionList[0];
-  }
-
-  return (
-    <TableRow key={index} sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
-      <TableCell
-        sx={{
-          fontWeight: 600,
-          color: (theme) => `${theme.palette.text.primary} !important`,
-        }}
-      >
-        {displayPermission.displayName}
-      </TableCell>
-
-      {dataList.map((grantItem: any, index: any) => (
-        <TableCell key={index}>
-          <FormGrantLabel
-            key={index}
-            label={grantItem.type}
-            value={grantItem.value}
-            isChecked={
-              isChecked &&
-              isCheckedGrantType(
-                displayPermission.permissionId,
-                selectPermission.permissionId,
-                selectPermission.grantTypeList,
-                grantItem.value,
-              )
-            }
-            isDisabled={isDisabled}
-          />
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-};
-
-// 권한에 따른 역할 상세정보 체크박스 활성화 표시
-const isCheckedGrantType = (
-  permissionId: number,
-  grant_permissionId: number,
-  receiveGrantTypeList: { grant_type: string }[],
-  grantType: string,
-) => {
-  if (permissionId != grant_permissionId) {
-    return false;
-  }
-
-  if (!receiveGrantTypeList || receiveGrantTypeList.length == 0) {
-    return false;
-  }
-
-  const checkedGrantList = receiveGrantTypeList.map((receiveGrantType: { grant_type: string }) => {
-    return receiveGrantType.grant_type;
-  });
-
-  if (checkedGrantList.indexOf(grantType) > -1) {
-    return true;
-  }
-
-  return false;
-};
-
 const RolesCards = () => {
   // ** States
-  const [open, setOpen] = useState<boolean>(false),
-    [dialogRoleViewOpen, setDialogRoleViewOpen] = useState<boolean>(false),
+  const [dialogRoleViewOpen, setDialogRoleViewOpen] = useState<boolean>(false),
     [dialogRoleRegisterOpen, setDialogRoleRegisterOpen] = useState<boolean>(false),
     [dialogRoleUserViewOpen, setDialogRoleUserViewOpen] = useState<boolean>(false),
     [dialogRoleUpdateOpen, setDialogRoleUpdateOpen] = useState<boolean>(false),
@@ -232,6 +118,295 @@ const RolesCards = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: { roleName: '' } });
+
+  // 권한에 따른 체크 박스 컴포넌트
+  const FormGrantLabel = (props: FormGrantLabelType) => {
+    // ** Props
+    const { label, value, isChecked, isDisabled, displayPermission } = props;
+
+    return (
+      <FormControlLabel
+        control={
+          <Checkbox
+            size="small"
+            defaultChecked={isChecked || false}
+            disabled={isDisabled}
+            onChange={(e) => onCheckedType(e.target.checked, e.target.value, displayPermission)}
+            sx={{
+              color: blue[400],
+              '&.Mui-checked': {
+                color: blue[400],
+              },
+            }}
+          />
+        }
+        label={label}
+        value={value}
+      />
+    );
+  };
+
+  // 모달 타이틀 컴포넌트
+  const modalTitle = (modalTitleName: string) => {
+    return (
+      <DialogTitle sx={{ textAlign: 'center', mt: 5 }}>
+        <Typography variant="h4" component="span">
+          {modalTitleName}
+        </Typography>
+      </DialogTitle>
+    );
+  };
+
+  const tableHead = () => {
+    return (
+      <TableHead>
+        <TableRow sx={{ pl: '2rem' }}>
+          <TableCell align="center">
+            <Box
+              sx={{
+                fontSize: '1.0rem',
+                alignItems: 'center',
+                textTransform: 'capitalize',
+              }}
+            >
+              권한 이름
+            </Box>
+          </TableCell>
+          <TableCell colSpan={4}>권한 종류</TableCell>
+        </TableRow>
+      </TableHead>
+    );
+  };
+
+  // 모달 버튼 컴포넌트
+  const modalButton = (action: string) => {
+    return (
+      <DialogActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
+        <Box className="demo-space-x">
+          {action == 'submit' ? (
+            <>
+              <Button size="large" type="submit" variant="contained">
+                등록
+              </Button>
+              <Button size="large" color="secondary" variant="outlined" onClick={handleClose}>
+                취소
+              </Button>
+            </>
+          ) : (
+            <Button size="large" variant="outlined" onClick={handleClose}>
+              확인
+            </Button>
+          )}
+        </Box>
+      </DialogActions>
+    );
+  };
+
+  // 역할 이름 입력창 컴포넌트
+  const grantNameInput = (label: string, rules: boolean, error: boolean | undefined) => {
+    return (
+      <FormControl>
+        <Controller
+          name="roleName"
+          control={control}
+          rules={{ required: rules }}
+          render={({ field: { value, onChange } }) => (
+            <TextField value={value} label={label} onChange={onChange} error={error} />
+          )}
+        />
+        {errors.roleName && (
+          <FormHelperText sx={{ color: 'error.main' }}>역할 이름을 입력해 주세요.</FormHelperText>
+        )}
+      </FormControl>
+    );
+  };
+
+  // 역할 등록/수정 테이블 컴포넌트
+  const grantInputTablebody = () => {
+    return (
+      <>
+        <TableContainer>
+          <Table size="small">
+            {tableHead()}
+            <TableBody>
+              {permissionData.map((data: any, index: number) => {
+                return (
+                  <FormGrantTableRow
+                    key={index}
+                    index={index}
+                    displayPermission={data}
+                    checkedPermissionDataList={viewData}
+                    dataList={dataList}
+                    isShowOnlyChecked={false}
+                    isChecked={true}
+                    isDisabled={false}
+                    isDialogShow={dialogRoleRegisterOpen || dialogRoleUpdateOpen}
+                  />
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box>
+          <Typography variant="body1" pt={3} sx={{ color: 'error.main' }}>
+            {' '}
+            {errMessage}
+          </Typography>
+        </Box>
+      </>
+    );
+  };
+
+  // 역할 보기 테이블 컴포넌트
+  const grantTablebody = (viewData: any, dataList: any) => {
+    return (
+      <>
+        {tableHead()}
+        <TableBody>
+          {viewData.map((data: any, index: number) => {
+            return (
+              <FormGrantTableRow
+                key={index}
+                index={index}
+                displayPermission={data}
+                checkedPermissionDataList={viewData}
+                dataList={dataList}
+                isShowOnlyChecked={true}
+                isChecked={true}
+                isDisabled={true}
+                isDialogShow={dialogRoleViewOpen}
+              />
+            );
+          })}
+        </TableBody>
+      </>
+    );
+  };
+
+  // TableBody checkBox 처리
+  const FormGrantTableRow = (props: FormGrantTableRowType) => {
+    // ** Props
+    const {
+      index, // permissionData Index
+      displayPermission, // permissionData
+      checkedPermissionDataList, // viewData
+      dataList, // dataList(GrantType)
+      isShowOnlyChecked, // check된 항목만 보일지 여부
+      isChecked, // defaultCheck 여부
+      isDisabled, // disabled 여부
+      isDialogShow, // 모달종류에 따른 표시 여부
+    } = props;
+
+    if (!isDialogShow) {
+      return null;
+    }
+
+    // viewData에 등록된 permissionId값만 추출
+    const selectPermissionList = checkedPermissionDataList.filter((value: any) => {
+      return value.permissionId == displayPermission.permissionId;
+    });
+
+    // isShowOnlyChecked 옵션은 권한을 설정한 리스트만 모달에 표시할지 여부
+    if (selectPermissionList.length == 0 && isShowOnlyChecked) {
+      return null;
+    }
+
+    let selectPermission = displayPermission;
+    if (selectPermissionList.length > 0) {
+      selectPermission = selectPermissionList[0];
+    } else {
+      const newPermission = {
+        displayName: displayPermission.displayName,
+        permissionId: displayPermission.permissionId,
+        grantTypeList: [],
+      };
+
+      viewData.push(newPermission);
+      selectPermission = newPermission;
+    }
+
+    return (
+      <TableRow key={index} sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
+        <TableCell
+          sx={{
+            textAlign: 'center',
+            paddingleft: '2rem',
+            fontWeight: 600,
+            color: (theme) => `${theme.palette.text.primary} !important`,
+          }}
+        >
+          {displayPermission.displayName}
+        </TableCell>
+
+        {dataList.map((grantItem: any, index: any) => (
+          <TableCell key={index}>
+            <FormGrantLabel
+              key={index}
+              label={grantItem.type}
+              value={grantItem.value}
+              isChecked={isCheckedGrantType(
+                displayPermission.permissionId,
+                selectPermission.permissionId,
+                selectPermission.grantTypeList,
+                grantItem.value,
+              )}
+              isDisabled={isDisabled}
+              displayPermission={selectPermission}
+            />
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  };
+
+  // 권한에 따른 역할 상세정보 체크박스 활성화 표시
+  const isCheckedGrantType = (
+    permissionId: number,
+    grant_permissionId: number,
+    receiveGrantTypeList: { grant_type: string }[],
+    grantType: string,
+  ) => {
+    if (permissionId != grant_permissionId) {
+      return false;
+    }
+
+    if (!receiveGrantTypeList || receiveGrantTypeList.length == 0) {
+      return false;
+    }
+
+    const checkedGrantList = receiveGrantTypeList.map(
+      (receiveGrantType: { grant_type: string }) => {
+        return receiveGrantType.grant_type;
+      },
+    );
+
+    if (checkedGrantList.indexOf(grantType) > -1) {
+      return true;
+    }
+
+    return false;
+  };
+
+  // 권한 타입 checkBox 처리
+  const onCheckedType = (isChecked: boolean, value: string, permission: permissionType) => {
+    console.log(isChecked);
+
+    setErrMessage('');
+
+    permission.dataChange = true;
+
+    const grantTypeList = permission.grantTypeList.map((grantItem: { grant_type: any }) => {
+      return grantItem.grant_type;
+    });
+
+    const isExistGrant = grantTypeList.indexOf(value) > -1;
+
+    if (isChecked && !isExistGrant) {
+      permission.grantTypeList.push({ grant_type: value });
+    } else if (!isChecked && isExistGrant) {
+      permission.grantTypeList.splice(grantTypeList.indexOf(value), 1);
+    }
+  };
 
   // 버튼 열기
   const handleClickOpen = (action: string, roleId: number) => {
@@ -266,23 +441,10 @@ const RolesCards = () => {
     setErrMessage('');
   };
 
-  // 권한 타입 checkBox 처리
-  const onCheckedType = (isChecked: boolean, value: string, permission: permissionType) => {
-    setIsChecked(true);
-    setErrMessage('');
-    if (value == '0') {
-      permission.isWrite = isChecked;
-    } else if (value == '1') {
-      permission.isRead = isChecked;
-    } else if (value == '2') {
-      permission.isUpdate = isChecked;
-    } else if (value == '3') {
-      permission.isDelete = isChecked;
-    }
-  };
-
   // 권한 (grantType) 체크박스 선택 시 value 지정 및 체크박스, 역할 이름 존재 여부 체크
   const onSubmit = (data: any) => {
+    console.log(viewData);
+
     let getRoleName = data.roleName;
 
     if (getRoleName === '') {
@@ -294,34 +456,21 @@ const RolesCards = () => {
       roleDto: [],
     };
 
-    permissionData.forEach((value: permissionType) => {
-      let type = '';
+    viewData.forEach((value: any) => {
+      if (value.dataChange != true) {
+        return;
+      }
 
-      const pushData = () => {
-        roleData.roleDto.push({
+      const changeGrantTypeList = value.grantTypeList.map((grant: any) => {
+        return {
           permissionId: value.permissionId,
-          grantType: type,
-        });
-      };
+          grantType: grant.grant_type,
+        };
+      });
 
-      if (value.isWrite == true) {
-        type = '0';
-        pushData();
-      }
-      if (value.isRead == true) {
-        type = '1';
-        pushData();
-      }
-      if (value.isUpdate == true) {
-        type = '2';
-        pushData();
-      }
-      if (value.isDelete == true) {
-        type = '3';
-        pushData();
-      }
+      roleData.roleDto.push(...changeGrantTypeList);
     });
-    if (isChecked == false) {
+    if (dialogTitle === '등록' && isChecked == false) {
       setErrMessage('역할을 한개 이상 체크해주세요.');
 
       return false;
@@ -331,7 +480,7 @@ const RolesCards = () => {
     });
 
     if (filterName.length > 0) {
-      setErrMessage('이미 중복된 역할이름이 있습니다.');
+      setErrMessage('이미 등록된 역할이름이 있습니다.');
 
       return false;
     } else {
@@ -339,6 +488,22 @@ const RolesCards = () => {
         getRoleName = data.roleName;
         createRole(roleData);
       } else if (dialogTitle == '수정') {
+        // viewData.map((item: any) => {
+        //   const checkedValues = {
+        //     permissionId: item.permissionId,
+        //     grantType: item.grantTypeList,
+        //   };
+        //   checkedValues.grantType.map((value: any) => {
+        //     roleData.roleDto.push({
+        //       permissionId: checkedValues.permissionId,
+        //       grantType: value.grant_type,
+        //     });
+
+        //     return value.grant_type;
+        //   });
+        // });
+
+        console.log('updateRoleData', roleData);
         updateRole(roleData, roleId);
       }
     }
@@ -392,6 +557,8 @@ const RolesCards = () => {
             isUpdate: false,
             isRead: false,
             grantType: '',
+            grantTypeList: undefined,
+            dataChange: false,
           };
           permissionMap.set(permission.permissionId, permissionData);
         }
@@ -431,6 +598,7 @@ const RolesCards = () => {
   // 역할 수정 API호출
   const updateRole = async (roleData: any, roleId: number) => {
     if (confirm('수정 하시겠습니까?')) {
+      console.log('roleData', roleData);
       try {
         const req = await Api.patch(`${apiConfig.apiEndpoint}/role/${roleId}`, {
           roleName: roleData.roleName,
@@ -440,7 +608,7 @@ const RolesCards = () => {
         alert('수정이 완료 되었습니다.');
         location.reload();
       } catch (err: any) {
-        console.log('err', err.response.data);
+        console.log('err', err);
         alert('수정에 실패 하였습니다.');
       }
     }
@@ -467,27 +635,23 @@ const RolesCards = () => {
         params: { getInfo: getInfo },
       });
 
-      // setViewData(res.data);
-
       const resultDataList = res.data.map(
         (permission: {
           display_name: string;
           permission_id: number;
           menu_name: string;
           grant_type_list: { grant_type: string }[];
+          id: string;
+          adminName: string;
         }) => {
           const value = {
             displayName: permission.display_name,
             permissionId: permission.permission_id,
             menuName: permission.menu_name,
             grantTypeList: permission.grant_type_list,
+            id: permission.id,
+            adminName: permission.adminName,
           };
-
-          // value.grantTypeList = permission.grant_type_list.map( (grantValue) => {
-          //   return {
-          //     grantType: grantValue.grant_type
-          //   }
-          // });
 
           return value;
         },
@@ -499,156 +663,6 @@ const RolesCards = () => {
         console.log('message:', err);
       }
     }
-  };
-
-  // 모달 타이틀 컴포넌트
-  const modalTitle = (modalTitleName: string) => {
-    return (
-      <DialogTitle sx={{ textAlign: 'center', mt: 5 }}>
-        <Typography variant="h4" component="span">
-          {modalTitleName}
-        </Typography>
-      </DialogTitle>
-    );
-  };
-
-  // 모달 버튼 컴포넌트
-  const modalButton = (action: string) => {
-    return (
-      <DialogActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
-        <Box className="demo-space-x">
-          {action == 'submit' ? (
-            <>
-              <Button size="large" type="submit" variant="contained">
-                등록
-              </Button>
-              <Button size="large" color="secondary" variant="outlined" onClick={handleClose}>
-                취소
-              </Button>
-            </>
-          ) : (
-            <Button size="large" variant="outlined" onClick={handleClose}>
-              확인
-            </Button>
-          )}
-        </Box>
-      </DialogActions>
-    );
-  };
-
-  // 역할 이름 입력창 컴포넌트
-  const grantNameInput = (label: string, rules: boolean, error: boolean | undefined) => {
-    return (
-      <FormControl>
-        <Controller
-          name="roleName"
-          control={control}
-          rules={{ required: rules }}
-          render={({ field: { value, onChange } }) => (
-            <TextField value={value} label={label} onChange={onChange} error={error} />
-          )}
-        />
-        {errors.roleName && (
-          <FormHelperText sx={{ color: 'error.main' }}>역할 이름을 입력해 주세요.</FormHelperText>
-        )}
-      </FormControl>
-    );
-  };
-
-  // 역할 등록/수정 테이블 컴포넌트
-  const grantInputTablebody = () => {
-    return (
-      <>
-        <TableContainer>
-          <Table size="small">
-            <TableBody>
-              {permissionData.map((data: any, index: number) => {
-                return (
-                  <FormGrantTableRow
-                    key={index}
-                    index={index}
-                    displayPermission={data}
-                    checkedPermissionDataList={viewData}
-                    dataList={dataList}
-                    isShowOnlyChecked={false}
-                    isChecked={true}
-                    isDisabled={false}
-                    isDialogShow={dialogRoleRegisterOpen || dialogRoleUpdateOpen}
-                  />
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Box>
-          <Typography variant="body1" pt={3} sx={{ color: 'error.main' }}>
-            {' '}
-            {errMessage}
-          </Typography>
-        </Box>
-      </>
-    );
-  };
-
-  // 역할 보기 테이블 컴포넌트
-  const grantTablebody = (viewData: any, dataList: any) => {
-    return (
-      <>
-        <TableHead>
-          <TableRow sx={{ pl: '2rem' }}>
-            <TableCell align="center">
-              <Box
-                sx={{
-                  fontSize: '1.0rem',
-                  alignItems: 'center',
-                  textTransform: 'capitalize',
-                }}
-              >
-                권한 이름
-              </Box>
-            </TableCell>
-            <TableCell colSpan={4}>권한 종류</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {viewData.map((data: any, index: number) => {
-            return (
-              <FormGrantTableRow
-                key={index}
-                index={index}
-                displayPermission={data}
-                checkedPermissionDataList={viewData}
-                dataList={dataList}
-                isShowOnlyChecked={true}
-                isChecked={true}
-                isDisabled={true}
-                isDialogShow={dialogRoleViewOpen}
-              />
-            );
-          })}
-        </TableBody>
-        {/* <TableBody>
-          {viewData.map((data: any, index: number) => {
-            return (
-              <TableRow key={index} sx={{ '& .MuiTableCell-root:first-of-type': { pl: 0 } }}>
-                <TableCell align="center">{data.display_name}</TableCell>
-
-                {dataList.map((list: any, dataListIndex: any) => (
-                  <TableCell align="center" key={dataListIndex}>
-                    <FormGrantLabel
-                      label={list.type}
-                      value={list.value}
-                      isChecked={isCheckedGrantType(0, 0, data.grantTypeList, list.value)}
-                      isDisabled={true}
-                    />
-                  </TableCell>
-                ))}
-              </TableRow>
-            );
-          })}
-        </TableBody> */}
-      </>
-    );
   };
 
   // Role List 불러오기
