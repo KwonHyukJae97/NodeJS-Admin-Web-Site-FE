@@ -28,6 +28,7 @@ import UserViewSecurity from 'src/views/apps/user/view/UserViewSecurity';
 // ** Types
 import { InvoiceType } from 'src/types/apps/invoiceTypes';
 
+//invoiceData 타입 정의
 interface Props {
   invoiceData: InvoiceType[];
 }
@@ -42,6 +43,7 @@ const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   },
 }));
 
+//내 정보 페이지 오른쪽 화면
 const UserViewRight = ({ invoiceData }: Props) => {
   // ** State
   const [value, setValue] = useState<string>('security');

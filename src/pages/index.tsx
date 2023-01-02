@@ -17,11 +17,12 @@ import { useAuth } from 'src/hooks/useAuth';
 //   // if (role === 'client') return '/acl'
 //   // else return '/dashboards/crm'
 //   return '/dashboards/crm'
-// }
+//
 
 // 홈 화면 실행
 const Home = () => {
   // ** Hooks
+
   const auth = useAuth();
   const router = useRouter();
 
@@ -33,9 +34,9 @@ const Home = () => {
     } else {
       router.replace('/login');
     }
-  }, [auth, router])
+  }, []);
 
   return <Spinner />;
-}
+};
 
 export default Home;

@@ -26,16 +26,12 @@ import UserViewRight from 'src/views/apps/user/view/UserViewRight';
 //   invoiceData: InvoiceType[];
 // };
 
-//그럼 여기서 그아이디값을 받아 아이디값으로 axios를 통해 상새정보를 요청
-//요청받은 데이터를 UserViewLeft로 data로 넘겨서
-//accountId 까지는 넘어오는데 벡엔드 axios호출이 안됨
-
+//내 정보 컴포넌트
 const UserView = ({ accountId, invoiceData }: any) => {
   // ** State
   const [error, setError] = useState<boolean>(false);
   const [data, setData] = useState<null | UsersType>(null);
 
-  console.log('qwe123qwe123', accountId);
   useEffect(() => {
     axios
       .get(`${apiConfig.apiEndpoint}/auth/${accountId}`)

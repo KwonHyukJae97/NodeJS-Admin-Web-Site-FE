@@ -44,108 +44,132 @@ import DialogContentText from '@mui/material/DialogContentText';
 import CustomAvatar from 'src/@core/components/mui/avatar';
 
 // ** Types
-import { ThemeColor } from 'src/@core/layouts/types';
 import { UsersType } from 'src/types/apps/userTypes';
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials';
-import axios from 'axios';
 
 import apiConfig from 'src/configs/api';
 import Button from '@mui/material/Button';
+import Api from 'src/utils/api';
+import moment from 'moment';
 
+//수정 데이터 타입 정의
 interface Props {
   data: UsersType;
 }
 
-// interface ColorsType {
-//   [key: string]: ThemeColor;
-// }
-
-// ** Styled <sup> component
-// const Sup = styled('sup')(({ theme }) => ({
-//   top: '0.2rem',
-//   left: '-0.6rem',
-//   position: 'absolute',
-//   color: theme.palette.primary.main,
-// }));
-
-// ** Styled <sub> component
-// const Sub = styled('sub')({
-//   fontWeight: 400,
-//   fontSize: '.875rem',
-//   lineHeight: '1.25rem',
-//   alignSelf: 'flex-end',
-// });
-
-// const roleColors: ColorsType = {
-//   admin: 'error',
-//   editor: 'info',
-//   author: 'warning',
-//   maintainer: 'success',
-//   subscriber: 'primary',
-// };
-
-// const statusColors: ColorsType = {
-//   active: 'success',
-//   pending: 'warning',
-//   inactive: 'secondary',
-// };
-
-//우리형식에 맞게 수정하여 나타내기
-
+//내정보 페이지
 const UserViewLeft = ({ data }: Props) => {
-  const [email, setEmail] = useState<string>(data.email);
-  const [phone, setPhone] = useState<string>(data.phone);
-  const [nickname, setNickname] = useState<string>(data.nickname);
-
-  // const [email, setEmail] = useState<string>(data.email);
-  // const [phone, setPhone] = useState<string>(data.phone);
-  // const [nickname, setNickname] = useState<string>(data.nickname);
-
   // ** States
-  const [openEditEmail, setOpenEditEmail] = useState<boolean>(false);
-  const [openEditPhone, setOpenEditPhone] = useState<boolean>(false);
-  const [openEditNickname, setOpenEditNickname] = useState<boolean>(false);
-
-  // const [openPlans, setOpenPlans] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>(data.email),
+    [phone, setPhone] = useState<string>(data.phone),
+    [nickname, setNickname] = useState<string>(data.nickname),
+    [openEditEmail, setOpenEditEmail] = useState<boolean>(false),
+    [openEditPhone, setOpenEditPhone] = useState<boolean>(false),
+    [openEditNickname, setOpenEditNickname] = useState<boolean>(false);
 
   // Handle Edit dialog
-  const handleEditClickOpenEmail = () => setOpenEditEmail(true);
-  const handleEditClickOpenPhone = () => setOpenEditPhone(true);
-  const handleEditClickOpenNickname = () => setOpenEditNickname(true);
-  const handleEditClickCloseEmail = () => setOpenEditEmail(false);
-  const handleEditClickClosePhone = () => setOpenEditPhone(false);
-  const handleEditClickCloseNickname = () => setOpenEditNickname(false);
+  const handleEditClickOpenEmail = () => setOpenEditEmail(true),
+    handleEditClickOpenPhone = () => setOpenEditPhone(true),
+    handleEditClickOpenNickname = () => setOpenEditNickname(true),
+    handleEditClickCloseEmail = () => setOpenEditEmail(false),
+    handleEditClickClosePhone = () => setOpenEditPhone(false),
+    handleEditClickCloseNickname = () => setOpenEditNickname(false);
 
-  // const inputChangeEmail = (e: any) => {
-  //   setEmail(e.target.value);
-  //   data.email = e.target.value;
+  const birthDate = moment(data.birth).format('YYYY-MM-DD');
+  const phoneNumber = data.phone.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+  if (data.id == null) {
+    data.id = '---정보 없음---';
+  }
+  if (data.email == null) {
+    data.email = '---정보 없음---';
+  }
+  if (data.snsId == null) {
+    data.snsId = '---정보 없음---';
+  }
 
-  //   // console.log(email);
-  // };
-  // const inputChangePhone = (e: any) => {
-  //   setPhone(e.target.value);
-  //   data.phone = e.target.value;
+  //이메일 수정 메소드
+  const editEmail = async () => {
+    if (confirm('이메일을 수정하시겠습니까?')) {
+      try {
+        //이메일형식 검사
+        const em = email;
+        const emailTest = em.search(
+          /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+        );
+        if (emailTest < 0) {
+          alert('이메일 형식에 맞게 다시 입력해주세요.');
+          
+return false;
+        } else {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+            email: email,
+          });
+          location.reload();
+          alert('이메일 수정이 완료되었습니다.');
+        }
+      } catch (err: any) {
+        console.log(err);
+        if (err.response.data.message == 'email must be an email') {
+          return alert('이메일 형식에 맞게 다시 입력해주세요.');
+        }
+      }
+    }
+  };
 
-  //   // console.log(email);
-  // };
-  // const inputChangeNickname = (e: any) => {
-  //   setNickname(e.target.value);
-  //   data.nickname = e.target.value;
+  //연락처 수정 메소드
+  const editPhone = async () => {
+    if (confirm('연락처를 수정하시겠습니까?')) {
+      try {
+        //전화번호 형식 검사
+        const phn = phone;
+        const phnTest = phn.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
+        if (phnTest < 0) {
+          alert('전화번호 형식을 확인하여 다시 입력해주세요.');
+          
+return false;
+        } else {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+            phone: phone,
+          });
+          location.reload();
+          alert('연락처 수정이 완료되었습니다.');
+        }
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
 
-  //   // console.log(email);
-  // };
+        return alert(message);
+      }
+    }
+  };
 
-  // const inputChange = (e) => {
-  //   // setEmail(e.target.value);
-  //   data.email = e.target.value;
-  //   // console.log(email);
-  // };
+  //닉네임 수정 메소드
+  const editNickname = async () => {
+    if (confirm('닉네임을 수정하시겠습니까?')) {
+      try {
+        const nick = nickname;
+        const nickTest = nick.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
+        if (nickTest < 0) {
+          alert('한글, 영문, 숫자만 입력해주세요.');
+          
+return false;
+        } else {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+            nickname: nickname,
+          });
+          location.reload();
+          alert('닉네임 수정이 완료되었습니다.');
+        }
+      } catch (err: any) {
+        console.log(err);
+        const message = err.response.data.message;
 
-  // Handle Upgrade Plan dialog
-  // const handlePlansClickOpen = () => setOpenPlans(true);
-  // const handlePlansClose = () => setOpenPlans(false);
+        return alert(message);
+      }
+    }
+  };
 
   const renderUserAvatar = () => {
     if (data) {
@@ -153,7 +177,6 @@ const UserViewLeft = ({ data }: Props) => {
         return (
           <CustomAvatar
             alt="User Image"
-            // src={data.avatar}
             variant="rounded"
             sx={{ width: 120, height: 120, mb: 4 }}
           />
@@ -163,7 +186,6 @@ const UserViewLeft = ({ data }: Props) => {
           <CustomAvatar
             skin="light"
             variant="rounded"
-            // color={data.avatarColor as ThemeColor}
             sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
           >
             {getInitials(data.nickname)}
@@ -251,14 +273,30 @@ const UserViewLeft = ({ data }: Props) => {
                     이&nbsp;&nbsp;메&nbsp;&nbsp;일 :
                   </Typography>
                   <Typography variant="body2">{data.email}</Typography>
-                  <Button onClick={handleEditClickOpenEmail}>수정</Button>
+                  &emsp;
+                  <Button
+                    onClick={handleEditClickOpenEmail}
+                    size={'small'}
+                    color={'primary'}
+                    variant={'outlined'}
+                  >
+                    수정
+                  </Button>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
                     연&nbsp;&nbsp;락&nbsp;&nbsp;처 :
                   </Typography>
-                  <Typography variant="body2">{data.phone}</Typography>
-                  <Button onClick={handleEditClickOpenPhone}>수정</Button>
+                  <Typography variant="body2">{phoneNumber}</Typography>
+                  &emsp;
+                  <Button
+                    onClick={handleEditClickOpenPhone}
+                    size={'small'}
+                    color={'primary'}
+                    variant={'outlined'}
+                  >
+                    수정
+                  </Button>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
@@ -266,13 +304,20 @@ const UserViewLeft = ({ data }: Props) => {
                   </Typography>
                   <Typography variant="body2">{data.nickname}</Typography>
                   &emsp;
-                  <Button onClick={handleEditClickOpenNickname}>수정</Button>
+                  <Button
+                    onClick={handleEditClickOpenNickname}
+                    size={'small'}
+                    color={'primary'}
+                    variant={'outlined'}
+                  >
+                    수정
+                  </Button>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
                     생 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일 :
                   </Typography>
-                  <Typography variant="body2">{data.birth}</Typography>
+                  <Typography variant="body2">{birthDate}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
@@ -380,6 +425,7 @@ const UserViewLeft = ({ data }: Props) => {
                         type="email"
                         label="이메일"
                         value={email}
+
                         // defaultValue={data.email}
                         // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}
@@ -387,34 +433,7 @@ const UserViewLeft = ({ data }: Props) => {
                     </Grid>
 
                     <DialogActions sx={{ justifyContent: 'center' }}>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1 }}
-                        onClick={() => {
-                          if (confirm('이메일을 수정하시겠습니까?')) {
-                            console.log(data);
-                            axios
-                              .patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
-                                email: email,
-                              })
-                              .then((res) => {
-                                console.log('resresres', res);
-                                location.reload();
-                                alert('이메일 수정이 완료되었습니다.');
-                              })
-                              .catch((err: any) => {
-                                console.log('errerrerr', err);
-                                console.log('에러처리해야댐', err.response.data.message);
-                                if (
-                                  err.response.data.message ===
-                                  '이미 존재하는 이메일이므로 수정 정보를 확인해주세요.'
-                                ) {
-                                  return alert('누군가 사용중인 이메일입니다. 다시 입력해주세요!');
-                                }
-                              });
-                          }
-                        }}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={() => editEmail()}>
                         수정
                       </Button>
                       <Button
@@ -459,39 +478,10 @@ const UserViewLeft = ({ data }: Props) => {
                         label="연락처"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-
-                        // onChange={inputChangePhone}
-                        // defaultValue={data.phone}
                       />
                     </Grid>
                     <DialogActions sx={{ justifyContent: 'center' }}>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1 }}
-                        onClick={() => {
-                          if (confirm('연락처를 수정하시겠습니까?')) {
-                            console.log(data);
-                            axios
-                              .patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
-                                phone: phone,
-                              })
-                              .then((res) => {
-                                console.log('resresres', res);
-                                location.reload();
-                                alert('연락처 수정이 완료되었습니다.');
-                              })
-                              .catch((err) => {
-                                console.log('errerrerr', err);
-                                if (
-                                  err.response.data.message ===
-                                  '이미 존재하는 연락처이므로 수정 정보를 확인해주세요.'
-                                ) {
-                                  return alert('누군가 사용중인 연락처입니다. 다시 입력해주세요!');
-                                }
-                              });
-                          }
-                        }}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={() => editPhone()}>
                         수정
                       </Button>
                       <Button
@@ -536,40 +526,11 @@ const UserViewLeft = ({ data }: Props) => {
                         label="닉네임"
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
-
-                        // onChange={inputChangeNickname}
-                        // defaultValue={data.nickname}
                       />
                     </Grid>
 
                     <DialogActions sx={{ justifyContent: 'center' }}>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1 }}
-                        onClick={() => {
-                          if (confirm('닉네임을 수정하시겠습니까?')) {
-                            console.log(data);
-                            axios
-                              .patch(`${apiConfig.apiEndpoint}/auth/${data.accountId}`, {
-                                nickname: nickname,
-                              })
-                              .then((res) => {
-                                console.log('resresres', res);
-                                location.reload();
-                                alert('닉네임 수정이 완료되었습니다.');
-                              })
-                              .catch((err) => {
-                                console.log('errerrerr', err);
-                                if (
-                                  err.response.data.message ===
-                                  '이미 존재하는 닉네임이므로 수정 정보를 확인해주세요.'
-                                ) {
-                                  return alert('누군가 사용중인 닉네임입니다. 다시 입력해주세요!');
-                                }
-                              });
-                          }
-                        }}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={() => editNickname()}>
                         수정
                       </Button>
                       <Button

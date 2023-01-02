@@ -4,21 +4,17 @@ import BlankLayout from 'src/@core/layouts/BlankLayout';
 import { useAuth } from 'src/hooks/useAuth';
 import qs from 'qs';
 
+// 리다이렉트 될 화면 (인가코드 받음) / 구글 로그인 처리 진행시 보여질 화면
 const OauthRedirect = () => {
   const auth = useAuth();
 
   useEffect(() => {
-    console.log('google redirect test');
+    // 구글 인가코드
     const code = new URL(window.location.href).searchParams.get('code');
-    console.log('구글 인가 코드입니다.', code);
 
     async function getTest() {
-      console.log('google get test');
       const body = getBody(code);
-      console.log('google body', body);
-
       const googleAccessToken = await getGoogleToken(body);
-      console.log('구글 토큰입니다.', googleAccessToken);
 
       if (googleAccessToken) {
         await getGoogleUserInfo(googleAccessToken);
@@ -27,6 +23,7 @@ const OauthRedirect = () => {
     getTest();
   });
 
+  //토큰 요청에 필요한 body값 정의
   const getBody = (code: any) => {
     const body = qs.stringify({
       grant_type: 'authorization_code',
@@ -39,6 +36,7 @@ const OauthRedirect = () => {
     return body;
   };
 
+  //구글 접근 토큰 요청
   const getGoogleToken = async (body: any) => {
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -82,9 +80,6 @@ const OauthRedirect = () => {
         googleAccount: responseUserInfo.data,
         resGoogleAccessToken: googleAccessToken,
       };
-      const { snsId, googleAccount } = googleUserInfo;
-      console.log('google 유저 정보입니다.', googleAccount);
-      console.log('google이메일11122', snsId);
 
       auth.googleLogin(googleUserInfo);
     }

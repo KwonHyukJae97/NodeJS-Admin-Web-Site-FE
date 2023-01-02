@@ -3,21 +3,25 @@ import { useState } from 'react';
 
 // ** Next Import
 import Link from 'next/link';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
+import { AlertCircleOutline } from 'mdi-material-ui';
 
 // ** Custom Components Imports
 import TableSearchHeader from 'src/views/company/list/TableSearchHeader';
 import PageLeftInHeader from 'src/@core/components/page-left-in-header';
+import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
 // ** Types
 import { CompanyType } from 'src/types/apps/companyTypes';
+import { PageType } from 'src/utils/pageType';
 
 // ** axios
 import axios from 'axios';
@@ -27,21 +31,10 @@ import apiConfig from 'src/configs/api';
 
 // ** moment
 import moment from 'moment';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
-import { AlertCircleOutline } from 'mdi-material-ui';
-import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
 // 테이블 행 데이터 타입 정의
 interface CellType {
   row: CompanyType;
-}
-
-// 페이지 타입 정의
-interface PageType {
-  currentPage: number;
-  pageSize: number;
-  totalCount: number;
-  totalPage: number;
 }
 
 // 링크 스타일 적용
@@ -132,14 +125,12 @@ const CompanyList = ({
   const [pageNo, setPageNo] = useState<number>(1),
     [searchWord, setSearchWord] = useState<string>('');
 
-  const pageName = 'company';
-
   // API로 조회한 데이터 리스트를 타입에 맞게 할당(SSR)
   const companyData: CompanyType[] =
     apiData !== null
-      ? apiData.map((data: any, idx: number) => {
+      ? apiData.map((data: any, index: number) => {
           const company: CompanyType = {
-            id: pageData.totalCount - pageData.pageSize * (pageData.currentPage - 1) - idx,
+            id: pageData.totalCount - pageData.pageSize * (pageData.currentPage - 1) - index,
             companyId: data.companyId,
             companyName: data.companyName,
             userCount: data.userCount,
@@ -151,7 +142,6 @@ const CompanyList = ({
         })
       : null;
 
-  // ** Hooks
   // 회원사 정보가 없을 경우 처리하는 컴포넌트
   const renderNoResult = (
     <Box
@@ -178,12 +168,14 @@ const CompanyList = ({
             subcategory={'회원사관리'}
             setPageNo={setPageNo}
             setSearchWord={setSearchWord}
+            pageName="company"
           />
           <TableSearchHeader
             searchWord={searchWord}
             setSearchWord={setSearchWord}
             pageNo={pageNo}
             setPageNo={setPageNo}
+            pageName="company"
           />
           {companyData !== null ? (
             <DataGrid
@@ -200,7 +192,7 @@ const CompanyList = ({
                   pageNo: pageNo,
                   setPageNo: setPageNo,
                   searchWord: searchWord,
-                  pageName: pageName,
+                  pageName: 'company',
                 },
               }}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
@@ -215,7 +207,7 @@ const CompanyList = ({
 };
 
 // 회원사 조회 API 요청
-export const getCompany = async (pageNo: number, searchWord: string) => {
+export const getAllCompany = async (pageNo: number, searchWord: string) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
     const res = await axios.get(`${apiConfig.apiEndpoint}/company`, {
@@ -231,7 +223,7 @@ export const getCompany = async (pageNo: number, searchWord: string) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { pageNo, searchWord } = context.query;
 
-  const result = await getCompany(Number(pageNo), searchWord as string);
+  const result = await getAllCompany(Number(pageNo), searchWord as string);
 
   const apiData: CompanyType = result === undefined ? null : result.items;
   const pageData: PageType =

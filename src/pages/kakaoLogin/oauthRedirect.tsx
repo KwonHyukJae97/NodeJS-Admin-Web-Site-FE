@@ -6,21 +6,15 @@ import qs from 'qs';
 
 // 리다이렉트 될 화면 (인가코드 받음) / 로그인 처리 진행시 보여질 화면
 const OauthRedirect = () => {
-  // const router = useRouter()
   const auth = useAuth();
 
   useEffect(() => {
-    console.log('redirect test');
+    //카카오 인가코드
     const code = new URL(window.location.href).searchParams.get('code');
-    console.log('카카오 인가코드입니다', code);
 
     async function getTest() {
-      console.log('getTest');
       const body = getBody(code);
-      console.log(body);
-
       const kakaoAccessToken = await getKakaoToken(body);
-      console.log('카카오 토큰입니다.', kakaoAccessToken);
 
       if (kakaoAccessToken) {
         await getKakaoUserInfo(kakaoAccessToken);
@@ -29,6 +23,7 @@ const OauthRedirect = () => {
     getTest();
   });
 
+  //토큰 요청에 필요한 body값 정의
   const getBody = (code: any) => {
     const body = qs.stringify({
       grant_type: 'authorization_code',
@@ -39,6 +34,7 @@ const OauthRedirect = () => {
     return body;
   };
 
+  //카카오 접근 토큰 요청
   const getKakaoToken = async (body: any) => {
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -78,6 +74,7 @@ const OauthRedirect = () => {
 
     if (responseUserInfo.status === 200) {
       const kakaoUserInfo = {
+        //식별 정보
         snsId: responseUserInfo.data.kakao_account.email,
         name: responseUserInfo.data.kakao_account.profile.nickname,
         nickname: responseUserInfo.data.kakao_account.profile.nickname,
@@ -86,16 +83,7 @@ const OauthRedirect = () => {
         resKakaoAccessToken: kakaoAccessToken,
         kakaoAccount: responseUserInfo.data.kakao_account,
       };
-      const { name, nickname, birth, gender, snsId, resKakaoAccessToken } = kakaoUserInfo;
 
-      console.log('카카오 이름.', name);
-      console.log('카카오 닉네임.', nickname);
-      console.log('카카오 snsID.', snsId);
-      console.log('카카오 생일.', birth);
-      console.log('카카오 성별.', gender);
-      console.log('카카오 토큰.', resKakaoAccessToken);
-
-      // return kakaoUserInfo
       auth.kakaoLogin(kakaoUserInfo);
     }
 
