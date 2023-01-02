@@ -456,13 +456,6 @@ const RolesCards = () => {
     };
 
     viewData.forEach((value: any) => {
-      if (!value.dataChange) {
-        return;
-      }
-      if (value.grantTypeList.length == 0) {
-        // 데이터 수정 내역은 있으나 체크박스 값이 없을 경우 grantType값을 4로 전송하여 데이터 삭제할 수 있도록 함.
-        roleData.roleDto.push({ permissionId: value.permissionId, grantType: '4' });
-      }
       const changeGrantTypeList = value.grantTypeList.map((grant: any) => {
         return {
           permissionId: value.permissionId,
