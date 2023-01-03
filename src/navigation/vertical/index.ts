@@ -56,6 +56,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: '레벨 카테고리',
+          path: '/level_category/list',
         },
         {
           title: '학습 관리',
