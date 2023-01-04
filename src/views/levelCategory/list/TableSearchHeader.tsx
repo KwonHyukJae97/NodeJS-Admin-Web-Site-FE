@@ -52,7 +52,6 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
   };
 
   const handleChange = (event: SelectChangeEvent) => {
-    console.log('event', event.target.value);
     setSearchKey(event.target.value);
     setCategoryType(event.target.value);
     setPageNo(1);
@@ -61,8 +60,6 @@ const TableSearchHeader = (props: TableSearchHeaderProps) => {
 
   // 검색 후 페이지 번호 상태가 바뀔 때마다 요청
   useEffect(() => {
-    console.log('searchkey', searchKey);
-    console.log('categoryType', categoryType);
     router.push(`/${pageName}/list/?pageNo=${pageNo}&searchKey=${searchKey}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNo, categoryType, searchKey]);

@@ -14,7 +14,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { AlertCircleOutline } from 'mdi-material-ui';
 import Button from '@mui/material/Button';
 import Icon from '@mdi/react';
-import { mdiSquareEditOutline, mdiTrashCanOutline } from '@mdi/js';
+import { mdiSquareEditOutline } from '@mdi/js';
 
 // ** Custom Components Imports
 import TableSearchHeader from 'src/views/levelCategory/list/TableSearchHeader';
@@ -30,33 +30,11 @@ import axios from 'axios';
 
 // ** Config
 import apiConfig from 'src/configs/api';
-import Api from 'src/utils/api';
 
 // 테이블 행 데이터 타입 정의
 interface CellType {
   row: LevelCategoryType;
 }
-
-// 레벨 카테고리 삭제 API 호출
-const deleteLevelCategory = async (id: number) => {
-  if (confirm('삭제 하시겠습니까?')) {
-    try {
-      await Api.delete(`${apiConfig.apiEndpoint}/levelCategory/${id}`, {
-        withCredentials: true,
-      });
-      alert('삭제가 완료되었습니다.');
-      window.location.reload();
-    } catch (err) {
-      console.log(err);
-      alert('삭제에 실패하였습니다.');
-    }
-  }
-};
-
-// 삭제 버튼 클릭 시 호출
-const handleDeleteLevelCategory = (id: number) => {
-  deleteLevelCategory(id);
-};
 
 // 테이블 컬럼 데이터 맵핑
 const columns = [
@@ -109,7 +87,7 @@ const columns = [
       return (
         <Box sx={{ margin: '0 auto' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Link href={`/levelCategory/edit/${row.levelCategoryId}`}>
+            <Link href={`/level_category/edit/${row.studyTypeCode}`}>
               <Button sx={{ minWidth: 0, p: 1.25 }}>
                 <Icon
                   path={mdiSquareEditOutline}
@@ -121,20 +99,6 @@ const columns = [
                 />
               </Button>
             </Link>
-
-            <Button
-              sx={{ minWidth: 0, p: 1.25 }}
-              onClick={() => handleDeleteLevelCategory(Number(row.levelCategoryId))}
-            >
-              <Icon
-                path={mdiTrashCanOutline}
-                size={0.85}
-                horizontal
-                vertical
-                rotate={180}
-                color="grey"
-              />
-            </Button>
           </Box>
         </Box>
       );

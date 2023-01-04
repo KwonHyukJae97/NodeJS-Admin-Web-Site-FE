@@ -12,11 +12,16 @@ export type LevelCategoryType = {
 
 // 학습 영역 정보 type 정의
 export type studyTypeCodeType = {
-  studyTypeCode: number;
+  studyTypeCode: string;
   studyTypeName: string;
 };
 
-// 회원사 props type 정의
-export type CompanyLayoutProps = {
-  id: number | undefined;
+// 레벨 카테고리 상세 정보 type 정의
+export type LevelCategoryDetailType = {
+  id?: number;
+  levelCategoryId: number;
+  levelCategoryName: string;
+  levelSequence: number;
+  levelStepStart: number;
+  levelStepEnd: number;
 };
