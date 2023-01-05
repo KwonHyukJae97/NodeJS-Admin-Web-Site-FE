@@ -18,10 +18,12 @@ export type studyTypeCodeType = {
 
 // 레벨 카테고리 상세 정보 type 정의
 export type LevelCategoryDetailType = {
+  [x: string]: any;
   id?: number;
   levelCategoryId: number;
   levelCategoryName: string;
   levelSequence: number;
   levelStepStart: number;
   levelStepEnd: number;
+  wordLevelName: string;
 };
