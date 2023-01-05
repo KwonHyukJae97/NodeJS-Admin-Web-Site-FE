@@ -22,7 +22,6 @@ import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 // ** axios
 import { ApiSSR } from 'src/utils/api';
 import apiConfig from 'src/configs/api';
-import axios from 'axios';
 
 // ** Types Imports
 import { NoticeType } from 'src/types/apps/boardTypes';

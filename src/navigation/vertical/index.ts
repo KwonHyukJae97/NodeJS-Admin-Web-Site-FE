@@ -53,6 +53,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: '전체 단어',
+          path: '/word/list',
         },
         {
           title: '레벨 카테고리',
