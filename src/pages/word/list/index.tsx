@@ -6,18 +6,16 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
-import { DataGrid } from '@mui/x-data-grid';
-import Typography from '@mui/material/Typography';
 import { AlertCircleOutline } from 'mdi-material-ui';
-import { Icon } from '@iconify/react';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
 
 // ** Custom Components Imports
 import PageLeftInHeader from 'src/@core/components/page-left-in-header';
-import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 import SearchFilterHeader from 'src/views/word/SearchFilterHeader';
 import SearchButtonsHeader from 'src/views/word/SearchButtonsHeader';
+import WordTable from 'src/views/word/WordTable';
 
 // ** axios
 import { ApiSSR } from 'src/utils/api';
@@ -26,185 +24,6 @@ import apiConfig from 'src/configs/api';
 // ** Types Imports
 import { WordType } from 'src/types/apps/wordTypes';
 import { PageType } from 'src/utils/pageType';
-
-// ** Common Util Imports
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-
-// 테이블 행 데이터 타입 정의
-interface CellType {
-  row: WordType;
-}
-
-// 테이블 컬럼 데이터 맵핑
-const columns = [
-  {
-    flex: 0.04,
-    minWidth: 40,
-    field: 'id',
-    headerName: '번호',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="subtitle2">{row.id}</Typography>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.02,
-    minWidth: 20,
-    field: 'wordType',
-    headerName: '구분',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography variant="subtitle2" style={{ margin: '0 auto' }}>
-          {row.isMainWord ? (
-            <Icon icon="ic:round-star" width="30" height="30" color="rgba(103, 108, 246, 1)" />
-          ) : (
-            // <Icon icon="mdi:link-variant" width="24" height="24" color="grey" />
-            // <Icon icon="mdi:link-variant-off" width="24" height="24" color="grey" />
-            <Icon icon="ic:round-star" width="30" height="30" color="grey" />
-          )}
-        </Typography>
-      );
-    },
-  },
-  {
-    flex: 0.06,
-    minWidth: 60,
-    field: 'word',
-    headerName: '단어',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <>
-          <Typography variant="subtitle2">{row.wordName}</Typography>
-          {/*{row.similarWords*/}
-          {/*  ? row.similarWords.map((similarWord) => (*/}
-          {/*      <Typography variant="subtitle2">{similarWord.wordName}</Typography>*/}
-          {/*    ))*/}
-          {/*  : null}*/}
-        </>
-      );
-    },
-  },
-  {
-    flex: 0.08,
-    minWidth: 80,
-    headerName: '의미',
-    field: 'mean',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Box>
-          <Typography variant="subtitle2">{row.mean}</Typography>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.15,
-    minWidth: 150,
-    headerName: '예문',
-    field: 'example',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Box>
-          {row.examples?.map((example) => (
-            <>
-              <Box key={example.exampleId} sx={{ p: 1, ml: 1 }}>
-                <Typography variant="subtitle2">{example.sentence}</Typography>
-                <Typography variant="subtitle2">{example.translation}</Typography>
-                <Typography variant="subtitle2">{example.source}</Typography>
-              </Box>
-              <Divider
-                sx={{
-                  borderWidth: 'unset',
-                  border: '0.5px solid rgba(76, 78, 100, 0.12)',
-                }}
-              />
-            </>
-          ))}
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.08,
-    minWidth: 80,
-    headerName: '옵션',
-    field: 'action',
-    renderCell: ({ row }: CellType) => {
-      const files = row.wordFiles;
-
-      return (
-        <Box sx={{ margin: '0 auto' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button sx={{ minWidth: 0, p: 1.25 }}>
-              {files!.filter((file) => file.fileCode == '00').pop() ? (
-                <Icon
-                  icon="ri:image-2-fill"
-                  width="24"
-                  height="24"
-                  color="rgba(103, 108, 246, 1)"
-                />
-              ) : (
-                <Icon icon="ri:image-2-fill" width="24" height="24" color="lightGrey" />
-              )}
-            </Button>
-            <Button sx={{ minWidth: 0, p: 1.25 }}>
-              {files!.filter((file) => file.fileCode == '01').pop() ? (
-                <Icon
-                  icon="ri:image-edit-fill"
-                  width="24"
-                  height="24"
-                  color="rgba(103, 108, 246, 1)"
-                />
-              ) : (
-                <Icon icon="ri:image-edit-fill" width="24" height="24" color="lightGrey" />
-              )}
-            </Button>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button sx={{ minWidth: 0, p: 1.25 }}>
-              {files!.filter((file) => file.fileCode == '02').pop() ? (
-                <Icon
-                  icon="ant-design:sound-filled"
-                  width="24"
-                  height="24"
-                  color="rgba(103, 108, 246, 1)"
-                />
-              ) : (
-                <Icon icon="ant-design:sound-filled" width="24" height="24" color="lightGrey" />
-              )}
-            </Button>
-            <Button sx={{ minWidth: 0, p: 1.25 }}>
-              {files!.filter((file) => file.fileCode == '03').pop() ? (
-                <Icon
-                  icon="fluent:video-clip-20-filled"
-                  width="24"
-                  height="24"
-                  color="rgba(103, 108, 246, 1)"
-                />
-              ) : (
-                <Icon icon="fluent:video-clip-20-filled" width="24" height="24" color="lightGrey" />
-              )}
-            </Button>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button sx={{ minWidth: 0, p: 1.25 }}>
-              <Icon icon="mdi:text-box-search" width="24" height="24" color="grey" />
-            </Button>
-            <Button sx={{ minWidth: 0, p: 1.25 }}>
-              <Icon icon="material-symbols:add-box" width="25" height="25" color="grey" />
-            </Button>
-          </Box>
-        </Box>
-      );
-    },
-  },
-];
 
 // 전체 단어 리스트 페이지
 const WordList = ({
@@ -273,22 +92,11 @@ const WordList = ({
           <SearchButtonsHeader isWordList={true} />
 
           {wordData !== null ? (
-            <DataGrid
-              autoHeight={true}
-              pagination
-              rows={wordData}
-              columns={columns}
-              checkboxSelection
-              components={{ Pagination: PaginationSimple }}
-              componentsProps={{
-                pagination: {
-                  totalPage: pageData.totalPage,
-                  pageNo: pageNo,
-                  setPageNo: setPageNo,
-                  pageName: 'word',
-                },
-              }}
-              sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
+            <WordTable
+              wordData={wordData}
+              totalPage={pageData.totalPage}
+              pageNo={pageNo}
+              setPageNo={setPageNo}
             />
           ) : (
             renderNoResult

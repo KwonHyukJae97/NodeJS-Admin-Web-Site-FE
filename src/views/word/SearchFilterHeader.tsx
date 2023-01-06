@@ -133,10 +133,8 @@ const SearchFilterHeader = () => {
             sx={{ width: 240 }}
           >
             <MenuItem value="">전체</MenuItem>
-            <MenuItem value={'isComment'}>답변상태</MenuItem>
-            <MenuItem value={'writer'}>작성자</MenuItem>
-            <MenuItem value={'commenter'}>답변자</MenuItem>
-            <MenuItem value={'regDate'}>등록일</MenuItem>
+            <MenuItem value={'isComment'}>등록</MenuItem>
+            <MenuItem value={'writer'}>미등록</MenuItem>
           </Select>
         </FormControl>
 
@@ -156,10 +154,8 @@ const SearchFilterHeader = () => {
             sx={{ width: 240 }}
           >
             <MenuItem value="">전체</MenuItem>
-            <MenuItem value={'isComment'}>답변상태</MenuItem>
-            <MenuItem value={'writer'}>작성자</MenuItem>
-            <MenuItem value={'commenter'}>답변자</MenuItem>
-            <MenuItem value={'regDate'}>등록일</MenuItem>
+            <MenuItem value={'isComment'}>등록</MenuItem>
+            <MenuItem value={'writer'}>미등록</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -191,10 +187,8 @@ const SearchFilterHeader = () => {
             sx={{ width: 240 }}
           >
             <MenuItem value="">전체</MenuItem>
-            <MenuItem value={'isComment'}>답변상태</MenuItem>
-            <MenuItem value={'writer'}>작성자</MenuItem>
-            <MenuItem value={'commenter'}>답변자</MenuItem>
-            <MenuItem value={'regDate'}>등록일</MenuItem>
+            <MenuItem value={'isComment'}>등록</MenuItem>
+            <MenuItem value={'writer'}>미등록</MenuItem>
           </Select>
         </FormControl>
 
@@ -214,10 +208,8 @@ const SearchFilterHeader = () => {
             sx={{ width: 240 }}
           >
             <MenuItem value="">전체</MenuItem>
-            <MenuItem value={'isComment'}>답변상태</MenuItem>
-            <MenuItem value={'writer'}>작성자</MenuItem>
-            <MenuItem value={'commenter'}>답변자</MenuItem>
-            <MenuItem value={'regDate'}>등록일</MenuItem>
+            <MenuItem value={'isComment'}>등록</MenuItem>
+            <MenuItem value={'writer'}>미등록</MenuItem>
           </Select>
         </FormControl>
 
@@ -237,10 +229,8 @@ const SearchFilterHeader = () => {
             sx={{ width: 240 }}
           >
             <MenuItem value="">전체</MenuItem>
-            <MenuItem value={'isComment'}>답변상태</MenuItem>
-            <MenuItem value={'writer'}>작성자</MenuItem>
-            <MenuItem value={'commenter'}>답변자</MenuItem>
-            <MenuItem value={'regDate'}>등록일</MenuItem>
+            <MenuItem value={'isComment'}>등록</MenuItem>
+            <MenuItem value={'writer'}>미등록</MenuItem>
           </Select>
         </FormControl>
 
@@ -260,10 +250,8 @@ const SearchFilterHeader = () => {
             sx={{ width: 240 }}
           >
             <MenuItem value="">전체</MenuItem>
-            <MenuItem value={'isComment'}>답변상태</MenuItem>
-            <MenuItem value={'writer'}>작성자</MenuItem>
-            <MenuItem value={'commenter'}>답변자</MenuItem>
-            <MenuItem value={'regDate'}>등록일</MenuItem>
+            <MenuItem value={'isComment'}>대표단어</MenuItem>
+            <MenuItem value={'writer'}>일반단어</MenuItem>
           </Select>
         </FormControl>
       </Box>
