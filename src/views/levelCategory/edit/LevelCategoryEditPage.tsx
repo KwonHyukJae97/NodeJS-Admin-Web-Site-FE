@@ -1,7 +1,7 @@
 // ** React Imports
-import { useCallback, useEffect, useState } from 'react';
-
-import { useDrag, useDrop } from 'react-dnd';
+import { useEffect, useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import '@atlaskit/css-reset';
 
 // ** Next Import
 import Link from 'next/link';
@@ -11,9 +11,9 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { AlertCircleOutline } from 'mdi-material-ui';
 import Button from '@mui/material/Button';
 import Icon from '@mdi/react';
+import { styled } from '@mui/material/styles';
 import { mdiSquareEditOutline, mdiTrashCanOutline } from '@mdi/js';
 
 // ** Types
@@ -25,12 +25,7 @@ import LevelCategoryLeftInHeader from 'src/views/levelCategory/edit/LevelCategor
 // ** Config
 import apiConfig from 'src/configs/api';
 import Api from 'src/utils/api';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 // 레벨 카테고리 삭제 API 호출
 const deleteLevelCategory = async (id: number) => {
@@ -53,12 +48,39 @@ const handleDeleteLevelCategory = (id: number) => {
   deleteLevelCategory(id);
 };
 
+const grid = 8;
+const getItemStyle = (isDragging: any, draggableStyle: any) => ({
+  userSelect: 'none',
+  padding: grid * 2,
+  margin: `0 0 ${grid}px 0`,
+
+  // dragging시 배경색 변경
+  background: isDragging ? 'lightgreen' : 'lightgrey',
+  ...draggableStyle,
+});
+
+const getListStyle = (isDraggingOver: any) => ({
+  // background: isDraggingOver ? 'lightgrey' : 'white',
+  padding: grid,
+  width: 250,
+});
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+
 // 레벨 카테고리 수정 페이지
 const LevelCategoryEdit = ({ id }: any) => {
   // ** State
   const [data, setData] = useState<LevelCategoryDetailType>(),
     [levelCategoryName, setLevelCategoryName] = useState<any[]>([]),
-    [levelStep, setLevelStep] = useState<any[]>([]);
+    [levelStep, setLevelStep] = useState<any[]>([]),
+    [levelCategoryItem, setLevelCategoryItem] = useState<any[]>([]);
 
   useEffect(() => {
     getDetailLevelCategory(id);
@@ -81,6 +103,7 @@ const LevelCategoryEdit = ({ id }: any) => {
         return detailData;
       });
       setData(levelCategoryData);
+      setLevelCategoryItem(levelCategoryData);
 
       const levelCategoryNameList: string[] = [];
       const tempStepList: number[] = [];
@@ -104,19 +127,16 @@ const LevelCategoryEdit = ({ id }: any) => {
   };
   console.log('data', data);
 
-  // const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
-  //   if(data) {
-  //     setData((prevCards: Item[]) =>
-  //     update(prevCards, {
-  //       $splice: [
-  //         [dragIndex, 1],
-  //         [hoverIndex, 0, prevCards[dragIndex] as Item],
-  //       ],
-  //     }),
-  //   )
-  //   }
+  // 레벨 드롭 시 핸들링 메소드
+  const handleDropChange = (result: any) => {
+    if (!result.destination) return;
+    console.log(result);
+    const items = [...levelCategoryItem];
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
 
-  // }, [])
+    setLevelCategoryItem(items);
+  };
 
   return (
     <Grid container spacing={6}>
@@ -128,44 +148,61 @@ const LevelCategoryEdit = ({ id }: any) => {
             subcategory={'레벨 카테고리'}
             subject={'수정'}
           />
+          <Box sx={{ float: 'left', m: 10, width: 100 }}>
+            <Grid>
+              <Typography variant="subtitle1">학습/레벨</Typography>
+            </Grid>
+            <Grid>
+              <Typography variant="subtitle1">레벨카테고리명</Typography>
+            </Grid>
 
-          <Box
-            sx={{
-              mt: 10,
-              mb: 2,
-              ml: 15,
-              mr: 15,
-              display: 'flex',
-            }}
-          >
-            <TableContainer ref={(node) => resizeDrop(node)}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">학습/레벨</TableCell>
-                    {levelCategoryName.map((name) => (
-                      <TableCell key={name} align="center">
-                        {name}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
+            {levelStep.map((step) => (
+              <Typography variant="subtitle2" key={step}>
+                {step}
+              </Typography>
+            ))}
 
-                <TableBody>
-                  {levelStep.map((step: any) => (
-                    <TableRow key={step}>
-                      <TableCell align="center">{step}</TableCell>
-                      {data &&
-                        data.map((item: any, index: number) => (
-                          <>
-                            <TableCell align="center">{item.wordLevelName}</TableCell>
-                          </>
-                        ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <DragDropContext onDragEnd={handleDropChange}>
+              <Droppable droppableId="first-box">
+                {(provided: any, snapshot: any) => (
+                  <Box
+                    className="top-container"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    style={getListStyle(snapshot.isDraggingOver)}
+                  >
+                    <Grid>
+                      {levelCategoryItem.map((item: any, index: number) => (
+                        <>
+                          <Draggable
+                            key={item.levelCategoryId}
+                            draggableId={item.levelCategoryId}
+                            index={index}
+                          >
+                            {(provided: any) => (
+                              <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs>
+                                  <Item
+                                    className="box-container"
+                                    ref={provided.innerRef}
+                                    {...provided.dragHandleProps}
+                                    {...provided.draggableProps}
+                                    // style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                                  >
+                                    {item.wordLevelName}
+                                  </Item>
+                                </Grid>
+                              </Grid>
+                            )}
+                          </Draggable>
+                        </>
+                      ))}
+                      {provided.placeholder}
+                    </Grid>
+                  </Box>
+                )}
+              </Droppable>
+            </DragDropContext>
           </Box>
         </Card>
       </Grid>
