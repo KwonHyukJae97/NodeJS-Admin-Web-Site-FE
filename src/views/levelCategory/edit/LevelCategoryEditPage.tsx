@@ -25,7 +25,13 @@ import LevelCategoryLeftInHeader from 'src/views/levelCategory/edit/LevelCategor
 // ** Config
 import apiConfig from 'src/configs/api';
 import Api from 'src/utils/api';
-import Paper from '@mui/material/Paper';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 // 레벨 카테고리 삭제 API 호출
 const deleteLevelCategory = async (id: number) => {
@@ -48,32 +54,6 @@ const handleDeleteLevelCategory = (id: number) => {
   deleteLevelCategory(id);
 };
 
-const grid = 8;
-const getItemStyle = (isDragging: any, draggableStyle: any) => ({
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // dragging시 배경색 변경
-  background: isDragging ? 'lightgreen' : 'lightgrey',
-  ...draggableStyle,
-});
-
-const getListStyle = (isDraggingOver: any) => ({
-  // background: isDraggingOver ? 'lightgrey' : 'white',
-  padding: grid,
-  width: 250,
-});
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  marginBottom: theme.spacing(2),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
-
 // 레벨 카테고리 수정 페이지
 const LevelCategoryEdit = ({ id }: any) => {
   // ** State
@@ -94,10 +74,7 @@ const LevelCategoryEdit = ({ id }: any) => {
         const detailData = {
           levelCategoryId: value.levelCategoryId,
           levelCategoryName: value.levelCategoryName,
-          levelSequence: value.levelSequence,
-          levelStepStart: value.levelStepStart,
-          levelStepEnd: value.levelStepEnd,
-          wordLevelName: value.wordLevelName,
+          levelStepInfo: value.levelStepInfo,
         };
 
         return detailData;
@@ -113,9 +90,10 @@ const LevelCategoryEdit = ({ id }: any) => {
         levelCategoryNameList.push(value.levelCategoryName);
 
         // 학습 단계 담기
-        tempStepList.push(value.levelStepEnd);
+        tempStepList.push(value.levelStepInfo[0].levelStepEnd);
       });
       setLevelCategoryName(levelCategoryNameList);
+
       const lastLevelStep = Math.max.apply(null, tempStepList);
       for (let index = 1; index <= lastLevelStep; index++) {
         levelStepList.push(index);
@@ -126,6 +104,30 @@ const LevelCategoryEdit = ({ id }: any) => {
     }
   };
   console.log('data', data);
+
+  // 단어 레벨 표시 컴포넌트
+  const WordLevelTableCell = () => {
+    if (data) {
+      data.forEach((item: any) => {
+        const findLevelStepInfoId = item.levelStepInfo.filter((id: any) => {
+          return item.levelCategoryId == id.levelStepInfoId;
+        });
+
+        console.log(
+          'result1',
+          findLevelStepInfoId[0].levelStepInfoId,
+          'result2',
+          item.levelCategoryId,
+        );
+
+        if (item.levelCategoryId === findLevelStepInfoId[0].levelStepInfoId) {
+          console.log('test');
+
+          return <TableCell>test</TableCell>;
+        }
+      });
+    }
+  };
 
   // 레벨 드롭 시 핸들링 메소드
   const handleDropChange = (result: any) => {
@@ -148,58 +150,65 @@ const LevelCategoryEdit = ({ id }: any) => {
             subcategory={'레벨 카테고리'}
             subject={'수정'}
           />
-          <Box sx={{ float: 'left', m: 10, width: 100 }}>
-            <Grid>
-              <Typography variant="subtitle1">학습/레벨</Typography>
-            </Grid>
-            <Grid>
-              <Typography variant="subtitle1">레벨카테고리명</Typography>
-            </Grid>
-
-            {levelStep.map((step) => (
-              <Typography variant="subtitle2" key={step}>
-                {step}
-              </Typography>
-            ))}
-
+          <Box
+            sx={{
+              m: 10,
+              display: 'flex',
+            }}
+          >
             <DragDropContext onDragEnd={handleDropChange}>
               <Droppable droppableId="first-box">
-                {(provided: any, snapshot: any) => (
-                  <Box
-                    className="top-container"
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    style={getListStyle(snapshot.isDraggingOver)}
-                  >
-                    <Grid>
-                      {levelCategoryItem.map((item: any, index: number) => (
-                        <>
-                          <Draggable
-                            key={item.levelCategoryId}
-                            draggableId={item.levelCategoryId}
-                            index={index}
-                          >
-                            {(provided: any) => (
-                              <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                <Grid item xs>
-                                  <Item
+                {(provided: any) => (
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center">학습/레벨</TableCell>
+                          {data &&
+                            data.map((item: any, index: number) => (
+                              <TableCell key={index} align="center">
+                                {item.levelCategoryName}
+                              </TableCell>
+                            ))}
+                        </TableRow>
+                      </TableHead>
+
+                      <TableBody
+                        sx={{ minWidth: 650 }}
+                        className="top-container"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        {/* 학습단계 Data */}
+                        {levelStep.map((step: any, idx: number) => (
+                          <TableRow key={idx}>
+                            <TableCell>{step}</TableCell>
+
+                            {/* 레벨 카테고리 Data */}
+                            {levelCategoryItem.map((item: any, index: number) => (
+                              <Draggable
+                                key={item.levelCategoryId}
+                                draggableId={item.levelCategoryId}
+                                index={index}
+                              >
+                                {(provided: any) => (
+                                  <TableRow
                                     className="box-container"
                                     ref={provided.innerRef}
                                     {...provided.dragHandleProps}
                                     {...provided.draggableProps}
-                                    // style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                                   >
-                                    {item.wordLevelName}
-                                  </Item>
-                                </Grid>
-                              </Grid>
-                            )}
-                          </Draggable>
-                        </>
-                      ))}
-                      {provided.placeholder}
-                    </Grid>
-                  </Box>
+                                    {WordLevelTableCell()}
+                                  </TableRow>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 )}
               </Droppable>
             </DragDropContext>

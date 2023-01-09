@@ -26,4 +26,5 @@ export type LevelCategoryDetailType = {
   levelStepStart: number;
   levelStepEnd: number;
   wordLevelName: string;
+  levelStepInfo: [];
 };
