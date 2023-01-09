@@ -20,6 +20,7 @@ import { mdiSquareEditOutline } from '@mdi/js';
 import TableSearchHeader from 'src/views/levelCategory/list/TableSearchHeader';
 import PageLeftInHeader from 'src/@core/components/page-left-in-header';
 import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
+import ActionButton from 'src/@core/components/ActionButton';
 
 // ** Types
 import { LevelCategoryType, studyTypeCodeType } from 'src/types/apps/levelTypes';
@@ -86,20 +87,11 @@ const columns = [
     renderCell: ({ row }: CellType) => {
       return (
         <Box sx={{ margin: '0 auto' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Link href={`/level_category/edit/${row.studyTypeCode}`}>
-              <Button sx={{ minWidth: 0, p: 1.25 }}>
-                <Icon
-                  path={mdiSquareEditOutline}
-                  size={0.75}
-                  horizontal
-                  vertical
-                  rotate={90}
-                  color="grey"
-                />
-              </Button>
-            </Link>
-          </Box>
+          <ActionButton
+            actions={'edit'}
+            path={'/level_category/edit/'}
+            id={`${row.studyTypeCode}`}
+          ></ActionButton>
         </Box>
       );
     },
