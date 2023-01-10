@@ -21,8 +21,8 @@ import Link from 'next/link';
 // 액션버튼 타입 정의
 interface ActionButtonType {
   actions: 'edit' | 'delete' | 'others';
-  path: string;
-  id: number | string;
+  path?: string;
+  id?: number | string;
 }
 
 // 액션버튼 컴포넌트
@@ -44,7 +44,7 @@ const ActionButton = (props: ActionButtonType) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       {actions === 'edit' ? (
-        <Link href={`${path}/${id}`} passHref>
+        <Link href={`${path}${id}`} passHref>
           <Button sx={{ minWidth: 0, p: 1.25 }}>
             <Icon
               path={mdiSquareEditOutline}
@@ -57,51 +57,20 @@ const ActionButton = (props: ActionButtonType) => {
           </Button>
         </Link>
       ) : actions === 'delete' ? (
-        <Link href={`${path}/${id}`} passHref>
+        <Link href={`${path}${id}`} passHref>
           <Button sx={{ minWidth: 0, p: 1.25 }}>
             <Icon
               path={mdiTrashCanOutline}
               size={0.75}
               horizontal
               vertical
-              rotate={90}
+              rotate={180}
               color="grey"
             />
           </Button>
         </Link>
       ) : actions === 'others' ? (
-        <Fragment>
-          <IconButton size="small" onClick={handleRowOptionsClick}>
-            <DotsVertical />
-          </IconButton>
-          <Menu
-            keepMounted
-            anchorEl={anchorEl}
-            open={rowOptionsOpen}
-            onClose={handleRowOptionsClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <Link href={`${path}`} passHref>
-              <MenuItem>
-                <UploadFileIcon fontSize="small" sx={{ mr: 2 }} />
-                엑셀 등록
-              </MenuItem>
-            </Link>
-            <Link href={`${path}`} passHref>
-              <MenuItem>
-                <PostAddIcon fontSize="small" sx={{ mr: 2 }} />
-                수기 등록
-              </MenuItem>
-            </Link>
-          </Menu>
-        </Fragment>
+        <Icon path={mdiTrashCanOutline} size={0.75} horizontal vertical rotate={180} color="grey" />
       ) : null}
     </Box>
   );
