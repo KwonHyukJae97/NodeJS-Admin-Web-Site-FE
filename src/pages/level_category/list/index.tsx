@@ -3,7 +3,6 @@ import { useState } from 'react';
 
 // ** Next Import
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
-import Link from 'next/link';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
@@ -12,9 +11,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { DataGrid } from '@mui/x-data-grid';
 import { AlertCircleOutline } from 'mdi-material-ui';
-import Button from '@mui/material/Button';
-import Icon from '@mdi/react';
-import { mdiSquareEditOutline } from '@mdi/js';
 
 // ** Custom Components Imports
 import TableSearchHeader from 'src/views/levelCategory/list/TableSearchHeader';

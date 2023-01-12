@@ -13,7 +13,7 @@ import { LevelCategoryDetailType } from 'src/types/apps/levelTypes';
 
 // ** Custom Components Imports
 import LevelCategoryLeftInHeader from 'src/views/levelCategory/edit/LevelCategoryLeftInHeader';
-import SendInvoiceDrawer from 'src/views/apps/invoice/shared-drawer/SendInvoiceDrawer';
+import LevelCategoryDrawer from 'src/views/apps/levelCategory/shared-drawer/LevelCategoryDrawer';
 
 // ** Config
 import apiConfig from 'src/configs/api';
@@ -29,6 +29,7 @@ import Link from 'next/link';
 import Button from '@mui/material/Button';
 import { Icon } from '@iconify/react';
 import searchAddOutline from '@iconify/icons-mdi/search-add-outline';
+import { boolean } from 'yup';
 
 // 레벨 카테고리 삭제 API 호출
 // const deleteLevelCategory = async (id: number) => {
@@ -57,20 +58,111 @@ interface wordLevelNameType {
   wordLevelName: string;
 }
 
+const LevelCategoryCell = (props: any, provided: any) => {
+  const [isFirstCell, setFirstCell] = useState(false);
+  const [isEmptyCell, setEmptyCell] = useState(false);
+  const [levelInfo, setLevelInfo] = useState<any>({});
+
+  useEffect(() => {
+    setFirstCell(isFirstCellFunc(props.item, props.step));
+    setEmptyCell(isEmptyCellFunc(props.item, props.step));
+
+    const findWordLevelInfoDetail = props.item.wordLevelInfo
+      .filter((wordLevelInfoDetail: any) => {
+        return (
+          wordLevelInfoDetail.levelStepStart <= props.step &&
+          wordLevelInfoDetail.levelStepEnd >= props.step
+        );
+      })
+      .pop();
+
+    setLevelInfo(findWordLevelInfoDetail);
+  }, []);
+
+  // 단어 레벨 표시 컴포넌트
+  const WordLevelTableCell = (item: any, step: number) => {
+    const findWordLevelInfoDetail = item.wordLevelInfo
+      .filter((wordLevelInfoDetail: any) => {
+        return (
+          wordLevelInfoDetail.levelStepStart <= step && wordLevelInfoDetail.levelStepEnd >= step
+        );
+      })
+      .pop();
+
+    return findWordLevelInfoDetail?.wordLevelName;
+  };
+
+  const isFirstCellFunc = (item: any, step: number): boolean => {
+    const resultListLength = item.wordLevelInfo.filter((wordLevelInfoDetail: any) => {
+      return wordLevelInfoDetail.levelStepStart == step;
+    }).length;
+
+    return resultListLength > 0;
+  };
+
+  const isEmptyCellFunc = (item: any, step: number): boolean => {
+    // 현재 cell 이 어딘가에 속하고 첫번째인 경우, 아무데도 속하지 않는 경우
+    const findWordLevelInfoDetail = item.wordLevelInfo
+      .filter((wordLevelInfoDetail: any) => {
+        return (
+          wordLevelInfoDetail.levelStepStart <= step && wordLevelInfoDetail.levelStepEnd >= step
+        );
+      })
+      .pop();
+
+    return !findWordLevelInfoDetail;
+  };
+
+  // const getRowSpan =
+
+  return (
+    <>
+      {/* {isEmptyCell || isFirstCell ? ( */}
+      <Draggable
+        key={props.item.levelDetailId}
+        draggableId={props.item.levelDetailId}
+        index={props.index}
+      >
+        {(provided: any) => (
+          <TableCell
+            sx={{ border: 1, borderColor: 'lightgrey' }}
+
+            // rowSpan={isFirstCell ? levelInfo.levelStepEnd - levelInfo.levelStepStart + 1 : 1}
+          >
+            <Box
+              align="center"
+              sx={{ border: 1, borderColor: 'lightgrey' }}
+              {...props}
+              className="box-container"
+              ref={provided.innerRef}
+              {...provided.dragHandleProps}
+              {...provided.draggableProps}
+            >
+              {levelInfo?.wordLevelName}
+            </Box>
+          </TableCell>
+        )}
+      </Draggable>
+      {/* ) : null} */}
+    </>
+  );
+};
+
 // 레벨 카테고리 수정 페이지
 const LevelCategoryEdit = ({ id }: any) => {
   // ** State
   const [data, setData] = useState<any[]>([]),
     [levelStep, setLevelStep] = useState<any[]>([]),
     [levelCategoryNameData, setLevelCategoryNameData] = useState<any[]>([]),
-    [wordLevelNameData, setWordLevelNameData] = useState<wordLevelNameType>(),
-    [sendInvoiceOpen, setSendInvoiceOpen] = useState<boolean>(false);
+    [wordLevelNameData, setWordLevelNameData] = useState<string>(''),
+    [isHover, setIsHover] = useState<boolean>(false),
+    [sendCategoryOpen, setSendCategoryOpen] = useState<boolean>(false);
 
   useEffect(() => {
     getDetailLevelCategory(id);
   }, []);
 
-  const toggleSendInvoiceDrawer = () => setSendInvoiceOpen(!sendInvoiceOpen);
+  const toggleLevelCategoryDrawer = () => setSendCategoryOpen(!sendCategoryOpen);
 
   // 레벨 카테고리 상세 정보 조회 API 요청
   const getDetailLevelCategory = async (id: number) => {
@@ -111,23 +203,32 @@ const LevelCategoryEdit = ({ id }: any) => {
   console.log('data', data);
 
   // 단어 레벨 표시 컴포넌트
-  const WordLevelTableCell = () => {
-    let wordLevelName = '';
+  const WordLevelTableCell = (item: any, step: number) => {
+    // let wordLevelName = '';
 
-    data.forEach((item: any) => {
-      levelStep.map((value) => {
-        if (item.wordLevelInfo[0].levelStepStart == value) {
-          for (let index = 1; index <= item.wordLevelInfo[0].levelStepEnd; index++) {
-            wordLevelName = item.wordLevelInfo[0].wordLevelName;
-            console.log('wordLevelName', wordLevelName);
-          }
+    const findWordLevelInfoDetail = item.wordLevelInfo
+      .filter((wordLevelInfoDetail: any) => {
+        return (
+          wordLevelInfoDetail.levelStepStart <= step && wordLevelInfoDetail.levelStepEnd >= step
+        );
+      })
+      .pop();
 
-          return wordLevelName;
-        }
-      });
-    });
+    return findWordLevelInfoDetail?.wordLevelName;
 
-    return wordLevelName;
+    // levelStep.forEach((item: any) => {
+    //   data.map((value) => {
+    //     if (value.wordLevelInfo[0].levelStepStart == item) {
+    //       for (let index = 1; index <= value.wordLevelInfo[0].levelStepEnd; index++) {
+    //         wordLevelName = value.wordLevelInfo[0].wordLevelName;
+    //       }
+
+    //       return wordLevelName;
+    //     }
+    //   });
+    // });
+
+    // return wordLevelName;
   };
 
   // 레벨 드롭 시 핸들링 메소드
@@ -164,16 +265,28 @@ const LevelCategoryEdit = ({ id }: any) => {
                     <Table>
                       <TableHead>
                         <TableRow>
-                          <TableCell align="center">학습/레벨</TableCell>
+                          <TableCell
+                            align="center"
+                            sx={{ pr: 7, border: 1, borderColor: 'lightgrey' }}
+                          >
+                            학습/레벨
+                          </TableCell>
                           {levelCategoryNameData.map((name: any, idx: number) => (
-                            <TableCell key={idx} align="center">
+                            <TableCell
+                              sx={{ border: 1, borderColor: 'lightgrey' }}
+                              key={idx}
+                              align="center"
+                              onMouseOver={() => setIsHover(true)}
+                              onMouseOut={() => setIsHover(false)}
+                            >
                               {name}
                               <Button
-                                // onMouseOver={}
                                 sx={{ minWidth: 0, p: 1.25 }}
-                                onClick={toggleSendInvoiceDrawer}
+                                onClick={toggleLevelCategoryDrawer}
                               >
-                                <Icon icon={searchAddOutline} color="grey" width="30" />
+                                {isHover ? (
+                                  <Icon icon={searchAddOutline} color="grey" width="25" />
+                                ) : null}
                               </Button>
                             </TableCell>
                           ))}
@@ -189,31 +302,42 @@ const LevelCategoryEdit = ({ id }: any) => {
                         {/* 학습단계 Data */}
                         {levelStep.map((step: number) => (
                           <TableRow key={step}>
-                            <TableCell align="center">{step}</TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ pr: 15, border: 1, borderColor: 'lightgrey' }}
+                            >
+                              {step}
+                            </TableCell>
 
                             {/* 레벨 카테고리 Data */}
                             {data &&
                               data.map((item: any, index: number) => (
-                                <Draggable
-                                  key={item.levelDetailId}
-                                  draggableId={item.levelDetailId}
-                                  index={index}
-                                >
-                                  {(provided: any) => (
-                                    <>
-                                      {}
-                                      <TableCell
+                                // <Draggable
+                                //   key={item.levelDetailId}
+                                //   draggableId={item.levelDetailId}
+                                //   index={index}
+                                // >
+                                // {(provided: any) => (
+                                <>
+                                  {}
+                                  {/* <TableCell
                                         align="center"
                                         className="box-container"
                                         ref={provided.innerRef}
                                         {...provided.dragHandleProps}
                                         {...provided.draggableProps}
                                       >
-                                        {WordLevelTableCell()}
-                                      </TableCell>
-                                    </>
-                                  )}
-                                </Draggable>
+                                        {WordLevelTableCell(item, step)}
+                                      </TableCell> */}
+                                  <LevelCategoryCell
+                                    provided={provided}
+                                    index={index}
+                                    item={item}
+                                    step={step}
+                                  />
+                                </>
+                                // )}
+                                // </Draggable>
                               ))}
                             {provided.placeholder}
                           </TableRow>
@@ -224,7 +348,7 @@ const LevelCategoryEdit = ({ id }: any) => {
                 )}
               </Droppable>
             </DragDropContext>
-            <SendInvoiceDrawer open={sendInvoiceOpen} toggle={toggleSendInvoiceDrawer} />
+            <LevelCategoryDrawer open={sendCategoryOpen} toggle={toggleLevelCategoryDrawer} />
           </Box>
         </Card>
       </Grid>
