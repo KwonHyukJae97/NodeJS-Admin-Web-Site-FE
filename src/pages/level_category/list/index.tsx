@@ -27,6 +27,7 @@ import axios from 'axios';
 
 // ** Config
 import apiConfig from 'src/configs/api';
+import MouseOverHandleButton from 'src/@core/components/MouseOverHandleButton';
 
 // 테이블 행 데이터 타입 정의
 interface CellType {
@@ -80,15 +81,26 @@ const columns = [
     minWidth: 100,
     headerName: 'ACTIONS',
     field: 'actions',
+
     renderCell: ({ row }: CellType) => {
       return (
-        <Box sx={{ margin: '0 auto' }}>
-          <ActionButton
-            actions={'edit'}
-            path={'/level_category/edit/'}
-            id={`${row.studyTypeCode}`}
-          ></ActionButton>
-        </Box>
+        <>
+          <Box sx={{ margin: '0 auto', display: 'flex' }}>
+            <ActionButton
+              actions={'edit'}
+              path={'/level_category/edit/'}
+              id={`${row.studyTypeCode}`}
+            ></ActionButton>
+
+            {/* ActionButton Test */}
+            <ActionButton
+              actions={'delete'}
+              path={'/level_category/delete/'}
+              id={`${row.studyTypeCode}`}
+            ></ActionButton>
+            <ActionButton actions={'others'}></ActionButton>
+          </Box>
+        </>
       );
     },
   },
@@ -101,7 +113,8 @@ const LevelCategoryList = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** State
   const [pageNo, setPageNo] = useState<number>(1),
-    [searchKey, setSearchKey] = useState<string>('');
+    [searchKey, setSearchKey] = useState<string>(''),
+    [isHover, setIsHover] = useState<boolean>(false);
 
   // API로 조회한 데이터 리스트를 타입에 맞게 할당(SSR)
   const levelCategoryData: LevelCategoryType[] =
@@ -181,6 +194,33 @@ const LevelCategoryList = ({
                 }}
               >
                 <Typography variant="body2">총 {pageData.totalCount} 개</Typography>
+              </Box>
+
+              {/* mouseover TEST */}
+              <Box
+                sx={{
+                  mb: 2,
+                  ml: 15,
+                  display: 'flex',
+                }}
+              >
+                <Typography
+                  variant="h2"
+                  onMouseOver={() => setIsHover(true)}
+                  onMouseOut={() => setIsHover(false)}
+                >
+                  {isHover ? (
+                    <>
+                      <MouseOverHandleButton actions="add" />
+                      <MouseOverHandleButton actions="remove" />
+                      <MouseOverHandleButton actions="edit" />
+                      <MouseOverHandleButton actions="view" />
+                      <MouseOverHandleButton actions="inputLine" />
+                      <MouseOverHandleButton actions="recommend" />
+                    </>
+                  ) : null}
+                  mouseOver
+                </Typography>
               </Box>
               <DataGrid
                 autoHeight
