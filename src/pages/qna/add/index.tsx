@@ -91,7 +91,6 @@ const QnaAdd = () => {
       try {
         const req = await Api.post(`${apiConfig.apiEndpoint}/qna`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
         });
         console.log('등록 성공', req);
         alert('등록이 완료되었습니다.');

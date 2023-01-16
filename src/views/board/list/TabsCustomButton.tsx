@@ -71,18 +71,20 @@ const TabsCustomButton = (props: TabsCustomButtonProps) => {
         </TabList>
       </TabContext>
 
-      {categoryList.map((category) => {
-        return (
-          <TabContext value={searchKey} key={category.categoryId}>
-            <TabList onChange={handleChange}>
-              <Tab value={category.categoryName} label={category.categoryName} />
-            </TabList>
-            {/*<TabPanel value="1">*/}
-            {/*  <Typography>전체 탭에 대한 내용</Typography>*/}
-            {/*</TabPanel>*/}
-          </TabContext>
-        );
-      })}
+      {categoryList != null
+        ? categoryList.map((category) => {
+            return (
+              <TabContext value={searchKey} key={category.categoryId}>
+                <TabList onChange={handleChange}>
+                  <Tab value={category.categoryName} label={category.categoryName} />
+                </TabList>
+                {/*<TabPanel value="1">*/}
+                {/*  <Typography>전체 탭에 대한 내용</Typography>*/}
+                {/*</TabPanel>*/}
+              </TabContext>
+            );
+          })
+        : null}
     </Box>
   );
 };

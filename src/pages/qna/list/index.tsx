@@ -27,9 +27,9 @@ import { QnaType } from 'src/types/apps/boardTypes';
 import { PageType } from 'src/utils/pageType';
 
 // ** axios
-import Api from 'src/utils/api';
-import axios from 'axios';
+import Api, { ApiSSR } from 'src/utils/api';
 import apiConfig from 'src/configs/api';
+import axios from 'axios';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
@@ -43,9 +43,7 @@ interface CellType {
 const deleteQna = async (id: number) => {
   if (confirm('삭제 하시겠습니까?')) {
     try {
-      await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`, {
-        withCredentials: true,
-      });
+      await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`);
       console.log('삭제 성공');
       alert('삭제가 완료되었습니다.');
       window.location.reload();
@@ -225,7 +223,7 @@ const QnaList = ({ apiData, pageData }: InferGetServerSidePropsType<typeof getSe
       }}
     >
       <AlertCircleOutline sx={{ mr: 2 }} />
-      <Typography variant="h6">해당 검색에 대한 게시글이 없습니다.</Typography>
+      <Typography variant="h6">관련 게시글이 없습니다.</Typography>
     </Box>
   );
 
@@ -271,11 +269,11 @@ const QnaList = ({ apiData, pageData }: InferGetServerSidePropsType<typeof getSe
 };
 
 // QnA 조회 API 호출
-export const getAllQna = async (pageNo: number, accountId: number) => {
+export const getAllQna = async (pageNo: number) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/qna`, {
-      data: { accountId, pageNo: page, pageSize: 10, totalData: false },
+    const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/qna`, {
+      data: { pageNo: page, pageSize: 10, totalData: false },
     });
 
     return res.data;
@@ -285,15 +283,9 @@ export const getAllQna = async (pageNo: number, accountId: number) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // console.log('ctx', context.query);
   const { pageNo } = context.query;
 
-  // 작성자만 본인의 내역 조회가 가능하기 때문에 임시값 할당
-  const accountId = 27;
-
-  // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
-  // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const result = await getAllQna(Number(pageNo), accountId);
+  const result = await getAllQna(Number(pageNo));
 
   const apiData: QnaType = result === undefined ? null : result.items;
   const pageData: PageType =

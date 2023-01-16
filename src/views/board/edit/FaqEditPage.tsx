@@ -32,7 +32,6 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
 import { CategoryType, FaqType } from 'src/types/apps/boardTypes';
-import { role } from 'src/pages/notice/list';
 
 // ** axios
 import Api from 'src/utils/api';
@@ -67,7 +66,6 @@ interface FaqEditProps {
 interface FaqInputData {
   title: string;
   categoryName: string;
-  role: string;
 }
 
 // FAQ 초기값 정의
@@ -83,20 +81,11 @@ const initFaq = {
   viewCnt: 0,
 };
 
-// Category 초기값 정의
-const initCategory = [
-  {
-    categoryId: 0,
-    categoryName: '',
-    isUse: false,
-  },
-];
-
 // FAQ 수정 페이지
 const FaqEdit = ({ id }: FaqEditProps) => {
   // ** State
   const [data, setData] = useState<FaqType>(initFaq),
-    [categoryData, setCategoryData] = useState<CategoryType[]>(initCategory),
+    [categoryData, setCategoryData] = useState<CategoryType[]>([]),
     [files, setFiles] = useState<File[]>([]),
     [htmlStr, setHtmlStr] = useState<string>('');
 
@@ -105,16 +94,6 @@ const FaqEdit = ({ id }: FaqEditProps) => {
     title: yup.string().required(),
     categoryName: yup.string().required(),
   });
-
-  // const categoryData: CategoryType[] = categoryApiData.map((data: any) => {
-  //   const category: CategoryType = {
-  //     categoryId: data.categoryId,
-  //     categoryName: data.categoryName,
-  //     isUse: data.isUse,
-  //   };
-  //
-  //   return category;
-  // });
 
   // ** Hooks
   const router = useRouter();
@@ -147,9 +126,7 @@ const FaqEdit = ({ id }: FaqEditProps) => {
   // Category 조회 API 호출
   const getAllCategory = async () => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/category`, {
-        params: { role },
-      });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/category`);
 
       const categoryApiData = res.data;
 
@@ -171,10 +148,7 @@ const FaqEdit = ({ id }: FaqEditProps) => {
   // FAQ 상세조회 API 호출
   const getDetailFaq = async (id: number) => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
-        data: { role },
-        withCredentials: true,
-      });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`);
 
       const faqData = {
         boardId: res.data.faqId,
@@ -220,7 +194,6 @@ const FaqEdit = ({ id }: FaqEditProps) => {
       });
     }
 
-    formData.append('role', '본사 관리자');
     formData.append('title', data.title);
     formData.append('content', htmlStr);
     formData.append('categoryName', data.categoryName);
@@ -234,7 +207,6 @@ const FaqEdit = ({ id }: FaqEditProps) => {
       try {
         const req = await Api.patch(`${apiConfig.apiEndpoint}/faq/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
         });
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');
@@ -277,13 +249,15 @@ const FaqEdit = ({ id }: FaqEditProps) => {
                       <MenuItem disabled value="">
                         분류 선택
                       </MenuItem>
-                      {categoryData.map((category) => {
-                        return (
-                          <MenuItem value={category.categoryName} key={category.categoryId}>
-                            {category.categoryName}
-                          </MenuItem>
-                        );
-                      })}
+                      {categoryData !== null
+                        ? categoryData.map((category) => {
+                            return (
+                              <MenuItem value={category.categoryName} key={category.categoryId}>
+                                {category.categoryName}
+                              </MenuItem>
+                            );
+                          })
+                        : null}
                     </Select>
                   )}
                 />

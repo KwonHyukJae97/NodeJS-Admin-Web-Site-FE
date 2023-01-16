@@ -20,7 +20,7 @@ import TableSearchHeader from 'src/views/board/list/TableSearchHeader';
 import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
 
 // ** axios
-import axios from 'axios';
+import { ApiSSR } from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Types Imports
@@ -30,9 +30,8 @@ import { PageType } from 'src/utils/pageType';
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
 
-// 조회 권한과 역할에 대한 정보 임시 부여
-export const role = '본사 관리자';
-export const noticeGrant = '0|1|2';
+// 조회 권한에 대한 정보 임시 부여
+export const noticeGrant = '0';
 
 // 테이블 행 데이터 타입 정의
 interface CellType {
@@ -145,7 +144,7 @@ const NoticeList = ({
       }}
     >
       <AlertCircleOutline sx={{ mr: 2 }} />
-      <Typography variant="h6">해당 검색에 대한 게시글이 없습니다.</Typography>
+      <Typography variant="h6">관련 게시글이 없습니다.</Typography>
     </Box>
   );
 
@@ -200,8 +199,8 @@ const NoticeList = ({
 export const getAllNotice = async (pageNo: number, searchWord: string) => {
   const page = pageNo == null ? 1 : pageNo;
   try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/notice`, {
-      data: { role, noticeGrant, searchWord, pageNo: page, pageSize: 10, totalData: false },
+    const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/notice`, {
+      data: { noticeGrant, searchWord, pageNo: page, pageSize: 10, totalData: false },
     });
 
     return res.data;
@@ -211,11 +210,8 @@ export const getAllNotice = async (pageNo: number, searchWord: string) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // console.log('ctx', context.query);
   const { pageNo, searchWord } = context.query;
 
-  // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
-  // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
   const result = await getAllNotice(Number(pageNo), searchWord as string);
 
   const apiData: NoticeType = result === undefined ? null : result.items;
