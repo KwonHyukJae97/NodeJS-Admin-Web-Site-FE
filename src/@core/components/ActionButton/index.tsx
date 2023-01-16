@@ -16,6 +16,8 @@ import {
   mdiDotsVertical,
   mdiFileExcel,
   mdiNotePlus,
+  mdiCheckCircle,
+  mdiCancel,
 } from '@mdi/js';
 
 // ** Next Import
@@ -23,7 +25,7 @@ import Link from 'next/link';
 
 // 액션버튼 타입 정의
 interface ActionButtonType {
-  actions: 'edit' | 'delete' | 'others';
+  actions: 'edit' | 'delete' | 'others' | 'isService' | 'isNotService';
   path?: string;
   id?: number | string;
 }
@@ -32,9 +34,10 @@ interface ActionButtonType {
 interface IconType {
   iconName: string;
   rotate: number;
-  path: string;
+  path?: string;
   id?: number | string;
   title?: string;
+  color?: string;
 }
 
 // ** link 스타일 적용
@@ -46,16 +49,19 @@ const StyledLink = styled('a')(({ theme }) => ({
 // 아이콘 컴포넌트
 const Icons = (props: IconType) => {
   // ** Props
-  const { iconName, rotate, path, id, title } = props;
-
-  return (
-    <Link href={`${path}${id}`} passHref>
-      <Button sx={{ minWidth: 0, p: 1.25 }}>
-        <Icon path={iconName} size={0.75} horizontal vertical rotate={rotate} color="grey" />
-        <StyledLink>{title}</StyledLink>
-      </Button>
-    </Link>
-  );
+  const { iconName, rotate, path, id, title, color } = props;
+  if (path != undefined) {
+    return (
+      <Link href={`${path}${id}`} passHref>
+        <Button sx={{ minWidth: 0, p: 1.25 }}>
+          <Icon path={iconName} size={0.75} horizontal vertical rotate={rotate} color={color} />
+          <StyledLink>{title}</StyledLink>
+        </Button>
+      </Link>
+    );
+  } else {
+    return <Icon path={iconName} size={0.75} horizontal vertical rotate={rotate} color={color} />;
+  }
 };
 
 // 더보기 버튼 컴포넌트
@@ -99,6 +105,7 @@ const RowOptions = () => {
             path={`/company/list`}
             id={''}
             title={'엑셀 등록'}
+            color="grey"
           />
         </MenuItem>
 
@@ -110,6 +117,7 @@ const RowOptions = () => {
             path={`/level_category/list`}
             id={''}
             title={'수기 등록'}
+            color="grey"
           />
         </MenuItem>
       </Menu>
@@ -125,11 +133,27 @@ const ActionButton = (props: ActionButtonType) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       {actions === 'edit' ? (
-        <Icons iconName={mdiSquareEditOutline} rotate={90} path={`${path}`} id={`${id}`} />
+        <Icons
+          iconName={mdiSquareEditOutline}
+          rotate={90}
+          path={`${path}`}
+          id={`${id}`}
+          color="grey"
+        />
       ) : actions === 'delete' ? (
-        <Icons iconName={mdiTrashCanOutline} rotate={180} path={`${path}`} id={`${id}`} />
+        <Icons
+          iconName={mdiTrashCanOutline}
+          rotate={180}
+          path={`${path}`}
+          id={`${id}`}
+          color="grey"
+        />
       ) : actions === 'others' ? (
         <RowOptions />
+      ) : actions === 'isService' ? (
+        <Icons iconName={mdiCheckCircle} rotate={180} color="green" />
+      ) : actions === 'isNotService' ? (
+        <Icons iconName={mdiCancel} rotate={180} color="red" />
       ) : null}
     </Box>
   );
