@@ -17,7 +17,6 @@ import AttachedFileList from './AttachedFileList';
 import BoardViewInfo from '../BoardViewInfo';
 
 // ** Types Imports
-import { role } from 'src/pages/notice/list';
 import { FaqType } from 'src/types/apps/boardTypes';
 
 // ** axios
@@ -63,10 +62,7 @@ const FaqView = ({ id }: FaqViewProps) => {
   // FAQ 상세조회 API 호출
   const getDetailFaq = async (id: number) => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`, {
-        data: { role },
-        withCredentials: true,
-      });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/faq/${id}`);
 
       const faqData = {
         boardId: res.data.faqId,
@@ -93,9 +89,7 @@ const FaqView = ({ id }: FaqViewProps) => {
   const deleteFaq = async (id: number) => {
     if (confirm('삭제 하시겠습니까?')) {
       try {
-        await Api.delete(`${apiConfig.apiEndpoint}/faq/${id}`, {
-          withCredentials: true,
-        });
+        await Api.delete(`${apiConfig.apiEndpoint}/faq/${id}`);
         console.log('삭제 성공');
         alert('삭제가 완료되었습니다.');
 

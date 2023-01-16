@@ -53,9 +53,11 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: '전체 단어',
+          path: '/word/list',
         },
         {
           title: '레벨 카테고리',
+          path: '/level_category/list',
         },
         {
           title: '학습 관리',
@@ -102,7 +104,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: '문의내역 관리',
-          path: '/qna/comment/list',
+          path: '/comment/list',
         },
       ],
     },

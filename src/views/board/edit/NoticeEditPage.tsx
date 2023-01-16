@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 // ** Next Import
@@ -32,8 +32,7 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // ** Types Imports
-import { role } from 'src/pages/notice/list';
-import { NoticeType } from 'src/types/apps/boardTypes';
+import { noticeGrantList, NoticeType } from 'src/types/apps/boardTypes';
 
 // ** axios
 import Api from 'src/utils/api';
@@ -45,6 +44,8 @@ import * as yup from 'yup';
 
 // ** Common Util Imports
 import { getDateTime } from 'src/utils/getDateTime';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 const EditorControlled = dynamic(
@@ -56,6 +57,7 @@ const EditorControlled = dynamic(
 const defaultValues = {
   title: '',
   isTop: false,
+  noticeGrant: '',
 };
 
 // props 타입 정의
@@ -67,7 +69,6 @@ interface NoticeEditProps {
 interface NoticeInputData {
   title: string;
   isTop: string;
-  role: string;
   noticeGrant: string;
 }
 
@@ -82,6 +83,7 @@ const initNotice = {
   writer: '',
   regDate: '',
   viewCnt: 0,
+  noticeGrant: '',
 };
 
 // 공지사항 수정 페이지
@@ -117,6 +119,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
     if (data.title !== '') {
       setValue('title', data.title);
       setValue('isTop', data.isTop);
+      setValue('noticeGrant', data.noticeGrant);
 
       // htmlStr에 대한 상태변화가 없을경우, content 수정 없이 patch 요청 시 null 값으로 할당됨
       setHtmlStr(data.content!);
@@ -126,9 +129,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
   // 공지사항 상세조회 API 호출
   const getDetailNotice = async (id: number) => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/notice/${id}`, {
-        data: { role },
-      });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/notice/${id}`);
 
       const noticeData = {
         boardId: res.data.notice.boardId,
@@ -138,6 +139,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
         writer: res.data.writer,
         fileList: res.data.fileList,
         regDate: getDateTime(res.data.notice.board.regDate),
+        noticeGrant: res.data.noticeGrant,
       };
       console.log(noticeData);
       setData(noticeData);
@@ -174,8 +176,7 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
       });
     }
 
-    formData.append('role', '본사 관리자');
-    formData.append('noticeGrant', '0|1|2');
+    formData.append('noticeGrant', data.noticeGrant);
     formData.append('title', data.title);
     formData.append('content', htmlStr);
     formData.append('isTop', data.isTop);
@@ -210,6 +211,50 @@ const NoticeEdit = ({ id }: NoticeEditProps) => {
 
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>
+              <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
+                조회 권한
+              </Typography>
+              <FormControl sx={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+                <Controller
+                  name="noticeGrant"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      value={value}
+                      label=""
+                      onChange={onChange}
+                      size="small"
+                      error={Boolean(errors.noticeGrant)}
+                      inputProps={{ 'aria-label': 'Without label' }}
+                      displayEmpty
+                      sx={{ mt: 2, mb: 1 }}
+
+                      // labelId="validation-basic-select"
+                      // aria-describedby="validation-basic-select"
+                    >
+                      <MenuItem disabled value="">
+                        조회권한 선택
+                      </MenuItem>
+                      {noticeGrantList.map((noticeGrant) => {
+                        return (
+                          <MenuItem value={noticeGrant.value} key={noticeGrant.name}>
+                            {noticeGrant.name}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  )}
+                />
+                {errors.noticeGrant && (
+                  <FormHelperText sx={{ color: 'error.main' }} id="validation-basic-select">
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Box>
+
+            <Box sx={{ ml: 14, mr: 14, mt: 5 }}>
               <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
                 상단 고정 여부
               </Typography>

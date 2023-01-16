@@ -9,7 +9,24 @@ export type NoticeType = {
   regDate: string;
   writer?: string;
   fileList?: any;
+  noticeGrant?: string;
 };
+
+export const noticeGrantList = [
+  {
+    name: '본사용',
+    value: '0',
+  },
+
+  // {
+  //   name: '회원사용',
+  //   value: '0|1',
+  // },
+  // {
+  //   name: '사용자용',
+  //   value: '0|1|2',
+  // },
+];
 
 // Faq 타입 정의
 export type FaqType = {
@@ -37,12 +54,13 @@ export type CategoryType = {
 export type QnaType = {
   id?: number;
   boardId: number;
-  isComment: boolean;
+  isComment?: boolean;
   title: string;
   content?: string;
   viewCnt?: number;
   regDate: string;
   writer?: string;
+  commenter?: string | null;
   fileList?: any;
 };
 
@@ -50,7 +68,7 @@ export type QnaType = {
 export type CommentType = {
   id?: number;
   commentId: number;
-  writer: string;
+  commenter: string;
   comment: string;
   regDate: string;
   adminId: number;
