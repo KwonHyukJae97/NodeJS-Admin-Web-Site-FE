@@ -286,7 +286,7 @@ const CommentCard = ({ qnaId, commentData }: CommentCardProps) => {
                       }}
                     >
                       <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                        {comment.writer}
+                        {comment.commenter}
                       </Typography>
                       <Typography variant="subtitle1" sx={{ pl: 5 }}>
                         {comment.regDate}

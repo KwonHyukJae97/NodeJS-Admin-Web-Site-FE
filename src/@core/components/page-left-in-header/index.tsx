@@ -18,6 +18,7 @@ interface PageLeftHeaderProps {
   subtitle?: ReactNode;
   maincategory?: ReactNode;
   subcategory?: ReactNode;
+  thirdcategory?: ReactNode;
   setPageNo: (value: number) => void;
   setSearchWord?: (value: string) => void;
   pageName: string;
@@ -32,6 +33,7 @@ const PageLeftInHeader = (props: PageLeftHeaderProps) => {
     subtitle,
     maincategory,
     subcategory,
+    thirdcategory,
     setPageNo,
     setSearchWord,
     pageName,
@@ -62,6 +64,12 @@ const PageLeftInHeader = (props: PageLeftHeaderProps) => {
           <Typography variant="body1">{maincategory}</Typography>
           <Icon path={mdiChevronLeft} size={1} horizontal color="lightgrey" />
           <Typography variant="body1">{subcategory}</Typography>
+          {thirdcategory ? (
+            <>
+              <Icon path={mdiChevronLeft} size={1} horizontal color="lightgrey" />
+              <Typography variant="body1">{thirdcategory}</Typography>
+            </>
+          ) : null}
         </Box>
       </Box>
       <Box sx={{ mt: 2, ml: 16 }}>

@@ -38,6 +38,9 @@ import * as yup from 'yup';
 // ** axios
 import apiConfig from 'src/configs/api';
 import Api from 'src/utils/api';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { noticeGrantList } from '../../../types/apps/boardTypes';
 
 // import EditorControlled from 'src/views/forms/form-elements/editor/EditorControlled';
 const EditorControlled = dynamic(
@@ -49,7 +52,6 @@ const EditorControlled = dynamic(
 interface NoticeInputData {
   title: string;
   isTop: string;
-  role: string;
   noticeGrant: string;
 }
 
@@ -57,6 +59,7 @@ interface NoticeInputData {
 const defaultValues = {
   title: '',
   isTop: false,
+  noticeGrant: '',
 };
 
 // 공지사항 등록 페이지
@@ -92,8 +95,7 @@ const NoticeAdd = () => {
       });
     }
 
-    formData.append('role', '본사 관리자');
-    formData.append('noticeGrant', '0|1|2');
+    formData.append('noticeGrant', data.noticeGrant);
     formData.append('title', data.title);
     formData.append('content', htmlStr);
     formData.append('isTop', data.isTop);
@@ -128,6 +130,50 @@ const NoticeAdd = () => {
 
           <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ ml: 14, mr: 14, mt: 6 }}>
+              <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
+                조회 권한
+              </Typography>
+              <FormControl sx={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+                <Controller
+                  name="noticeGrant"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      value={value}
+                      label=""
+                      onChange={onChange}
+                      size="small"
+                      error={Boolean(errors.noticeGrant)}
+                      inputProps={{ 'aria-label': 'Without label' }}
+                      displayEmpty
+                      sx={{ mt: 2, mb: 1 }}
+
+                      // labelId="validation-basic-select"
+                      // aria-describedby="validation-basic-select"
+                    >
+                      <MenuItem disabled value="">
+                        조회권한 선택
+                      </MenuItem>
+                      {noticeGrantList.map((noticeGrant) => {
+                        return (
+                          <MenuItem value={noticeGrant.value} key={noticeGrant.name}>
+                            {noticeGrant.name}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  )}
+                />
+                {errors.noticeGrant && (
+                  <FormHelperText sx={{ color: 'error.main' }} id="validation-basic-select">
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Box>
+
+            <Box sx={{ ml: 14, mr: 14, mt: 5 }}>
               <Typography variant="subtitle2" sx={{ ml: 0.5 }}>
                 상단 고정 여부
               </Typography>

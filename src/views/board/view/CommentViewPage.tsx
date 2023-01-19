@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 
 // ** Next Import
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 // ** MUI Imports
@@ -28,7 +27,7 @@ import apiConfig from 'src/configs/api';
 import { getDateTime } from 'src/utils/getDateTime';
 
 // props 타입 정의
-interface QnaViewProps {
+interface CommentViewProps {
   id: number;
 }
 
@@ -45,8 +44,8 @@ const initQna = {
   viewCnt: 0,
 };
 
-// QnA 상세 페이지
-const QnaView = ({ id }: QnaViewProps) => {
+// Comment 상세 페이지
+const CommentView = ({ id }: CommentViewProps) => {
   // ** State
   const [data, setData] = useState<QnaType>(initQna),
     [comment, setComment] = useState<CommentType[]>([]);
@@ -54,19 +53,20 @@ const QnaView = ({ id }: QnaViewProps) => {
   // ** Hooks
   const router = useRouter();
   useEffect(() => {
-    getDetailQna(id);
+    getDetailComment(id);
   }, [id]);
 
   // QnA 상세조회 API 호출
-  const getDetailQna = async (id: number) => {
+  const getDetailComment = async (id: number) => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/qna/${id}`, { withCredentials: true });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/comment/${id}`);
+
+      console.log('comment res', res);
 
       const qnaData = {
         boardId: res.data.qna.qnaId,
         title: res.data.qna.title,
         content: res.data.qna.content,
-        isComment: res.data.qna.isComment,
         writer: res.data.qna.writer,
         fileList: res.data.qna.fileList,
         regDate: getDateTime(res.data.qna.regDate),
@@ -96,34 +96,34 @@ const QnaView = ({ id }: QnaViewProps) => {
   };
 
   // QnA 삭제 API 호출
-  const deleteQna = async (id: number) => {
-    if (confirm('삭제 하시겠습니까?')) {
-      try {
-        await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`);
-        console.log('삭제 성공');
-        alert('삭제가 완료되었습니다.');
-
-        router.replace('/qna/list');
-      } catch (err) {
-        console.log(err);
-        alert('삭제에 실패하였습니다.');
-      }
-    }
-  };
+  // const deleteQna = async (id: number) => {
+  //   if (confirm('삭제 하시겠습니까?')) {
+  //     try {
+  //       await Api.delete(`${apiConfig.apiEndpoint}/qna/${id}`);
+  //       console.log('삭제 성공');
+  //       alert('삭제가 완료되었습니다.');
+  //
+  //       router.replace('/qna/list');
+  //     } catch (err) {
+  //       console.log(err);
+  //       alert('삭제에 실패하였습니다.');
+  //     }
+  //   }
+  // };
 
   // 삭제 버튼 클릭 시 호출
-  const handleDeleteQna = (id: number) => {
-    deleteQna(id);
-  };
+  // const handleDeleteQna = (id: number) => {
+  //   deleteQna(id);
+  // };
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <BoardLeftInHeader
-            title={'나의 1:1 문의'}
+            title={'문의내역 관리'}
             maincategory={'고객센터'}
-            subcategory={'나의 1:1 문의'}
+            subcategory={'문의내역 관리'}
           />
 
           <BoardViewInfo
@@ -136,19 +136,19 @@ const QnaView = ({ id }: QnaViewProps) => {
           {data.fileList.length !== 0 ? <AttachedFileList fileList={data.fileList} /> : null}
 
           <Box sx={{ ml: 14, mr: 14, mb: 10, display: 'flex', justifyContent: 'flex-end' }}>
-            <Link href={`/qna/edit/${id}`} passHref>
-              <Button variant="contained" sx={{ mr: 3 }}>
-                수정
-              </Button>
-            </Link>
-            <Button
-              variant="outlined"
-              color="error"
-              sx={{ mr: 3 }}
-              onClick={() => handleDeleteQna(id)}
-            >
-              삭제
-            </Button>
+            {/*<Link href={`/qna/edit/${id}`} passHref>*/}
+            {/*  <Button variant="contained" sx={{ mr: 3 }}>*/}
+            {/*    수정*/}
+            {/*  </Button>*/}
+            {/*</Link>*/}
+            {/*<Button*/}
+            {/*  variant="outlined"*/}
+            {/*  color="error"*/}
+            {/*  sx={{ mr: 3 }}*/}
+            {/*  onClick={() => handleDeleteQna(id)}*/}
+            {/*>*/}
+            {/*  삭제*/}
+            {/*</Button>*/}
             {/*<Link href={'/qna/list'} passHref>*/}
             <Button
               variant="outlined"
@@ -169,4 +169,4 @@ const QnaView = ({ id }: QnaViewProps) => {
   );
 };
 
-export default QnaView;
+export default CommentView;

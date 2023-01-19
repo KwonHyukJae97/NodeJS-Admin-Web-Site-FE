@@ -109,9 +109,7 @@ const QnaEdit = ({ id }: QnaEditProps) => {
   // QnA 상세조회 API 호출
   const getDetailQna = async (id: number) => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/qna/${id}`, {
-        withCredentials: true,
-      });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/qna/${id}`);
 
       const qnaData = {
         boardId: res.data.qna.qnaId,
@@ -169,7 +167,6 @@ const QnaEdit = ({ id }: QnaEditProps) => {
       try {
         const req = await Api.patch(`${apiConfig.apiEndpoint}/qna/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
         });
         console.log('수정 성공', req);
         alert('수정이 완료되었습니다.');

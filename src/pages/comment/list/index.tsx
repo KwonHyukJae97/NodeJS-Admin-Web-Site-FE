@@ -17,13 +17,14 @@ import { AlertCircleOutline } from 'mdi-material-ui';
 import CustomChip from 'src/@core/components/mui/chip';
 import PageLeftInHeader from 'src/@core/components/page-left-in-header';
 import PaginationSimple from 'src/views/components/pagination/PaginationSimple';
+import TableSearchHeaderToggle from 'src/views/board/list/TableSearchHeaderToggle';
 
 // ** Types Imports
 import { QnaType } from 'src/types/apps/boardTypes';
 import { PageType } from 'src/utils/pageType';
 
 // ** axios
-import axios from 'axios';
+import { ApiSSR } from 'src/utils/api';
 import apiConfig from 'src/configs/api';
 
 // ** Common Util Imports
@@ -50,13 +51,13 @@ const columns = [
     },
   },
   {
-    flex: 0.4,
-    minWidth: 200,
+    flex: 0.25,
+    minWidth: 250,
     field: 'title',
     headerName: '제목',
     renderCell: ({ row }: CellType) => {
       return (
-        <Link href={`/qna/view/${row.boardId}`} passHref>
+        <Link href={`/comment/view/${row.boardId}`} passHref>
           <Typography variant="subtitle1" style={{ marginLeft: '40px' }}>
             {row.title}
           </Typography>
@@ -67,6 +68,32 @@ const columns = [
   {
     flex: 0.1,
     minWidth: 100,
+    headerName: '작성자',
+    field: 'writer',
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Box sx={{ margin: '0 auto' }}>
+          <Typography variant="subtitle2">{row.writer}</Typography>
+        </Box>
+      );
+    },
+  },
+  {
+    flex: 0.1,
+    minWidth: 100,
+    headerName: '답변자',
+    field: 'commenter',
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Box sx={{ margin: '0 auto' }}>
+          <Typography variant="subtitle2">{row.commenter}</Typography>
+        </Box>
+      );
+    },
+  },
+  {
+    flex: 0.06,
+    minWidth: 60,
     headerName: '등록일',
     field: 'regDate',
     renderCell: ({ row }: CellType) => {
@@ -78,8 +105,8 @@ const columns = [
     },
   },
   {
-    flex: 0.1,
-    minWidth: 60,
+    flex: 0.07,
+    minWidth: 70,
     headerName: '상태',
     field: 'isComment',
     renderCell: ({ row }: CellType) => {
@@ -114,7 +141,9 @@ const QnaCommentList = ({
   pageData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** State
-  const [pageNo, setPageNo] = useState<number>(1);
+  const [pageNo, setPageNo] = useState<number>(1),
+    [searchWord, setSearchWord] = useState<string>(''),
+    [searchKey, setSearchKey] = useState<string>('');
 
   // API로 조회한 데이터 리스트를 타입에 맞게 할당(SSR)
   const qnaData: QnaType[] =
@@ -125,6 +154,10 @@ const QnaCommentList = ({
             boardId: data.qnaId,
             title: data.title,
             isComment: data.isComment,
+            writer: data.writerName + '(' + data.writerNickname + ')',
+            commenter: data.isComment
+              ? data.commenterName + '(' + data.commenterNickname + ')'
+              : null,
             viewCnt: data.viewCount,
             regDate: getDateTime(data.regDate),
           };
@@ -145,7 +178,7 @@ const QnaCommentList = ({
       }}
     >
       <AlertCircleOutline sx={{ mr: 2 }} />
-      <Typography variant="h6">해당 검색에 대한 게시글이 없습니다.</Typography>
+      <Typography variant="h6">관련 게시글이 없습니다.</Typography>
     </Box>
   );
 
@@ -158,7 +191,19 @@ const QnaCommentList = ({
             maincategory={'고객센터'}
             subcategory={'문의내역 관리'}
             setPageNo={setPageNo}
-            pageName="qna/comment"
+            setSearchKey={setSearchKey}
+            setSearchWord={setSearchWord}
+            pageName="comment"
+          />
+
+          <TableSearchHeaderToggle
+            searchWord={searchWord}
+            setSearchWord={setSearchWord}
+            pageNo={pageNo}
+            setPageNo={setPageNo}
+            searchKey={searchKey}
+            setSearchKey={setSearchKey}
+            pageName="comment"
           />
 
           {qnaData !== null ? (
@@ -174,7 +219,7 @@ const QnaCommentList = ({
                   totalPage: pageData.totalPage,
                   pageNo: pageNo,
                   setPageNo: setPageNo,
-                  pageName: 'qna/comment',
+                  pageName: 'comment',
                 },
               }}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
@@ -189,11 +234,12 @@ const QnaCommentList = ({
 };
 
 // QnA-Comment 조회 API 호출
-export const getAllComment = async (pageNo: number) => {
+export const getAllComment = async (pageNo: number, searchKey: string, searchWord: string) => {
   const page = pageNo == null ? 1 : pageNo;
+
   try {
-    const res = await axios.get(`${apiConfig.apiEndpoint}/comment`, {
-      data: { pageNo: page, pageSize: 10, totalData: false },
+    const res = await ApiSSR.get(`${apiConfig.apiEndpoint}/comment`, {
+      data: { searchKey, searchWord, pageNo: page, pageSize: 10, totalData: false },
     });
 
     return res.data;
@@ -203,14 +249,9 @@ export const getAllComment = async (pageNo: number) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // console.log('ctx', context.query);
-  const { pageNo } = context.query;
+  const { pageNo, searchKey, searchWord } = context.query;
 
-  // 서버사이드 렌더링 시, 브라우저와는 별개로 직접 쿠키를 넣어 요청해야하기 때문에 해당 작업 반영 예정
-  // 현재는 테스트를 위해 backend 단에서 @UseGuard 주석 처리 후, 진행
-  const result = await getAllComment(Number(pageNo));
-
-  console.log('result', result);
+  const result = await getAllComment(Number(pageNo), searchKey as string, searchWord as string);
 
   const apiData: QnaType = result === undefined ? null : result.items;
   const pageData: PageType =
