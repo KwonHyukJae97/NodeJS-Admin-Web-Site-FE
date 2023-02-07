@@ -53,6 +53,7 @@ import apiConfig from 'src/configs/api';
 import Button from '@mui/material/Button';
 import Api from 'src/utils/api';
 import moment from 'moment';
+import { AccountChild } from 'mdi-material-ui';
 
 //수정 데이터 타입 정의
 interface Props {
@@ -100,12 +101,16 @@ const UserViewLeft = ({ data }: Props) => {
         );
         if (emailTest < 0) {
           alert('이메일 형식에 맞게 다시 입력해주세요.');
-          
-return false;
+
+          return false;
         } else {
-          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/me`, {
+            accountId: data.accountId,
             email: email,
           });
+
+          // await Api.patch(`${apiConfig.apiEndpoint}/admin/me${data.accountId}`, {
+          console.log('이메일수정테스트');
           location.reload();
           alert('이메일 수정이 완료되었습니다.');
         }
@@ -127,10 +132,11 @@ return false;
         const phnTest = phn.search(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}/);
         if (phnTest < 0) {
           alert('전화번호 형식을 확인하여 다시 입력해주세요.');
-          
-return false;
+
+          return false;
         } else {
-          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/me`, {
+            accountId: data.accountId,
             phone: phone,
           });
           location.reload();
@@ -138,6 +144,7 @@ return false;
         }
       } catch (err: any) {
         console.log(err);
+        console.log(err.response.data.message);
         const message = err.response.data.message;
 
         return alert(message);
@@ -153,10 +160,11 @@ return false;
         const nickTest = nick.search(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/);
         if (nickTest < 0) {
           alert('한글, 영문, 숫자만 입력해주세요.');
-          
-return false;
+
+          return false;
         } else {
-          await Api.patch(`${apiConfig.apiEndpoint}/admin/${data.accountId}`, {
+          await Api.patch(`${apiConfig.apiEndpoint}/admin/me`, {
+            accountId: data.accountId,
             nickname: nickname,
           });
           location.reload();
@@ -209,55 +217,7 @@ return false;
               <Typography variant="h6" sx={{ mb: 4 }}>
                 {data.nickname}
               </Typography>
-              {/* <CustomChip
-                skin="light"
-                size="small"
-                label={data.role}
-                color={roleColors[data.role]}
-                sx={{
-                  borderRadius: '4px',
-                  fontSize: '0.875rem',
-                  textTransform: 'capitalize',
-                  '& .MuiChip-label': { mt: -0.25 },
-                }}
-              /> */}
             </CardContent>
-
-            {/* <CardContent sx={{ my: 1 }}> */}
-            {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}> */}
-            {/* <Box sx={{ mr: 6, display: 'flex', alignItems: 'center' }}>
-                  <CustomAvatar
-                    skin="light"
-                    variant="rounded"
-                    sx={{ mr: 4, width: 44, height: 44 }}
-                  >
-                    <Check />
-                  </CustomAvatar>
-                  <Box>
-                    <Typography variant="h5" sx={{ lineHeight: 1.3 }}>
-                      1.23k
-                    </Typography>
-                    <Typography variant="body2">Task Done</Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <CustomAvatar
-                    skin="light"
-                    variant="rounded"
-                    sx={{ mr: 4, width: 44, height: 44 }}
-                  >
-                    <StarOutline />
-                  </CustomAvatar>
-                  <Box>
-                    <Typography variant="h5" sx={{ lineHeight: 1.3 }}>
-                      568
-                    </Typography>
-                    <Typography variant="body2">Project Done</Typography>
-                  </Box>
-                </Box>
-              </Box> */}
-            {/* </CardContent> */}
-
             <CardContent>
               <Typography variant="h6">내 정보</Typography>
               <Divider sx={{ mt: 4 }} />
@@ -331,71 +291,8 @@ return false;
                   </Typography>
                   <Typography variant="body2">{data.snsId}</Typography>
                 </Box>
-                {/* <Box sx={{ display: 'flex', mb: 2.7 }}>
-                  <Typography variant="subtitle2" sx={{ mr: 2, color: 'text.primary' }}>
-                    Status:
-                  </Typography>
-                  <CustomChip
-                    skin="light"
-                    size="small"
-                    label={data.status}
-                    color={statusColors[data.status]}
-                    sx={{
-                      height: 20,
-                      fontSize: '0.75rem',
-                      fontWeight: 500,
-                      borderRadius: '5px',
-                      textTransform: 'capitalize',
-                    }}
-                  />
-                </Box> */}
-                {/* <Box sx={{ display: 'flex', mb: 2.7 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>
-                    Role:
-                  </Typography>
-                  <Typography variant="body2" sx={{ textTransform: 'capitalize' }}>
-                    {data.role}
-                  </Typography>
-                </Box> */}
-                {/* <Box sx={{ display: 'flex', mb: 2.7 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>
-                    Tax ID:
-                  </Typography>
-                  <Typography variant="body2">Tax-8894</Typography>
-                </Box> */}
-                {/* <Box sx={{ display: 'flex', mb: 2.7 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>
-                    Contact:
-                  </Typography>
-                  <Typography variant="body2">+1 {data.contact}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2.7 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>
-                    Language:
-                  </Typography>
-                  <Typography variant="body2">English</Typography>
-                </Box>
-                <Box sx={{ display: 'flex' }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>
-                    Country:
-                  </Typography>
-                  <Typography variant="body2">{data.country}</Typography>
-                </Box> */}
               </Box>
             </CardContent>
-
-            {/* <CardActions sx={{ display: 'flex', justifyContent: 'center' }}> */}
-            {/* <Button variant="contained" sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-                Edit
-              </Button> */}
-            {/* <Button variant="contained" sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-                수정
-              </Button>
-              <Button color="error" variant="outlined">
-                Suspend
-              </Button>
-            </CardActions> */}
-
             <Dialog
               open={openEditEmail}
               onClose={handleEditClickCloseEmail}
@@ -414,9 +311,7 @@ return false;
                   variant="body2"
                   id="user-view-edit-description"
                   sx={{ textAlign: 'center', mb: 7 }}
-                >
-                  {/* Updating user details will receive a privacy audit. */}
-                </DialogContentText>
+                ></DialogContentText>
                 <form>
                   <Grid container spacing={6}>
                     <Grid item xs={12} sm={12}>
@@ -425,9 +320,6 @@ return false;
                         type="email"
                         label="이메일"
                         value={email}
-
-                        // defaultValue={data.email}
-                        // onChange={inputChangeEmail}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </Grid>
@@ -466,9 +358,7 @@ return false;
                   variant="body2"
                   id="user-view-edit-description"
                   sx={{ textAlign: 'center', mb: 7 }}
-                >
-                  {/* Updating user details will receive a privacy audit. */}
-                </DialogContentText>
+                ></DialogContentText>
                 <form>
                   <Grid container spacing={6}>
                     <Grid item xs={12} sm={6}>
@@ -514,9 +404,7 @@ return false;
                   variant="body2"
                   id="user-view-edit-description"
                   sx={{ textAlign: 'center', mb: 7 }}
-                >
-                  {/* Updating user details will receive a privacy audit. */}
-                </DialogContentText>
+                ></DialogContentText>
                 <form>
                   <Grid container spacing={6}>
                     <Grid item xs={12} sm={6}>

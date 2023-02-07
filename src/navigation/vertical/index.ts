@@ -47,9 +47,11 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: '단어 레벨',
+          path: '/word_level/list',
         },
         {
           title: '프로젝트',
+          path: '/project/list',
         },
         {
           title: '전체 단어',
@@ -61,6 +63,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: '학습 관리',
+          path: '/study/list',
         },
       ],
     },

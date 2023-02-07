@@ -82,6 +82,8 @@ const AuthProvider = ({ children }: Props) => {
         setLoading(true);
         console.log('사용자 정보 있음');
 
+        //Api 를 사용 할 경우 엑세스 토큰 만료된 후 페이지 이동, 동작 시에 자동으로 엑세스토큰 갱신
+        //axios 를 사용 할 경우 엑세스토큰 만료 후 페이지 이동, 동작 시에 로컬스토리지 비우고 로그인 화면으로 이동
         await Api.get(authConfig.meEndpoint, { withCredentials: true })
           .then(async (response) => {
             const user: UserDataType = {
@@ -98,8 +100,12 @@ const AuthProvider = ({ children }: Props) => {
           })
           .catch(() => {
             // 토큰 만료 시, 로그인 페이지로 이동 / 로컬스토리지에 저장되어있는 userData 삭제
+            alert('다시 로그인해주세요.');
             router.push('login');
-            localStorage.removeItem(authConfig.storageUserDataKeyName);
+
+            // localStorage.removeItem(authConfig.storageUserDataKeyName);
+            window.localStorage.clear();
+            removeCookieAccessToken();
             setUser(null);
             setLoading(false);
             console.log('사용자 정보 조회 실패');
@@ -229,6 +235,8 @@ const AuthProvider = ({ children }: Props) => {
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
         await router.replace(redirectURL as string);
+
+        location.reload();
       } else {
         console.log('loginSuccess 값 false일경우');
 
@@ -307,6 +315,8 @@ const AuthProvider = ({ children }: Props) => {
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
         await router.replace(redirectURL as string);
+
+        location.reload();
       } else {
         console.log('loginFailed!');
         console.log('param.email', params.snsId);
@@ -385,6 +395,8 @@ const AuthProvider = ({ children }: Props) => {
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/';
 
         await router.replace(redirectURL as string);
+
+        location.reload();
       } else {
         console.log('loginSuccess 실패 시');
 
@@ -414,9 +426,7 @@ const AuthProvider = ({ children }: Props) => {
   //로그아웃 요청 시 실행
   const handleLogout = async () => {
     try {
-      const res = await Api.get(`${apiConfig.apiEndpoint}/auth/logout/admin`, {
-        withCredentials: true,
-      });
+      const res = await Api.get(`${apiConfig.apiEndpoint}/auth/logout/admin`);
       console.log('프론트 로그아웃 테스트', res);
       setUser(null);
       setIsInitialized(false);

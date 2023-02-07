@@ -26,9 +26,14 @@ const tokenAuth = async (config: any): Promise<AxiosRequestConfig> => {
 
     //엑세스 토큰 만료시간 지나면 다시 갱신하는 메소드
     if (moment(expDate).diff(moment(momentDate)) < 0 && accessToken) {
-      const response = await axios.get(`${apiConfig.apiEndpoint}/auth/refresh/accessToken`);
+      const response = await axios.get(`${apiConfig.apiEndpoint}/auth/refresh/accessToken`, {
+        withCredentials: true,
+      });
+      console.log('프론트 엑세스 토큰 갱신', response);
 
-      const res = await axios.get(authConfig.meEndpoint);
+      const res = await axios.get(authConfig.meEndpoint, {
+        withCredentials: true,
+      });
 
       const user: UserDataType = {
         accountId: res.data.authInfo.accountId,
@@ -51,6 +56,7 @@ const tokenAuth = async (config: any): Promise<AxiosRequestConfig> => {
       localStorage.setItem(authConfig.storageExpireAtDataKeyName, JSON.stringify(newExpireAt));
     } else {
       console.log('토큰 갱신 필요 없음');
+
       // 만료시간이 남아있을 경우 유저데이터 조회할 필요없음.
       // const res = await axios.get(authConfig.meEndpoint, {
       //   withCredentials: true,
